@@ -15,8 +15,8 @@ export function ProjectCard({ solution }: ProjectCardProps) {
       <SystemMockup variant={solution.mockup} />
 
       <div className="mt-6 flex flex-1 flex-col">
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-[0.7rem] font-semibold tracking-[0.14em] text-accent-600 uppercase">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="min-w-0 text-[0.7rem] font-semibold tracking-[0.14em] text-accent-600 uppercase">
             {solution.category}
           </span>
           <span className="shrink-0 rounded-full border border-ink-200/80 px-2.5 py-1 text-[0.65rem] font-medium text-ink-500">
@@ -38,7 +38,7 @@ export function ProjectCard({ solution }: ProjectCardProps) {
         <div className="mt-auto pt-6">
           <a
             href="#contact"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
+            className="inline-flex items-center gap-1.5 py-1 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
           >
             Discuss a similar system
             <ArrowUpRight className="size-4" aria-hidden="true" />

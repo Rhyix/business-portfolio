@@ -1,7 +1,10 @@
 import { useMemo } from 'react'
 import type { ReactNode } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import { fadeInUp } from '../../lib/motion'
+
+const supportsIntersectionObserver =
+  typeof window !== 'undefined' && 'IntersectionObserver' in window
 
 interface RevealProps {
   children: ReactNode
@@ -12,18 +15,19 @@ interface RevealProps {
 
 /**
  * Fades and lifts its children into view once.
- * Falls back to static content when the user prefers reduced motion.
+ * Falls back to static content when the user prefers reduced motion, or when
+ * the browser has no IntersectionObserver to drive `whileInView`.
  */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
   const prefersReducedMotion = useReducedMotion()
   const variants = useMemo(() => fadeInUp(delay), [delay])
 
-  if (prefersReducedMotion) {
+  if (prefersReducedMotion || !supportsIntersectionObserver) {
     return <div className={className}>{children}</div>
   }
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial="hidden"
       whileInView="visible"
@@ -31,6 +35,6 @@ export function Reveal({ children, delay = 0, className }: RevealProps) {
       variants={variants}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 }

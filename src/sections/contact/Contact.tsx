@@ -36,7 +36,7 @@ export function Contact() {
                 <div key={detail.label} className="flex items-start gap-3.5">
                   <IconFrame icon={detail.icon} size="sm" />
                   <div>
-                    <dt className="text-xs font-semibold tracking-[0.14em] text-ink-400 uppercase">
+                    <dt className="text-xs font-semibold tracking-[0.14em] text-ink-500 uppercase">
                       {detail.label}
                     </dt>
                     <dd className="mt-1 text-sm font-medium text-ink-900">

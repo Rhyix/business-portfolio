@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { Container } from '../ui/Container'
@@ -15,9 +15,21 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const scrolled = useScrolled(8)
   const activeId = useActiveSection(sectionIds)
+  const toggleButtonRef = useRef<HTMLButtonElement>(null)
 
   const closeMenu = useCallback(() => setMenuOpen(false), [])
   const toggleMenu = useCallback(() => setMenuOpen((open) => !open), [])
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia('(min-width: 1024px)')
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setMenuOpen(false)
+    }
+
+    desktopQuery.addEventListener('change', handleChange)
+    return () => desktopQuery.removeEventListener('change', handleChange)
+  }, [])
 
   return (
     <header
@@ -32,7 +44,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between gap-4 lg:h-20">
           <Logo />
 
-          <nav aria-label="Primary" className="hidden md:block">
+          <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-1">
               {primaryNavigation.map((item) => {
                 const isActive = activeId === item.href.replace('#', '')
@@ -68,12 +80,13 @@ export function Navbar() {
             </Button>
 
             <button
+              ref={toggleButtonRef}
               type="button"
               onClick={toggleMenu}
               aria-expanded={menuOpen}
               aria-controls={MOBILE_MENU_ID}
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              className="inline-flex size-10 items-center justify-center rounded-xl border border-ink-200 bg-white text-ink-700 transition-colors duration-200 hover:bg-ink-50 md:hidden"
+              className="inline-flex size-11 items-center justify-center rounded-xl border border-ink-200 bg-white text-ink-700 transition-colors duration-200 hover:bg-ink-50 lg:hidden"
             >
               {menuOpen ? (
                 <X className="size-5" aria-hidden="true" />
@@ -92,6 +105,7 @@ export function Navbar() {
         cta={navigationCta}
         activeId={activeId}
         onClose={closeMenu}
+        toggleButtonRef={toggleButtonRef}
       />
     </header>
   )

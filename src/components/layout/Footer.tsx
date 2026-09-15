@@ -42,12 +42,12 @@ export function Footer() {
             <h2 className="text-xs font-semibold tracking-[0.16em] text-white uppercase">
               Navigate
             </h2>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-2">
               {primaryNavigation.map((item) => (
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="text-sm transition-colors duration-200 hover:text-white"
+                    className="block py-1 text-sm transition-colors duration-200 hover:text-white"
                   >
                     {item.label}
                   </a>
@@ -60,12 +60,12 @@ export function Footer() {
             <h2 className="text-xs font-semibold tracking-[0.16em] text-white uppercase">
               Services
             </h2>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-2">
               {services.map((service) => (
                 <li key={service.title}>
                   <a
                     href="#services"
-                    className="text-sm transition-colors duration-200 hover:text-white"
+                    className="block py-1 text-sm transition-colors duration-200 hover:text-white"
                   >
                     {service.title}
                   </a>
@@ -78,27 +78,27 @@ export function Footer() {
             <h2 className="text-xs font-semibold tracking-[0.16em] text-white uppercase">
               Contact
             </h2>
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-5 space-y-2 text-sm">
               <li>
                 <a
                   href={contactLinks.email}
-                  className="inline-flex items-center gap-2 transition-colors duration-200 hover:text-white"
+                  className="inline-flex items-center gap-2 py-1 transition-colors duration-200 hover:text-white"
                 >
-                  <Mail className="size-4 text-ink-500" aria-hidden="true" />
+                  <Mail className="size-4 text-ink-400" aria-hidden="true" />
                   {company.email}
                 </a>
               </li>
               <li>
                 <a
                   href={contactLinks.phone}
-                  className="inline-flex items-center gap-2 transition-colors duration-200 hover:text-white"
+                  className="inline-flex items-center gap-2 py-1 transition-colors duration-200 hover:text-white"
                 >
-                  <Phone className="size-4 text-ink-500" aria-hidden="true" />
+                  <Phone className="size-4 text-ink-400" aria-hidden="true" />
                   {company.phone}
                 </a>
               </li>
               <li className="inline-flex items-center gap-2">
-                <MapPin className="size-4 text-ink-500" aria-hidden="true" />
+                <MapPin className="size-4 text-ink-400" aria-hidden="true" />
                 {company.location}
               </li>
             </ul>

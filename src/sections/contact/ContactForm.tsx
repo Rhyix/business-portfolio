@@ -31,11 +31,11 @@ const controlStyles =
   'w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 transition-colors duration-200 placeholder:text-ink-400 focus:border-accent-400 focus:ring-2 focus:ring-accent-100 focus:outline-none'
 
 /** Shared aria wiring and error styling for form controls. */
-function fieldState(field: keyof ContactFormValues, error?: string) {
+function fieldState(field: keyof ContactFormValues, error?: string, className?: string) {
   return {
     'aria-invalid': error ? true : undefined,
     'aria-describedby': error ? `contact-${field}-error` : undefined,
-    className: cn(controlStyles, error ? 'border-red-300' : undefined),
+    className: cn(controlStyles, className, error ? 'border-red-300' : undefined),
   }
 }
 
@@ -111,7 +111,7 @@ export function ContactForm() {
             placeholder="Your full name"
             value={values.name}
             onChange={handleChange}
-            {...fieldState('name', errors.name)}
+            {...fieldState('name', errors.name, 'h-11')}
           />
         </FormField>
 
@@ -124,7 +124,7 @@ export function ContactForm() {
             placeholder="name@example.com"
             value={values.email}
             onChange={handleChange}
-            {...fieldState('email', errors.email)}
+            {...fieldState('email', errors.email, 'h-11')}
           />
         </FormField>
 
@@ -141,7 +141,7 @@ export function ContactForm() {
             placeholder="Optional"
             value={values.organisation}
             onChange={handleChange}
-            {...fieldState('organisation', errors.organisation)}
+            {...fieldState('organisation', errors.organisation, 'h-11')}
           />
         </FormField>
 
@@ -151,7 +151,7 @@ export function ContactForm() {
             name="projectType"
             value={values.projectType}
             onChange={handleChange}
-            {...fieldState('projectType', errors.projectType)}
+            {...fieldState('projectType', errors.projectType, 'h-11')}
           >
             <option value="">Select a project type</option>
             {projectTypes.map((projectType) => (

@@ -18,7 +18,7 @@ export function FormSuccess({ name, onReset }: FormSuccessProps) {
   const firstName = name.trim().split(' ')[0]
 
   return (
-    <div className="rounded-2xl border border-ink-200/80 bg-white p-8 shadow-card sm:p-10">
+    <div role="status" className="rounded-2xl border border-ink-200/80 bg-white p-8 shadow-card sm:p-10">
       <IconFrame icon={CircleCheckBig} size="lg" />
       <h3 className="mt-5 text-lg font-semibold text-ink-900">
         Thanks{firstName ? `, ${firstName}` : ''} — your details are complete.

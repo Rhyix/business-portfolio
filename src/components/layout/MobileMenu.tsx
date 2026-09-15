@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
+import type { RefObject } from 'react'
+import { AnimatePresence, m } from 'motion/react'
 import { ChevronRight } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { EASE_OUT_EXPO } from '../../lib/motion'
@@ -13,10 +14,19 @@ interface MobileMenuProps {
   cta: NavItem
   activeId: string | null
   onClose: () => void
+  toggleButtonRef: RefObject<HTMLButtonElement | null>
 }
 
 /** Collapsible navigation panel shown below the sticky bar on small screens. */
-export function MobileMenu({ id, open, items, cta, activeId, onClose }: MobileMenuProps) {
+export function MobileMenu({
+  id,
+  open,
+  items,
+  cta,
+  activeId,
+  onClose,
+  toggleButtonRef,
+}: MobileMenuProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -28,22 +38,25 @@ export function MobileMenu({ id, open, items, cta, activeId, onClose }: MobileMe
     if (!open) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        onClose()
+        toggleButtonRef.current?.focus()
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [open, onClose])
+  }, [open, onClose, toggleButtonRef])
 
   return (
     <AnimatePresence initial={false}>
       {open ? (
-        <motion.div
+        <m.div
           key="mobile-menu"
           id={id}
           ref={panelRef}
           tabIndex={-1}
-          className="absolute inset-x-0 top-full overflow-hidden border-b border-ink-200 bg-white shadow-card md:hidden"
+          className="absolute inset-x-0 top-full overflow-hidden border-b border-ink-200 bg-white shadow-card lg:hidden"
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
@@ -77,7 +90,7 @@ export function MobileMenu({ id, open, items, cta, activeId, onClose }: MobileMe
               {cta.label}
             </Button>
           </nav>
-        </motion.div>
+        </m.div>
       ) : null}
     </AnimatePresence>
   )

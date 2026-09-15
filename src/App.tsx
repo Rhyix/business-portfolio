@@ -1,11 +1,14 @@
+import { LazyMotion, domAnimation } from 'motion/react'
 import { Home } from './pages/Home'
 import { SiteLayout } from './components/layout/SiteLayout'
 
 function App() {
   return (
-    <SiteLayout>
-      <Home />
-    </SiteLayout>
+    <LazyMotion features={domAnimation}>
+      <SiteLayout>
+        <Home />
+      </SiteLayout>
+    </LazyMotion>
   )
 }
 
