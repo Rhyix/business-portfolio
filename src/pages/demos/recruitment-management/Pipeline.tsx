@@ -9,6 +9,7 @@ import { cn } from '../../../lib/cn'
 import { formatDate } from '../../../lib/format'
 import { useRecruitmentData } from '../../../data/demos/recruitment/context'
 import type { Applicant, ApplicantStage } from '../../../data/demos/recruitment/types'
+import { IntegrationPanel } from './IntegrationPanel'
 
 const stageOrder: ApplicantStage[] = ['Applied', 'Screening', 'Interview', 'Assessment', 'Shortlisted', 'Hired', 'Rejected']
 
@@ -258,6 +259,8 @@ export function Pipeline() {
                   ))}
                 </select>
               </label>
+
+              <IntegrationPanel applicant={detailApplicant} />
             </div>
           ) : null}
         </Modal>

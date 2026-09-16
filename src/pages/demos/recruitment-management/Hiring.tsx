@@ -10,6 +10,7 @@ import { cn } from '../../../lib/cn'
 import { formatDate } from '../../../lib/format'
 import { useRecruitmentData } from '../../../data/demos/recruitment/context'
 import type { Applicant, ApplicantStage } from '../../../data/demos/recruitment/types'
+import { IntegrationPanel } from './IntegrationPanel'
 
 type HiringTab = 'Shortlisted' | 'Hired' | 'Rejected'
 
@@ -194,6 +195,8 @@ export function Hiring() {
                 <p className="mt-1 text-sm text-ink-800">{detailApplicant.decisionNotes}</p>
               </div>
             ) : null}
+
+            <IntegrationPanel applicant={detailApplicant} />
           </div>
         ) : null}
       </Modal>

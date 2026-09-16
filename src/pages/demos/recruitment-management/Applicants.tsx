@@ -13,6 +13,7 @@ import { formatDate } from '../../../lib/format'
 import { useRecruitmentData } from '../../../data/demos/recruitment/context'
 import type { Applicant, ApplicantInput, ApplicantStage } from '../../../data/demos/recruitment/types'
 import { ApplicantFormModal } from './ApplicantFormModal'
+import { IntegrationPanel } from './IntegrationPanel'
 
 const PAGE_SIZE = 8
 
@@ -463,6 +464,8 @@ export function Applicants() {
                 Edit applicant
               </Button>
             </div>
+
+            <IntegrationPanel applicant={detailApplicant} />
           </div>
         ) : null}
       </Modal>

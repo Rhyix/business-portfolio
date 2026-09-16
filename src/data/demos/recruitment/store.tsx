@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { RecruitmentDataContext } from './context'
+import type { IntegrationStatus, SyncOutcome } from './context'
+import { getAllHireRecords, queueHireForIntegration } from '../../../lib/integrationBridge'
+import type { RecruitmentHireRecord } from '../../../lib/integrationBridge'
 import { initialVacancies } from './vacancies'
 import { initialApplicants } from './applicants'
 import { initialInterviews } from './interviews'
@@ -52,6 +55,9 @@ export function RecruitmentDataProvider({ children, onHiringDecision }: Recruitm
   const [assessments, setAssessments] = useState<Assessment[]>(initialAssessments)
   const [evaluations, setEvaluations] = useState<Evaluation[]>(initialEvaluations)
   const [activity, setActivity] = useState<RecruitmentActivityItem[]>(initialActivity)
+  const [integrationRecords, setIntegrationRecords] = useState<Record<string, RecruitmentHireRecord>>(() =>
+    Object.fromEntries(getAllHireRecords().map((record) => [record.applicantId, record])),
+  )
 
   const nextVacancyId = useRef(111)
   const nextApplicantId = useRef(221)
@@ -156,6 +162,53 @@ export function RecruitmentDataProvider({ children, onHiringDecision }: Recruitm
   const rejectApplicant = useCallback((applicantId: string, notes?: string) => applyStageChange(applicantId, 'Rejected', notes), [applyStageChange])
   const returnToPipeline = useCallback((applicantId: string) => applyStageChange(applicantId, 'Shortlisted'), [applyStageChange])
 
+  const getIntegrationStatus = useCallback(
+    (applicantId: string): IntegrationStatus => {
+      const applicant = applicants.find((item) => item.id === applicantId)
+      if (!applicant || applicant.stage !== 'Hired') return 'NotSynced'
+      return integrationRecords[applicantId] ? 'Synced' : 'Ready'
+    },
+    [applicants, integrationRecords],
+  )
+
+  const getIntegrationEmployeeId = useCallback(
+    (applicantId: string) => integrationRecords[applicantId]?.employeeId,
+    [integrationRecords],
+  )
+
+  const syncApplicantToPlatform = useCallback(
+    (applicantId: string): SyncOutcome => {
+      const applicant = applicants.find((item) => item.id === applicantId)
+      if (!applicant) return { ok: false, error: 'This applicant could not be found.' }
+      if (applicant.stage !== 'Hired') {
+        return { ok: false, error: 'Only hired candidates can be added to the Integrated Platform.' }
+      }
+
+      const vacancy = vacancies.find((item) => item.id === applicant.vacancyId)
+      const hiredEntry = applicant.timeline[applicant.timeline.length - 1]
+
+      const result = queueHireForIntegration({
+        applicantId: applicant.id,
+        applicantName: applicant.name,
+        positionTitle: applicant.positionTitle,
+        department: vacancy?.department ?? 'General',
+        employmentType: vacancy?.employmentType ?? 'Full-time',
+        email: applicant.email,
+        phone: applicant.phone,
+        hiredDate: hiredEntry?.date ?? today(),
+      })
+
+      if (!result.ok) return result
+
+      setIntegrationRecords((current) => ({ ...current, [applicantId]: result.record }))
+      if (!result.alreadyQueued) {
+        logActivity('applicant.synced', `${applicant.name} was added to the Integrated Platform as a new employee.`)
+      }
+      return { ok: true }
+    },
+    [applicants, vacancies, logActivity],
+  )
+
   const addInterview = useCallback(
     (values: InterviewInput) => {
       const newInterview: Interview = { id: `INT-${nextInterviewId.current++}`, ...values }
@@ -218,6 +271,9 @@ export function RecruitmentDataProvider({ children, onHiringDecision }: Recruitm
     markHired,
     rejectApplicant,
     returnToPipeline,
+    getIntegrationStatus,
+    getIntegrationEmployeeId,
+    syncApplicantToPlatform,
   }
 
   return <RecruitmentDataContext.Provider value={value}>{children}</RecruitmentDataContext.Provider>

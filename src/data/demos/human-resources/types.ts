@@ -17,6 +17,10 @@ export interface Employee {
   email: string
   phone: string
   joined: string
+  /** Present when this record was created from a Recruitment System hire — e.g. "Recruitment System". */
+  source?: string
+  /** The originating Recruitment System applicant ID, for duplicate-sync protection and cross-linking. */
+  recruitmentApplicantId?: string
 }
 
 export type AttendanceStatus = 'Present' | 'Late' | 'Absent' | 'On Leave'

@@ -110,6 +110,7 @@ export type RecruitmentActivityType =
   | 'assessment.completed'
   | 'applicant.shortlisted'
   | 'hiring.decided'
+  | 'applicant.synced'
 
 export interface RecruitmentActivityItem {
   id: string

@@ -42,7 +42,18 @@ export interface RecruitmentDataContextValue {
   markHired: (applicantId: string, notes?: string) => void
   rejectApplicant: (applicantId: string, notes?: string) => void
   returnToPipeline: (applicantId: string) => void
+
+  /** NotSynced until Hired; Ready once Hired but not yet sent; Synced once queued for the Integrated Platform. */
+  getIntegrationStatus: (applicantId: string) => IntegrationStatus
+  /** The real Employee ID once the Integrated Platform has created the record — undefined until then. */
+  getIntegrationEmployeeId: (applicantId: string) => string | undefined
+  /** User-triggered — queues a Hired applicant for Employee creation in the Integrated Platform. Idempotent. */
+  syncApplicantToPlatform: (applicantId: string) => SyncOutcome
 }
+
+export type IntegrationStatus = 'NotSynced' | 'Ready' | 'Synced'
+
+export type SyncOutcome = { ok: true } | { ok: false; error: string }
 
 export const RecruitmentDataContext = createContext<RecruitmentDataContextValue | null>(null)
 

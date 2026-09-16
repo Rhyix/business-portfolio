@@ -1,7 +1,8 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { IntegratedDataContext } from './context'
 import type { IntegratedDataContextValue } from './context'
+import { reconcileHires } from '../../../lib/integrationBridge'
 import {
   seedApplicantsList,
   seedAttendanceDates,
@@ -165,6 +166,46 @@ export function IntegratedDataProvider({ children }: { children: ReactNode }) {
     },
     [logActivity],
   )
+
+  // Tracks which recruitment applicant IDs this mount has already turned
+  // into an Employee, so React StrictMode's double effect invocation (dev
+  // only) can't create a duplicate — see reconcileHires below.
+  const reconciledHireApplicantIds = useRef<Set<string>>(new Set())
+
+  useEffect(() => {
+    // The Employee list itself doesn't persist across a mount (no backend),
+    // only the bridge's own small record does — so on every mount this
+    // re-creates an Employee for every queued-or-already-synced hire that
+    // isn't already present in this session, reusing the same Employee ID
+    // a previous mount assigned. See src/lib/integrationBridge.ts.
+    reconcileHires((record) => {
+      if (reconciledHireApplicantIds.current.has(record.applicantId)) {
+        return record.employeeId ?? ''
+      }
+      reconciledHireApplicantIds.current.add(record.applicantId)
+
+      const id = record.employeeId ?? `EMP-${nextEmployeeId.current++}`
+      const newEmployee: Employee = {
+        id,
+        name: record.applicantName,
+        department: record.department,
+        position: record.positionTitle,
+        employmentType: record.employmentType,
+        status: 'Active',
+        email: record.email,
+        phone: record.phone,
+        joined: record.hiredDate,
+        source: 'Recruitment System',
+        recruitmentApplicantId: record.applicantId,
+      }
+      setEmployees((current) => [newEmployee, ...current])
+      logActivity(
+        'employee.added',
+        `${newEmployee.name} joined ${newEmployee.department} as ${newEmployee.position} — added from Recruitment System.`,
+      )
+      return id
+    })
+  }, [logActivity])
 
   const updateEmployee = useCallback((id: string, values: EmployeeInput) => {
     setEmployees((current) => current.map((employee) => (employee.id === id ? { ...employee, ...values } : employee)))

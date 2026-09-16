@@ -8,11 +8,13 @@ import { StatusBadge } from '../../../components/demo/StatusBadge'
 import { Modal } from '../../../components/demo/Modal'
 import { Tag } from '../../../components/ui/Tag'
 import { Button } from '../../../components/ui/Button'
+import { Link } from '../../../lib/router'
 import { formatDate } from '../../../lib/format'
 import { employees as initialEmployees } from '../../../data/demos/human-resources/employees'
 import { recentActivity } from '../../../data/demos/human-resources/dashboard'
 import type { Employee, EmployeeStatus, EmploymentType } from '../../../data/demos/human-resources/types'
 import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
+import { basePath as recruitmentBasePath } from '../../../data/demos/recruitment/navigation'
 import { EmployeeFormModal } from './EmployeeFormModal'
 import type { EmployeeFormValues } from './EmployeeFormModal'
 
@@ -363,7 +365,28 @@ export function Employees() {
                 <dt className="text-xs font-medium text-ink-500">Start date</dt>
                 <dd className="mt-0.5 text-ink-900">{formatDate(detailEmployee.joined)}</dd>
               </div>
+              {detailEmployee.source ? (
+                <div>
+                  <dt className="text-xs font-medium text-ink-500">Source</dt>
+                  <dd className="mt-0.5 text-ink-900">{detailEmployee.source}</dd>
+                </div>
+              ) : null}
             </dl>
+
+            {detailEmployee.source ? (
+              <div className="rounded-xl border border-ink-200/80 bg-ink-50/50 p-4 text-sm">
+                <p className="text-xs font-medium text-ink-500">Recruitment record</p>
+                {detailEmployee.recruitmentApplicantId ? (
+                  <p className="mt-1 text-ink-800">Applicant ID: {detailEmployee.recruitmentApplicantId}</p>
+                ) : null}
+                <Link
+                  to={recruitmentBasePath}
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent-600 hover:text-accent-700"
+                >
+                  View recruitment record
+                </Link>
+              </div>
+            ) : null}
 
             <div>
               <p className="text-xs font-medium text-ink-500">Recent activity</p>
