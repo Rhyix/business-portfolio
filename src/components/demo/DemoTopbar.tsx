@@ -13,6 +13,8 @@ interface GlobalSearchProps {
   query: string
   onQueryChange: (value: string) => void
   results: readonly GlobalSearchResult[]
+  /** Overrides the default topbar search placeholder text. */
+  placeholder?: string
 }
 
 interface DemoTopbarProps {
@@ -108,7 +110,7 @@ export function DemoTopbar({
             value={globalSearch ? globalSearch.query : localSearchValue}
             onChange={globalSearch ? globalSearch.onQueryChange : setLocalSearchValue}
             onFocus={() => globalSearch && setSearchResultsOpen(true)}
-            placeholder={globalSearch ? 'Search customers, orders, employees…' : 'Search this workspace…'}
+            placeholder={globalSearch ? (globalSearch.placeholder ?? 'Search customers, orders, employees…') : 'Search this workspace…'}
             aria-label={globalSearch ? 'Search across the platform' : 'Search this workspace'}
           />
 

@@ -40,12 +40,13 @@ export const solutions: Solution[] = [
   },
   {
     id: 'recruitment',
-    category: 'People',
-    title: 'Recruitment System',
+    category: 'People / Recruitment',
+    title: 'Recruitment Management System',
     description:
       'Job postings, applicant pipelines, interview scheduling and evaluation records.',
     technologies: ['Django', 'MySQL', 'React'],
     mockup: 'board',
+    demoHref: '/solutions/recruitment-management',
   },
   {
     id: 'inventory',

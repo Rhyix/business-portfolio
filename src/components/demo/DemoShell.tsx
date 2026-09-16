@@ -18,6 +18,8 @@ interface DemoShellProps {
     query: string
     onQueryChange: (value: string) => void
     results: readonly GlobalSearchResult[]
+    /** Overrides the default topbar search placeholder text. */
+    placeholder?: string
   }
   children: ReactNode
 }

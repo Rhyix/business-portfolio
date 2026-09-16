@@ -6,6 +6,7 @@ import { SiteLayout } from './components/layout/SiteLayout'
 import { basePath as integratedBasePath } from './data/demos/integrated/navigation'
 import { basePath as bmsBasePath } from './data/demos/business-management/navigation'
 import { basePath as hrmsBasePath } from './data/demos/human-resources/navigation'
+import { basePath as recruitmentBasePath } from './data/demos/recruitment/navigation'
 import { useRouter } from './lib/useRouter'
 
 // Code-split each demo app: a visitor on the marketing site never needs any
@@ -26,11 +27,17 @@ const HumanResourceManagement = lazy(() =>
     default: module.HumanResourceManagement,
   })),
 )
+const RecruitmentManagementSystem = lazy(() =>
+  import('./pages/demos/recruitment-management/RecruitmentManagementSystem').then((module) => ({
+    default: module.RecruitmentManagementSystem,
+  })),
+)
 
 const demoApps: { basePath: string; Component: ComponentType }[] = [
   { basePath: integratedBasePath, Component: IntegratedBusinessManagementPlatform },
   { basePath: bmsBasePath, Component: BusinessManagementSystem },
   { basePath: hrmsBasePath, Component: HumanResourceManagement },
+  { basePath: recruitmentBasePath, Component: RecruitmentManagementSystem },
 ]
 
 function DemoLoadingFallback() {
