@@ -64,7 +64,7 @@ export function Hero() {
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </Button>
                 <Button href="#solutions" variant="secondary" size="lg">
-                  View Our Work
+                  View Solutions
                 </Button>
               </div>
             </Reveal>

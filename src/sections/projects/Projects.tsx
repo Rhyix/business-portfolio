@@ -5,6 +5,9 @@ import { SectionHeading } from '../../components/ui/SectionHeading'
 import { solutions } from '../../data/projects'
 import { ProjectCard } from './ProjectCard'
 
+/** Every solution except the flagship platform, which already has its own showcase section above. */
+const otherSolutions = solutions.filter((solution) => !solution.featured)
+
 /** Representative system types, clearly labelled as sample solutions. */
 export function Projects() {
   return (
@@ -22,7 +25,7 @@ export function Projects() {
         />
 
         <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {solutions.map((solution, index) => (
+          {otherSolutions.map((solution, index) => (
             <li key={solution.id} className="h-full">
               <Reveal delay={(index % 3) * 0.06} className="h-full">
                 <ProjectCard solution={solution} />

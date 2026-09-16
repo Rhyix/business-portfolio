@@ -26,7 +26,7 @@ export function About() {
               team can maintain later.
             </p>
             <Button href="#contact" variant="secondary" className="mt-8">
-              Start a Project
+              Get in Touch
             </Button>
           </div>
 

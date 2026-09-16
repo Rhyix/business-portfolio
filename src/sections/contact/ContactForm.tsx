@@ -183,7 +183,7 @@ export function ContactForm() {
 
       <div className="mt-7 flex justify-end">
         <Button type="submit" size="lg" className="w-full sm:w-auto">
-          Send enquiry
+          Send Enquiry
           <Send className="size-4" aria-hidden="true" />
         </Button>
       </div>

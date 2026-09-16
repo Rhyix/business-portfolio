@@ -26,7 +26,7 @@ export function CallToAction() {
               id="cta-title"
               eyebrow="Start a project"
               title="Have an idea for a system?"
-              description="Let's turn your business requirements into a working digital solution. Tell us what you need and we will outline the next steps."
+              description="Let's turn your business requirements into a working software solution. Tell us what you need and we will outline the next steps."
               align="center"
               tone="dark"
             />

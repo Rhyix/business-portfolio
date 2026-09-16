@@ -14,12 +14,14 @@ export const services: Service[] = [
   {
     icon: LayoutDashboard,
     title: 'Business Management Systems',
-    description: 'Administrative platforms for records, approvals, reporting and daily operations.',
+    description:
+      'A central system for records, approvals and reporting, so day-to-day operations do not depend on spreadsheets and email.',
   },
   {
     icon: Database,
     title: 'Database Development',
-    description: 'Relational data modelling, migrations, queries and reporting structures.',
+    description:
+      'The data layer behind your application — modelled, migrated and queried so your records and reports stay accurate as the system grows.',
   },
   {
     icon: Palette,

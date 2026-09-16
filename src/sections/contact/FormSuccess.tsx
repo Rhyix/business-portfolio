@@ -35,7 +35,7 @@ export function FormSuccess({ name, onReset }: FormSuccessProps) {
         and we will take it from there.
       </p>
       <Button variant="secondary" size="sm" className="mt-7" onClick={onReset}>
-        Submit another enquiry
+        Submit Another Enquiry
       </Button>
     </div>
   )
