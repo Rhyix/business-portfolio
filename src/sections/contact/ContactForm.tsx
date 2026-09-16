@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { Send } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
 import { projectTypes } from '../../data/contact'
 import { cn } from '../../lib/cn'
+import { fadeSwap } from '../../lib/motion'
 import { FormField } from './FormField'
 import { FormSuccess } from './FormSuccess'
 
@@ -59,6 +61,7 @@ export function ContactForm() {
   const [values, setValues] = useState<ContactFormValues>(emptyValues)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -91,11 +94,9 @@ export function ContactForm() {
     setSubmitted(false)
   }
 
-  if (submitted) {
-    return <FormSuccess name={values.name} onReset={handleReset} />
-  }
-
-  return (
+  const content = submitted ? (
+    <FormSuccess name={values.name} onReset={handleReset} />
+  ) : (
     <form
       noValidate
       onSubmit={handleSubmit}
@@ -187,5 +188,17 @@ export function ContactForm() {
         </Button>
       </div>
     </form>
+  )
+
+  if (prefersReducedMotion) {
+    return content
+  }
+
+  return (
+    <AnimatePresence mode="popLayout" initial={false}>
+      <m.div key={submitted ? 'success' : 'form'} initial="hidden" animate="visible" exit="exit" variants={fadeSwap()}>
+        {content}
+      </m.div>
+    </AnimatePresence>
   )
 }

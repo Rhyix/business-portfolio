@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
-import { AnimatePresence, m } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { ChevronRight } from 'lucide-react'
 import { Button } from '../ui/Button'
 import { EASE_OUT_EXPO } from '../../lib/motion'
@@ -28,6 +28,7 @@ export function MobileMenu({
   toggleButtonRef,
 }: MobileMenuProps) {
   const panelRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     if (!open) return
@@ -60,7 +61,7 @@ export function MobileMenu({
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: EASE_OUT_EXPO }}
         >
           <nav aria-label="Mobile" className="px-5 py-4 sm:px-8">
             <ul className="divide-y divide-ink-100">

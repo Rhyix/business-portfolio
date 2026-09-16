@@ -63,7 +63,7 @@ export function Navbar() {
                       <span
                         aria-hidden="true"
                         className={cn(
-                          'absolute inset-x-3.5 bottom-0.5 h-px origin-left bg-accent-600 transition-transform duration-300',
+                          'absolute inset-x-3.5 bottom-0.5 h-px origin-left bg-accent-600 transition-transform duration-300 ease-out-expo',
                           isActive ? 'scale-x-100' : 'scale-x-0',
                         )}
                       />

@@ -1,5 +1,6 @@
 import { ArrowUpRight, Sparkle } from 'lucide-react'
 import { Tag } from '../../components/ui/Tag'
+import { cardHoverClassName } from '../../components/ui/cardStyles'
 import { solutionLabel } from '../../data/projects'
 import type { Solution } from '../../types/content'
 import { Link } from '../../lib/router'
@@ -17,10 +18,11 @@ export function ProjectCard({ solution }: ProjectCardProps) {
   return (
     <article
       className={cn(
-        'flex h-full flex-col rounded-2xl border bg-white p-5 transition-colors duration-200 sm:p-6',
+        'group flex h-full flex-col rounded-2xl border bg-white p-5 sm:p-6',
         isFeatured
           ? 'border-accent-200 ring-1 ring-accent-100 hover:border-accent-300'
           : 'border-ink-200/80 hover:border-ink-300',
+        cardHoverClassName('clickable'),
       )}
     >
       <SystemMockup variant={solution.mockup} />
@@ -61,7 +63,7 @@ export function ProjectCard({ solution }: ProjectCardProps) {
               className="inline-flex items-center gap-1.5 py-1 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
             >
               {isFeatured ? 'Explore demo' : 'View demo'}
-              <ArrowUpRight className="size-4" aria-hidden="true" />
+              <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
             </Link>
           ) : (
             <a

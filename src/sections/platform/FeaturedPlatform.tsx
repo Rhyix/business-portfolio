@@ -2,12 +2,14 @@ import { ArrowRight, ArrowDown, MonitorPlay } from 'lucide-react'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { buttonClassName } from '../../components/ui/buttonStyles'
+import { cardHoverClassName } from '../../components/ui/cardStyles'
 import { Container } from '../../components/ui/Container'
 import { IconFrame } from '../../components/ui/IconFrame'
 import { Reveal } from '../../components/ui/Reveal'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { Tag } from '../../components/ui/Tag'
+import { cn } from '../../lib/cn'
 import { Link } from '../../lib/router'
 import {
   featuredPlatformHref,
@@ -60,7 +62,7 @@ export function FeaturedPlatform() {
         <div className="mt-16 grid gap-5 sm:grid-cols-3">
           {platformCapabilities.map((group, index) => (
             <Reveal key={group.title} delay={index * 0.05}>
-              <div className="h-full rounded-2xl border border-ink-200/80 bg-white p-6">
+              <div className={cn('h-full rounded-2xl border border-ink-200/80 bg-white p-6', cardHoverClassName('static'))}>
                 <IconFrame icon={group.icon} size="sm" />
                 <h3 className="mt-4 text-sm font-semibold text-ink-900">{group.title}</h3>
                 <ul className="mt-4 flex flex-wrap gap-2">
@@ -85,7 +87,7 @@ export function FeaturedPlatform() {
           <div className="mt-8 grid gap-8 lg:grid-cols-2">
             {platformFlows.map((flow, index) => (
               <Reveal key={flow.label} delay={index * 0.05}>
-                <div className="rounded-2xl border border-ink-200/80 bg-white p-6">
+                <div className={cn('rounded-2xl border border-ink-200/80 bg-white p-6', cardHoverClassName('static'))}>
                   <p className="text-xs font-semibold tracking-[0.1em] text-accent-600 uppercase">
                     {flow.label}
                   </p>

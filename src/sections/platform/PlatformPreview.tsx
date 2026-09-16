@@ -1,4 +1,5 @@
 import { BarChart3, LayoutDashboard, ShoppingCart, Users, UsersRound } from 'lucide-react'
+import { RevealStagger } from '../../components/ui/RevealStagger'
 import { cn } from '../../lib/cn'
 import { featuredPlatformHref } from '../../data/platform'
 
@@ -56,9 +57,9 @@ export function PlatformPreview() {
         </span>
       </div>
 
-      <div className="flex">
+      <RevealStagger className="flex">
         {/* Sidebar */}
-        <div className="hidden w-40 shrink-0 border-r border-ink-200/70 bg-white p-3 md:block lg:w-48">
+        <RevealStagger.Item className="hidden w-40 shrink-0 border-r border-ink-200/70 bg-white p-3 md:block lg:w-48">
           <div className="flex items-center gap-2 px-1">
             <span className="grid size-6 place-items-center rounded-md bg-ink-950 text-[0.6rem] font-semibold text-white">
               A
@@ -89,76 +90,82 @@ export function PlatformPreview() {
               </div>
             ))}
           </div>
-        </div>
+        </RevealStagger.Item>
 
         {/* Main panel */}
         <div className="min-w-0 flex-1 p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-sm font-semibold text-ink-900">Dashboard</span>
-            <div className="flex items-center gap-2">
-              <span className="hidden h-7 w-28 rounded-md border border-ink-200 bg-white sm:block" />
-              <span className="size-7 shrink-0 rounded-full bg-ink-100" />
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-            {statTiles.map((tile) => (
-              <div key={tile.label} className="rounded-xl border border-ink-200/70 bg-white p-2.5">
-                <span className="block text-[0.6rem] font-semibold tracking-[0.08em] text-ink-400 uppercase">
-                  {tile.label}
-                </span>
-                <span className="mt-1.5 block text-sm font-semibold text-ink-900">{tile.value}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-            <div className="rounded-xl border border-ink-200/70 bg-white p-3">
-              <span className="block text-[0.65rem] font-medium text-ink-500">Revenue trend</span>
-              <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
-                {revenueBars.map((height, index) => (
-                  <span
-                    key={index}
-                    className={cn(
-                      'flex-1 rounded-t-sm',
-                      index === revenueBars.length - 1 ? 'bg-accent-500' : 'bg-accent-200',
-                    )}
-                    style={{ height: `${height}%` }}
-                  />
-                ))}
+          <RevealStagger.Item>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-sm font-semibold text-ink-900">Dashboard</span>
+              <div className="flex items-center gap-2">
+                <span className="hidden h-7 w-28 rounded-md border border-ink-200 bg-white sm:block" />
+                <span className="size-7 shrink-0 rounded-full bg-ink-100" />
               </div>
             </div>
-            <div className="rounded-xl border border-ink-200/70 bg-white p-3">
-              <span className="block text-[0.65rem] font-medium text-ink-500">Order activity</span>
-              <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
-                {activityBars.map((height, index) => (
-                  <span
-                    key={index}
-                    className={cn(
-                      'flex-1 rounded-t-sm',
-                      index === activityBars.length - 2 ? 'bg-accent-500' : 'bg-accent-200',
-                    )}
-                    style={{ height: `${height}%` }}
-                  />
-                ))}
+
+            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {statTiles.map((tile) => (
+                <div key={tile.label} className="rounded-xl border border-ink-200/70 bg-white p-2.5">
+                  <span className="block text-[0.6rem] font-semibold tracking-[0.08em] text-ink-400 uppercase">
+                    {tile.label}
+                  </span>
+                  <span className="mt-1.5 block text-sm font-semibold text-ink-900">{tile.value}</span>
+                </div>
+              ))}
+            </div>
+          </RevealStagger.Item>
+
+          <RevealStagger.Item>
+            <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+              <div className="rounded-xl border border-ink-200/70 bg-white p-3">
+                <span className="block text-[0.65rem] font-medium text-ink-500">Revenue trend</span>
+                <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
+                  {revenueBars.map((height, index) => (
+                    <span
+                      key={index}
+                      className={cn(
+                        'flex-1 rounded-t-sm',
+                        index === revenueBars.length - 1 ? 'bg-accent-500' : 'bg-accent-200',
+                      )}
+                      style={{ height: `${height}%` }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-xl border border-ink-200/70 bg-white p-3">
+                <span className="block text-[0.65rem] font-medium text-ink-500">Order activity</span>
+                <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
+                  {activityBars.map((height, index) => (
+                    <span
+                      key={index}
+                      className={cn(
+                        'flex-1 rounded-t-sm',
+                        index === activityBars.length - 2 ? 'bg-accent-500' : 'bg-accent-200',
+                      )}
+                      style={{ height: `${height}%` }}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          </RevealStagger.Item>
 
-          <div className="mt-3 space-y-2 rounded-xl border border-ink-200/70 bg-white p-3">
-            <span className="block text-[0.65rem] font-medium text-ink-500">Recent orders</span>
-            {recentRows.map((row) => (
-              <div key={row.name} className="flex items-center gap-2.5 border-t border-ink-100 pt-2 first:border-t-0 first:pt-0">
-                <span className="size-4 shrink-0 rounded-full bg-ink-100" />
-                <span className="h-1.5 flex-1 rounded-full bg-ink-100" />
-                <span className="shrink-0 rounded-full bg-ink-50 px-2 py-0.5 text-[0.6rem] font-medium text-ink-500">
-                  {row.status}
-                </span>
-              </div>
-            ))}
-          </div>
+          <RevealStagger.Item>
+            <div className="mt-3 space-y-2 rounded-xl border border-ink-200/70 bg-white p-3">
+              <span className="block text-[0.65rem] font-medium text-ink-500">Recent orders</span>
+              {recentRows.map((row) => (
+                <div key={row.name} className="flex items-center gap-2.5 border-t border-ink-100 pt-2 first:border-t-0 first:pt-0">
+                  <span className="size-4 shrink-0 rounded-full bg-ink-100" />
+                  <span className="h-1.5 flex-1 rounded-full bg-ink-100" />
+                  <span className="shrink-0 rounded-full bg-ink-50 px-2 py-0.5 text-[0.6rem] font-medium text-ink-500">
+                    {row.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </RevealStagger.Item>
         </div>
-      </div>
+      </RevealStagger>
     </div>
   )
 }

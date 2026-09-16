@@ -6,6 +6,7 @@ import {
   Settings,
   ShieldCheck,
 } from 'lucide-react'
+import { RevealStagger } from '../../components/ui/RevealStagger'
 import { cn } from '../../lib/cn'
 
 const sidebarItems = [
@@ -37,9 +38,9 @@ export function HeroVisual() {
         </div>
 
         {/* Application surface */}
-        <div className="grid grid-cols-[auto_1fr] gap-2 rounded-2xl border border-ink-200/70 bg-ink-50/70 p-2 sm:gap-2.5 sm:p-3">
+        <RevealStagger className="grid grid-cols-[auto_1fr] gap-2 rounded-2xl border border-ink-200/70 bg-ink-50/70 p-2 sm:gap-2.5 sm:p-3">
           {/* Sidebar */}
-          <div className="hidden w-32 flex-col gap-1 rounded-xl border border-ink-200/70 bg-white p-2 sm:flex">
+          <RevealStagger.Item className="hidden w-32 flex-col gap-1 rounded-xl border border-ink-200/70 bg-white p-2 sm:flex">
             {sidebarItems.map((item) => (
               <div
                 key={item.label}
@@ -52,58 +53,64 @@ export function HeroVisual() {
                 {item.label}
               </div>
             ))}
-          </div>
+          </RevealStagger.Item>
 
           {/* Main panel */}
           <div className="min-w-0 space-y-2.5">
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-ink-200/70 bg-white px-3 py-2.5">
-              <div className="space-y-1.5">
-                <span className="block h-2 w-20 rounded-full bg-ink-200" />
-                <span className="block h-1.5 w-14 rounded-full bg-ink-100" />
-              </div>
-              <span className="rounded-md bg-ink-950 px-2 py-1 text-[0.6rem] font-medium text-white">
-                Action
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              {[0, 1, 2].map((tile) => (
-                <div key={tile} className="rounded-xl border border-ink-200/70 bg-white p-2.5">
-                  <span className="block h-1.5 w-10 rounded-full bg-ink-100" />
-                  <span className="mt-2 block h-2 w-14 rounded-full bg-ink-200" />
+            <RevealStagger.Item>
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-ink-200/70 bg-white px-3 py-2.5">
+                <div className="space-y-1.5">
+                  <span className="block h-2 w-20 rounded-full bg-ink-200" />
+                  <span className="block h-1.5 w-14 rounded-full bg-ink-100" />
                 </div>
-              ))}
-            </div>
+                <span className="rounded-md bg-ink-950 px-2 py-1 text-[0.6rem] font-medium text-white">
+                  Action
+                </span>
+              </div>
 
-            <div className="rounded-xl border border-ink-200/70 bg-white p-3">
-              <span className="block h-1.5 w-16 rounded-full bg-ink-100" />
-              <div className="mt-3 flex h-16 items-end gap-1.5 sm:h-20">
-                {chartBars.map((height, index) => (
-                  <span
-                    key={index}
-                    className={cn(
-                      'flex-1 rounded-t-sm',
-                      index === chartBars.length - 1 ? 'bg-accent-500' : 'bg-accent-200',
-                    )}
-                    style={{ height: `${height}%` }}
-                  />
+              <div className="mt-2.5 grid grid-cols-3 gap-2">
+                {[0, 1, 2].map((tile) => (
+                  <div key={tile} className="rounded-xl border border-ink-200/70 bg-white p-2.5">
+                    <span className="block h-1.5 w-10 rounded-full bg-ink-100" />
+                    <span className="mt-2 block h-2 w-14 rounded-full bg-ink-200" />
+                  </div>
                 ))}
               </div>
-            </div>
+            </RevealStagger.Item>
 
-            <div className="space-y-2 rounded-xl border border-ink-200/70 bg-white p-3">
-              {recordStatuses.map((status) => (
-                <div key={status} className="flex items-center gap-2">
-                  <span className="size-4 shrink-0 rounded-full bg-ink-100" />
-                  <span className="h-1.5 flex-1 rounded-full bg-ink-100" />
-                  <span className="rounded-full bg-ink-50 px-2 py-0.5 text-[0.6rem] font-medium text-ink-500">
-                    {status}
-                  </span>
+            <RevealStagger.Item>
+              <div className="rounded-xl border border-ink-200/70 bg-white p-3">
+                <span className="block h-1.5 w-16 rounded-full bg-ink-100" />
+                <div className="mt-3 flex h-16 items-end gap-1.5 sm:h-20">
+                  {chartBars.map((height, index) => (
+                    <span
+                      key={index}
+                      className={cn(
+                        'flex-1 rounded-t-sm',
+                        index === chartBars.length - 1 ? 'bg-accent-500' : 'bg-accent-200',
+                      )}
+                      style={{ height: `${height}%` }}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            </RevealStagger.Item>
+
+            <RevealStagger.Item>
+              <div className="space-y-2 rounded-xl border border-ink-200/70 bg-white p-3">
+                {recordStatuses.map((status) => (
+                  <div key={status} className="flex items-center gap-2">
+                    <span className="size-4 shrink-0 rounded-full bg-ink-100" />
+                    <span className="h-1.5 flex-1 rounded-full bg-ink-100" />
+                    <span className="rounded-full bg-ink-50 px-2 py-0.5 text-[0.6rem] font-medium text-ink-500">
+                      {status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </RevealStagger.Item>
           </div>
-        </div>
+        </RevealStagger>
       </div>
 
       {/* Floating detail cards */}
