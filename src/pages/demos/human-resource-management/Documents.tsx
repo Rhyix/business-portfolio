@@ -6,8 +6,9 @@ import { FilterDropdown } from '../../../components/demo/FilterDropdown'
 import { StatusBadge } from '../../../components/demo/StatusBadge'
 import { Modal } from '../../../components/demo/Modal'
 import { formatDate } from '../../../lib/format'
-import { employeeDocuments } from '../../../data/demos/human-resources/documents'
+import { employeeDocuments as initialDocuments } from '../../../data/demos/human-resources/documents'
 import type { DocumentStatus, DocumentType, EmployeeDocument } from '../../../data/demos/human-resources/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 
 const STATUS_OPTIONS: DocumentStatus[] = ['Valid', 'Expiring Soon', 'Expired', 'Missing']
 
@@ -17,6 +18,8 @@ function documentTitle(type: DocumentType): string {
 
 /** Employee document register: filters and a metadata-only detail view. No file storage or uploads. */
 export function Documents() {
+  const shared = useOptionalIntegratedData()
+  const employeeDocuments = shared ? shared.documents : initialDocuments
   const [employeeFilter, setEmployeeFilter] = useState('All')
   const [typeFilter, setTypeFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
@@ -26,11 +29,11 @@ export function Documents() {
 
   const employeeNames = useMemo(
     () => Array.from(new Set(employeeDocuments.map((doc) => doc.employeeName))).sort(),
-    [],
+    [employeeDocuments],
   )
   const documentTypes = useMemo(
     () => Array.from(new Set(employeeDocuments.map((doc) => doc.type))).sort(),
-    [],
+    [employeeDocuments],
   )
 
   const filteredDocs = useMemo(() => {
@@ -40,7 +43,7 @@ export function Documents() {
         (typeFilter === 'All' || doc.type === typeFilter) &&
         (statusFilter === 'All' || doc.status === statusFilter),
     )
-  }, [employeeFilter, typeFilter, statusFilter])
+  }, [employeeDocuments, employeeFilter, typeFilter, statusFilter])
 
   const columns: DataTableColumn<EmployeeDocument>[] = [
     {

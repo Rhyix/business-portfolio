@@ -10,6 +10,7 @@ import { Button } from '../../../components/ui/Button'
 import { formatCurrency, formatNumber } from '../../../lib/format'
 import { initialProducts } from '../../../data/demos/business-management/products'
 import type { Product } from '../../../data/demos/business-management/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 import { ProductFormModal } from './ProductFormModal'
 import type { ProductFormValues } from './ProductFormModal'
 
@@ -31,9 +32,17 @@ function matchesSearch(product: Product, term: string): boolean {
   )
 }
 
-/** Product catalogue page: search, category filter and CRUD-style interactions over local state. */
+/**
+ * Product catalogue page: search, category filter and CRUD-style
+ * interactions. Uses the shared integrated-platform store when available
+ * (so edits are reflected in Orders and Inventory too); otherwise falls
+ * back to local state, so this component serves both the standalone BMS
+ * demo and the integrated platform.
+ */
 export function Products() {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const shared = useOptionalIntegratedData()
+  const [localProducts, setLocalProducts] = useState<Product[]>(initialProducts)
+  const products = shared ? shared.products : localProducts
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [page, setPage] = useState(1)
@@ -84,22 +93,32 @@ export function Products() {
 
   const handleFormSubmit = (values: ProductFormValues) => {
     if (editingProduct) {
-      setProducts((current) =>
-        current.map((product) =>
-          product.id === editingProduct.id ? { ...product, ...values } : product,
-        ),
-      )
+      if (shared) {
+        shared.updateProduct(editingProduct.id, values)
+      } else {
+        setLocalProducts((current) =>
+          current.map((product) =>
+            product.id === editingProduct.id ? { ...product, ...values } : product,
+          ),
+        )
+      }
+    } else if (shared) {
+      shared.addProduct(values)
     } else {
       const newProduct: Product = { id: `PRD-${nextIdRef.current}`, ...values }
       nextIdRef.current += 1
-      setProducts((current) => [newProduct, ...current])
+      setLocalProducts((current) => [newProduct, ...current])
     }
     setFormOpen(false)
   }
 
   const confirmDelete = () => {
     if (!deleteTarget) return
-    setProducts((current) => current.filter((product) => product.id !== deleteTarget.id))
+    if (shared) {
+      shared.deleteProduct(deleteTarget.id)
+    } else {
+      setLocalProducts((current) => current.filter((product) => product.id !== deleteTarget.id))
+    }
     setDeleteTarget(null)
   }
 

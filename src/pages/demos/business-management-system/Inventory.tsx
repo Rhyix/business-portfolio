@@ -10,6 +10,7 @@ import { formatDate, formatNumber } from '../../../lib/format'
 import { initialProducts } from '../../../data/demos/business-management/products'
 import { stockMovements } from '../../../data/demos/business-management/inventory'
 import type { Product, StockMovementType } from '../../../data/demos/business-management/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 
 function stockStatus(product: Product): 'Healthy' | 'Low stock' | 'Out of stock' {
   if (product.stock === 0) return 'Out of stock'
@@ -29,18 +30,25 @@ const movementIcons: Record<StockMovementType, typeof ArrowUpCircle> = {
   Adjustment: Settings2,
 }
 
-/** Inventory page: at-a-glance stock health, filterable stock table and recent movement log. */
+/**
+ * Inventory page: at-a-glance stock health, filterable stock table and
+ * recent movement log. Reads live product stock from the shared
+ * integrated-platform store when available, so orders placed elsewhere in
+ * the platform are reflected here within the same demo session.
+ */
 export function Inventory() {
+  const shared = useOptionalIntegratedData()
+  const products = shared ? shared.products : initialProducts
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
 
   const categories = useMemo(
-    () => Array.from(new Set(initialProducts.map((product) => product.category))).sort(),
-    [],
+    () => Array.from(new Set(products.map((product) => product.category))).sort(),
+    [products],
   )
 
   const counts = useMemo(() => {
-    return initialProducts.reduce(
+    return products.reduce(
       (totals, product) => {
         const status = stockStatus(product)
         if (status === 'Healthy') totals.healthy += 1
@@ -50,15 +58,15 @@ export function Inventory() {
       },
       { healthy: 0, low: 0, out: 0 },
     )
-  }, [])
+  }, [products])
 
   const filteredProducts = useMemo(() => {
-    return initialProducts.filter(
+    return products.filter(
       (product) =>
         (categoryFilter === 'All' || product.category === categoryFilter) &&
         matchesSearch(product, searchTerm),
     )
-  }, [searchTerm, categoryFilter])
+  }, [products, searchTerm, categoryFilter])
 
   const columns: DataTableColumn<Product>[] = [
     {

@@ -10,6 +10,7 @@ import { Button } from '../../../components/ui/Button'
 import { formatDate } from '../../../lib/format'
 import { initialCustomers } from '../../../data/demos/business-management/customers'
 import type { Customer, CustomerStatus } from '../../../data/demos/business-management/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 import { CustomerFormModal } from './CustomerFormModal'
 import type { CustomerFormValues } from './CustomerFormModal'
 
@@ -26,9 +27,17 @@ function matchesSearch(customer: Customer, term: string): boolean {
   )
 }
 
-/** Customer management page: search, filter, pagination and CRUD-style interactions over local state. */
+/**
+ * Customer management page: search, filter, pagination and CRUD-style
+ * interactions. Uses the shared integrated-platform store when rendered
+ * inside it (via IntegratedDataProvider); otherwise falls back to local
+ * state seeded from the same demo data, so this single component serves
+ * both the standalone BMS demo and the integrated platform.
+ */
 export function Customers() {
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers)
+  const shared = useOptionalIntegratedData()
+  const [localCustomers, setLocalCustomers] = useState<Customer[]>(initialCustomers)
+  const customers = shared ? shared.customers : localCustomers
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [page, setPage] = useState(1)
@@ -75,11 +84,17 @@ export function Customers() {
 
   const handleFormSubmit = (values: CustomerFormValues) => {
     if (editingCustomer) {
-      setCustomers((current) =>
-        current.map((customer) =>
-          customer.id === editingCustomer.id ? { ...customer, ...values } : customer,
-        ),
-      )
+      if (shared) {
+        shared.updateCustomer(editingCustomer.id, values)
+      } else {
+        setLocalCustomers((current) =>
+          current.map((customer) =>
+            customer.id === editingCustomer.id ? { ...customer, ...values } : customer,
+          ),
+        )
+      }
+    } else if (shared) {
+      shared.addCustomer(values)
     } else {
       const newCustomer: Customer = {
         id: `CUS-${nextIdRef.current}`,
@@ -88,14 +103,18 @@ export function Customers() {
         joined: new Date().toISOString().slice(0, 10),
       }
       nextIdRef.current += 1
-      setCustomers((current) => [newCustomer, ...current])
+      setLocalCustomers((current) => [newCustomer, ...current])
     }
     setFormOpen(false)
   }
 
   const confirmDelete = () => {
     if (!deleteTarget) return
-    setCustomers((current) => current.filter((customer) => customer.id !== deleteTarget.id))
+    if (shared) {
+      shared.deleteCustomer(deleteTarget.id)
+    } else {
+      setLocalCustomers((current) => current.filter((customer) => customer.id !== deleteTarget.id))
+    }
     setDeleteTarget(null)
   }
 

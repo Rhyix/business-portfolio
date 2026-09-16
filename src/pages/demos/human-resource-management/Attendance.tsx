@@ -6,8 +6,9 @@ import { FilterDropdown } from '../../../components/demo/FilterDropdown'
 import { StatusBadge } from '../../../components/demo/StatusBadge'
 import { StatCard } from '../../../components/demo/StatCard'
 import { formatDate } from '../../../lib/format'
-import { attendanceDates, attendanceRecords } from '../../../data/demos/human-resources/attendance'
+import { attendanceDates as initialAttendanceDates, attendanceRecords as initialAttendanceRecords } from '../../../data/demos/human-resources/attendance'
 import type { AttendanceRecord, AttendanceStatus } from '../../../data/demos/human-resources/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 
 const STATUS_OPTIONS: AttendanceStatus[] = ['Present', 'Late', 'Absent', 'On Leave']
 
@@ -22,6 +23,9 @@ const columns: DataTableColumn<AttendanceRecord>[] = [
 
 /** Attendance page: date selector, department/status filters and a daily summary. */
 export function Attendance() {
+  const shared = useOptionalIntegratedData()
+  const attendanceDates = shared ? shared.attendanceDates : initialAttendanceDates
+  const attendanceRecords = shared ? shared.attendanceRecords : initialAttendanceRecords
   const latestDate = attendanceDates[attendanceDates.length - 1]
   const [selectedDate, setSelectedDate] = useState(latestDate)
   const [departmentFilter, setDepartmentFilter] = useState('All')
@@ -30,7 +34,7 @@ export function Attendance() {
 
   const dayRecords = useMemo(
     () => attendanceRecords.filter((record) => record.date === selectedDate),
-    [selectedDate],
+    [attendanceRecords, selectedDate],
   )
 
   const departments = useMemo(

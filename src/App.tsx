@@ -1,17 +1,45 @@
+import { lazy, Suspense } from 'react'
+import type { ComponentType } from 'react'
 import { LazyMotion, domAnimation } from 'motion/react'
 import { Home } from './pages/Home'
 import { SiteLayout } from './components/layout/SiteLayout'
-import { BusinessManagementSystem } from './pages/demos/business-management-system/BusinessManagementSystem'
-import { HumanResourceManagement } from './pages/demos/human-resource-management/HumanResourceManagement'
+import { basePath as integratedBasePath } from './data/demos/integrated/navigation'
 import { basePath as bmsBasePath } from './data/demos/business-management/navigation'
 import { basePath as hrmsBasePath } from './data/demos/human-resources/navigation'
 import { useRouter } from './lib/useRouter'
-import type { ComponentType } from 'react'
+
+// Code-split each demo app: a visitor on the marketing site never needs any
+// of this bundled up front, and the three demos together are the largest
+// part of the app.
+const IntegratedBusinessManagementPlatform = lazy(() =>
+  import('./pages/demos/integrated-platform/IntegratedBusinessManagementPlatform').then((module) => ({
+    default: module.IntegratedBusinessManagementPlatform,
+  })),
+)
+const BusinessManagementSystem = lazy(() =>
+  import('./pages/demos/business-management-system/BusinessManagementSystem').then((module) => ({
+    default: module.BusinessManagementSystem,
+  })),
+)
+const HumanResourceManagement = lazy(() =>
+  import('./pages/demos/human-resource-management/HumanResourceManagement').then((module) => ({
+    default: module.HumanResourceManagement,
+  })),
+)
 
 const demoApps: { basePath: string; Component: ComponentType }[] = [
+  { basePath: integratedBasePath, Component: IntegratedBusinessManagementPlatform },
   { basePath: bmsBasePath, Component: BusinessManagementSystem },
   { basePath: hrmsBasePath, Component: HumanResourceManagement },
 ]
+
+function DemoLoadingFallback() {
+  return (
+    <div className="flex h-svh items-center justify-center bg-ink-50/40">
+      <p className="text-sm text-ink-500">Loading demo…</p>
+    </div>
+  )
+}
 
 function App() {
   const { path } = useRouter()
@@ -22,7 +50,9 @@ function App() {
   return (
     <LazyMotion features={domAnimation}>
       {activeDemo ? (
-        <activeDemo.Component />
+        <Suspense fallback={<DemoLoadingFallback />}>
+          <activeDemo.Component />
+        </Suspense>
       ) : (
         <SiteLayout>
           <Home />

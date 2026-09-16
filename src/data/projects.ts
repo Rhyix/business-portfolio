@@ -8,6 +8,16 @@ export const solutionLabel = 'Sample solution'
 
 export const solutions: Solution[] = [
   {
+    id: 'integrated-platform',
+    category: 'Platform',
+    title: 'Integrated Business Management Platform',
+    description:
+      'An integrated platform combining business operations, workforce management and reporting in one workspace.',
+    technologies: ['React', 'Laravel', 'MySQL'],
+    mockup: 'chart',
+    demoHref: '/solutions/integrated-business-management-platform',
+  },
+  {
     id: 'business-management',
     category: 'Operations',
     title: 'Business Management System',

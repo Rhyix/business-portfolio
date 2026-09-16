@@ -1,7 +1,9 @@
 import { Search } from 'lucide-react'
+import type { InputHTMLAttributes } from 'react'
 import { cn } from '../../lib/cn'
 
-interface SearchInputProps {
+interface SearchInputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type' | 'className' | 'placeholder'> {
   value: string
   onChange: (value: string) => void
   placeholder?: string

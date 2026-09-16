@@ -12,6 +12,7 @@ import { Tag } from '../../../components/ui/Tag'
 import { formatDate } from '../../../lib/format'
 import { applicants as initialApplicants, interviewSchedule, jobOpenings } from '../../../data/demos/human-resources/recruitment'
 import type { Applicant, ApplicantStatus } from '../../../data/demos/human-resources/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 import { cn } from '../../../lib/cn'
 
 type RecruitmentTab = 'openings' | 'applicants' | 'interviews'
@@ -56,10 +57,17 @@ function matchesSearch(applicant: Applicant, term: string): boolean {
   return applicant.name.toLowerCase().includes(needle) || applicant.positionTitle.toLowerCase().includes(needle)
 }
 
-/** HRMS recruitment module: open positions, an applicant pipeline and an interview schedule. */
+/**
+ * HRMS recruitment module: open positions, an applicant pipeline and an
+ * interview schedule. Uses the shared integrated-platform store when
+ * available — moving an applicant to "Hired" then creates a matching
+ * Employee record automatically (see the store's updateApplicantStatus).
+ */
 export function Recruitment() {
+  const shared = useOptionalIntegratedData()
   const [activeTab, setActiveTab] = useState<RecruitmentTab>('openings')
-  const [applicants, setApplicants] = useState<Applicant[]>(initialApplicants)
+  const [localApplicants, setLocalApplicants] = useState<Applicant[]>(initialApplicants)
+  const applicants = shared ? shared.applicants : localApplicants
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [positionFilter, setPositionFilter] = useState('All')
@@ -105,11 +113,15 @@ export function Recruitment() {
   const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>) => {
     if (!detailApplicant) return
     const nextStatus = event.target.value as ApplicantStatus
-    setApplicants((current) =>
-      current.map((applicant) =>
-        applicant.id === detailApplicant.id ? { ...applicant, status: nextStatus } : applicant,
-      ),
-    )
+    if (shared) {
+      shared.updateApplicantStatus(detailApplicant.id, nextStatus)
+    } else {
+      setLocalApplicants((current) =>
+        current.map((applicant) =>
+          applicant.id === detailApplicant.id ? { ...applicant, status: nextStatus } : applicant,
+        ),
+      )
+    }
   }
 
   return (
@@ -142,7 +154,11 @@ export function Recruitment() {
 
       {activeTab === 'openings' ? (
         <div role="tabpanel" id={`${tabListId}-openings-panel`} aria-labelledby={`${tabListId}-openings-tab`}>
-          <DataTable columns={openingColumns} rows={jobOpenings} rowKey={(job) => job.id} />
+          <DataTable
+            columns={openingColumns}
+            rows={shared ? shared.jobOpenings : jobOpenings}
+            rowKey={(job) => job.id}
+          />
         </div>
       ) : null}
 
@@ -189,7 +205,11 @@ export function Recruitment() {
 
       {activeTab === 'interviews' ? (
         <div role="tabpanel" id={`${tabListId}-interviews-panel`} aria-labelledby={`${tabListId}-interviews-tab`}>
-          <DataTable columns={interviewColumns} rows={interviewSchedule} rowKey={(interview) => interview.id} />
+          <DataTable
+            columns={interviewColumns}
+            rows={shared ? shared.interviews : interviewSchedule}
+            rowKey={(interview) => interview.id}
+          />
         </div>
       ) : null}
 
@@ -234,7 +254,9 @@ export function Recruitment() {
                 ))}
               </select>
               <p className="mt-2 text-xs text-ink-400">
-                Updating this selector changes the applicant's status immediately in this demo session.
+                {shared
+                  ? "Updating this selector changes the applicant's status immediately. Marking an applicant Hired also adds them to Employees."
+                  : "Updating this selector changes the applicant's status immediately in this demo session."}
               </p>
             </div>
           </div>

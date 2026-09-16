@@ -12,6 +12,7 @@ import { formatDate } from '../../../lib/format'
 import { employees as initialEmployees } from '../../../data/demos/human-resources/employees'
 import { recentActivity } from '../../../data/demos/human-resources/dashboard'
 import type { Employee, EmployeeStatus, EmploymentType } from '../../../data/demos/human-resources/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 import { EmployeeFormModal } from './EmployeeFormModal'
 import type { EmployeeFormValues } from './EmployeeFormModal'
 
@@ -46,9 +47,16 @@ function sortEmployees(list: Employee[], sort: SortOption): Employee[] {
   return sorted.sort((a, b) => new Date(a.joined).getTime() - new Date(b.joined).getTime())
 }
 
-/** Employee management page: search, filters, sorting, pagination and CRUD-style interactions over local state. */
+/**
+ * Employee management page: search, filters, sorting, pagination and
+ * CRUD-style interactions. Uses the shared integrated-platform store when
+ * available (so employees hired via Recruitment appear here immediately);
+ * otherwise falls back to local state.
+ */
 export function Employees() {
-  const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+  const shared = useOptionalIntegratedData()
+  const [localEmployees, setLocalEmployees] = useState<Employee[]>(initialEmployees)
+  const employees = shared ? shared.employees : localEmployees
   const [searchTerm, setSearchTerm] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
@@ -99,11 +107,17 @@ export function Employees() {
 
   const handleFormSubmit = (values: EmployeeFormValues) => {
     if (editingEmployee) {
-      setEmployees((current) =>
-        current.map((employee) =>
-          employee.id === editingEmployee.id ? { ...employee, ...values } : employee,
-        ),
-      )
+      if (shared) {
+        shared.updateEmployee(editingEmployee.id, values)
+      } else {
+        setLocalEmployees((current) =>
+          current.map((employee) =>
+            employee.id === editingEmployee.id ? { ...employee, ...values } : employee,
+          ),
+        )
+      }
+    } else if (shared) {
+      shared.addEmployee(values)
     } else {
       const newEmployee: Employee = {
         id: `EMP-${nextIdRef.current}`,
@@ -111,14 +125,18 @@ export function Employees() {
         joined: new Date().toISOString().slice(0, 10),
       }
       nextIdRef.current += 1
-      setEmployees((current) => [newEmployee, ...current])
+      setLocalEmployees((current) => [newEmployee, ...current])
     }
     setFormOpen(false)
   }
 
   const confirmDelete = () => {
     if (!deleteTarget) return
-    setEmployees((current) => current.filter((employee) => employee.id !== deleteTarget.id))
+    if (shared) {
+      shared.deleteEmployee(deleteTarget.id)
+    } else {
+      setLocalEmployees((current) => current.filter((employee) => employee.id !== deleteTarget.id))
+    }
     setDeleteTarget(null)
   }
 
@@ -172,8 +190,9 @@ export function Employees() {
     },
   ]
 
+  const activitySource = shared ? shared.activity : recentActivity
   const detailActivity = detailEmployee
-    ? recentActivity.filter((item) => item.message.includes(detailEmployee.name))
+    ? activitySource.filter((item) => item.message.includes(detailEmployee.name))
     : []
 
   return (

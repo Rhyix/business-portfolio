@@ -11,6 +11,7 @@ import { Button } from '../../../components/ui/Button'
 import { formatDate } from '../../../lib/format'
 import { leaveRequests as initialLeaveRequests } from '../../../data/demos/human-resources/leave'
 import type { LeaveRequest, LeaveStatus, LeaveType } from '../../../data/demos/human-resources/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 
 const STATUS_OPTIONS: LeaveStatus[] = ['Pending', 'Approved', 'Rejected']
 const TYPE_OPTIONS: LeaveType[] = ['Vacation Leave', 'Sick Leave', 'Emergency Leave', 'Personal Leave']
@@ -23,9 +24,16 @@ function matchesSearch(request: LeaveRequest, term: string): boolean {
 
 type PendingAction = { request: LeaveRequest; action: 'Approved' | 'Rejected' } | null
 
-/** Leave-request workflow: search, filters, a detail view and an approve/reject flow with confirmation. */
+/**
+ * Leave-request workflow: search, filters, a detail view and an
+ * approve/reject flow with confirmation. Uses the shared integrated-platform
+ * store when available, so dashboard HR indicators reflect the decision
+ * immediately; otherwise falls back to local state.
+ */
 export function Leave() {
-  const [requests, setRequests] = useState<LeaveRequest[]>(initialLeaveRequests)
+  const shared = useOptionalIntegratedData()
+  const [localRequests, setLocalRequests] = useState<LeaveRequest[]>(initialLeaveRequests)
+  const requests = shared ? shared.leaveRequests : localRequests
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [typeFilter, setTypeFilter] = useState('All')
@@ -45,11 +53,15 @@ export function Leave() {
 
   const applyDecision = () => {
     if (!pendingAction) return
-    setRequests((current) =>
-      current.map((request) =>
-        request.id === pendingAction.request.id ? { ...request, status: pendingAction.action } : request,
-      ),
-    )
+    if (shared) {
+      shared.updateLeaveStatus(pendingAction.request.id, pendingAction.action)
+    } else {
+      setLocalRequests((current) =>
+        current.map((request) =>
+          request.id === pendingAction.request.id ? { ...request, status: pendingAction.action } : request,
+        ),
+      )
+    }
     setPendingAction(null)
     setDetailRequestId(null)
   }

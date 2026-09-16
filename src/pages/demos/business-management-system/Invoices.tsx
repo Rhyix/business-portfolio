@@ -5,9 +5,11 @@ import { SearchInput } from '../../../components/demo/SearchInput'
 import { FilterDropdown } from '../../../components/demo/FilterDropdown'
 import { StatusBadge } from '../../../components/demo/StatusBadge'
 import { Modal } from '../../../components/demo/Modal'
+import { Button } from '../../../components/ui/Button'
 import { formatCurrency, formatDate } from '../../../lib/format'
 import { initialInvoices } from '../../../data/demos/business-management/invoices'
 import type { Invoice, InvoiceStatus } from '../../../data/demos/business-management/types'
+import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
 
 const STATUS_OPTIONS: InvoiceStatus[] = ['Paid', 'Pending', 'Overdue']
 
@@ -21,18 +23,27 @@ function matchesSearch(invoice: Invoice, term: string): boolean {
   )
 }
 
-/** Invoice management page: status filtering, search and a read-only invoice detail view. */
+/**
+ * Invoice management page: status filtering, search and an invoice detail
+ * view. Inside the integrated platform (shared store present) the detail
+ * view also gains a "Mark as paid" action. No real payment processing.
+ */
 export function Invoices() {
+  const shared = useOptionalIntegratedData()
+  const invoices = shared ? shared.invoices : initialInvoices
+
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
-  const [detailInvoice, setDetailInvoice] = useState<Invoice | null>(null)
+  const [detailInvoiceId, setDetailInvoiceId] = useState<string | null>(null)
+
+  const detailInvoice = invoices.find((invoice) => invoice.id === detailInvoiceId) ?? null
 
   const filteredInvoices = useMemo(() => {
-    return initialInvoices.filter(
+    return invoices.filter(
       (invoice) =>
         (statusFilter === 'All' || invoice.status === statusFilter) && matchesSearch(invoice, searchTerm),
     )
-  }, [searchTerm, statusFilter])
+  }, [invoices, searchTerm, statusFilter])
 
   const columns: DataTableColumn<Invoice>[] = [
     { key: 'id', header: 'Invoice', render: (invoice) => <span className="font-medium text-ink-900">{invoice.id}</span> },
@@ -74,14 +85,14 @@ export function Invoices() {
         columns={columns}
         rows={filteredInvoices}
         rowKey={(invoice) => invoice.id}
-        onRowClick={setDetailInvoice}
+        onRowClick={(invoice) => setDetailInvoiceId(invoice.id)}
         emptyTitle="No invoices found"
         emptyMessage="Try a different search term or status filter."
       />
 
       <Modal
         open={detailInvoice !== null}
-        onClose={() => setDetailInvoice(null)}
+        onClose={() => setDetailInvoiceId(null)}
         title={detailInvoice ? `Invoice ${detailInvoice.id}` : ''}
         description={detailInvoice ? `Billed to ${detailInvoice.customerName} for order ${detailInvoice.orderId}` : undefined}
       >
@@ -113,6 +124,14 @@ export function Invoices() {
               This demo does not process real payments. In a production build this panel would link to
               the order record and a payment/reconciliation workflow.
             </p>
+
+            {shared && detailInvoice.status !== 'Paid' ? (
+              <div className="flex justify-end pt-2">
+                <Button type="button" size="md" onClick={() => shared.markInvoicePaid(detailInvoice.id)}>
+                  Mark as paid
+                </Button>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </Modal>
