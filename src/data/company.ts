@@ -17,24 +17,27 @@ export interface CompanyProfile {
 }
 
 /**
- * PLACEHOLDER CONTENT — single source of truth for brand and contact details.
- * Replace the values below with the real business information; no component or
+ * Single source of truth for brand and contact details.
+ * Contact fields below are still placeholders — replace `email` and `phone`
+ * with the real business information once it is confirmed; no component or
  * layout change is required.
  */
 export const company: CompanyProfile = {
-  name: 'Your Company',
-  monogram: 'YC',
+  name: 'AETEX Tech Solution',
+  monogram: 'A',
   tagline: 'Custom software solutions built for your business.',
   description:
     'We design, develop and maintain custom web systems, business management software and responsive web applications, built around your requirements.',
-  email: 'hello@yourcompany.com',
+  // PLACEHOLDER: replace with the real business email once confirmed.
+  email: 'hello@example.com',
+  // PLACEHOLDER: replace with the real business phone number once confirmed.
   phone: '+00 000 0000',
   // PLACEHOLDER: add a city/region once a physical office location is confirmed.
   location: 'Remote',
   social: [],
 }
 
-/** Footer copyright line, e.g. "© 2026 Your Company. All rights reserved." */
+/** Footer copyright line, e.g. "© 2026 AETEX Tech Solution. All rights reserved." */
 export function buildCopyright(year: number = new Date().getFullYear()): string {
   return `© ${year} ${company.name}. All rights reserved.`
 }

@@ -13,6 +13,8 @@ interface LogoProps {
  */
 export function Logo({ className, tone = 'light', href = '#home' }: LogoProps) {
   const isDark = tone === 'dark'
+  const [brandName, ...descriptorWords] = company.name.trim().split(' ')
+  const descriptor = descriptorWords.join(' ')
 
   return (
     <a href={href} className={cn('group inline-flex items-center gap-2.5', className)}>
@@ -31,7 +33,18 @@ export function Logo({ className, tone = 'light', href = '#home' }: LogoProps) {
           isDark ? 'text-white' : 'text-ink-900',
         )}
       >
-        {company.name}
+        {brandName}
+        {descriptor ? (
+          <span
+            className={cn(
+              'hidden font-medium sm:inline',
+              isDark ? 'text-ink-300' : 'text-ink-500',
+            )}
+          >
+            {' '}
+            {descriptor}
+          </span>
+        ) : null}
       </span>
     </a>
   )
