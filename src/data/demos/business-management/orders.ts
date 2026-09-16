@@ -1,0 +1,113 @@
+import type { Order } from './types'
+
+/** Fictional demo orders for the Business Management System. */
+export const initialOrders: Order[] = [
+  {
+    id: 'ORD-5001',
+    customerName: 'Nadia Cortes',
+    date: '2026-09-01',
+    items: [
+      { productName: 'Wireless Optical Mouse', quantity: 6, unitPrice: 590 },
+      { productName: 'Mechanical Keyboard, Tenkeyless', quantity: 2, unitPrice: 2450 },
+    ],
+    total: 8440,
+    status: 'Completed',
+  },
+  {
+    id: 'ORD-5002',
+    customerName: 'Jefferson Cruz',
+    date: '2026-09-03',
+    items: [{ productName: 'Adjustable Standing Desk', quantity: 3, unitPrice: 12800 }],
+    total: 38400,
+    status: 'Processing',
+  },
+  {
+    id: 'ORD-5003',
+    customerName: 'Marilou Fajardo',
+    date: '2026-09-04',
+    items: [
+      { productName: 'A4 Copy Paper, 80gsm (Ream)', quantity: 40, unitPrice: 215 },
+      { productName: 'Permanent Marker Set', quantity: 10, unitPrice: 145 },
+    ],
+    total: 10050,
+    status: 'Completed',
+  },
+  {
+    id: 'ORD-5004',
+    customerName: 'Domingo Pascual',
+    date: '2026-09-05',
+    items: [{ productName: '4-Drawer Filing Cabinet', quantity: 4, unitPrice: 5400 }],
+    total: 21600,
+    status: 'Pending',
+  },
+  {
+    id: 'ORD-5005',
+    customerName: 'Marco Villar',
+    date: '2026-09-06',
+    items: [
+      { productName: 'Pallet Wrap, 500mm x 300m', quantity: 20, unitPrice: 410 },
+      { productName: 'Corrugated Shipping Box, Medium', quantity: 300, unitPrice: 28 },
+    ],
+    total: 16600,
+    status: 'Completed',
+  },
+  {
+    id: 'ORD-5006',
+    customerName: 'Amihan Torres',
+    date: '2026-09-07',
+    items: [{ productName: 'Task Lamp, LED Dimmable', quantity: 12, unitPrice: 980 }],
+    total: 11760,
+    status: 'Cancelled',
+  },
+  {
+    id: 'ORD-5007',
+    customerName: 'Ramil Dizon',
+    date: '2026-09-08',
+    items: [{ productName: '27" IPS Monitor', quantity: 2, unitPrice: 8990 }],
+    total: 17980,
+    status: 'Processing',
+  },
+  {
+    id: 'ORD-5008',
+    customerName: 'Kristine Ilagan',
+    date: '2026-09-09',
+    items: [{ productName: 'Ergonomic Office Chair', quantity: 5, unitPrice: 6750 }],
+    total: 33750,
+    status: 'Completed',
+  },
+  {
+    id: 'ORD-5009',
+    customerName: 'Wilfredo Santos',
+    date: '2026-09-10',
+    items: [
+      { productName: 'Packing Tape, Clear (6-pack)', quantity: 15, unitPrice: 320 },
+      { productName: 'Lever Arch File, A4', quantity: 25, unitPrice: 95 },
+    ],
+    total: 7175,
+    status: 'Pending',
+  },
+  {
+    id: 'ORD-5010',
+    customerName: 'Nadia Cortes',
+    date: '2026-09-11',
+    items: [{ productName: 'USB-C Docking Station', quantity: 4, unitPrice: 3200 }],
+    total: 12800,
+    status: 'Completed',
+  },
+  {
+    id: 'ORD-5011',
+    customerName: 'Cielo Ramos',
+    date: '2026-09-12',
+    items: [{ productName: 'A4 Copy Paper, 80gsm (Ream)', quantity: 60, unitPrice: 215 }],
+    total: 12900,
+    status: 'Processing',
+  },
+  {
+    id: 'ORD-5012',
+    customerName: 'Jefferson Cruz',
+    date: '2026-09-13',
+    items: [{ productName: 'Corrugated Shipping Box, Medium', quantity: 800, unitPrice: 28 }],
+    total: 22400,
+    status: 'Completed',
+  },
+]

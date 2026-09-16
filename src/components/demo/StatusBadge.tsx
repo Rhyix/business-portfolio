@@ -1,0 +1,42 @@
+import { cn } from '../../lib/cn'
+
+const toneStyles: Record<string, string> = {
+  Active: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  Healthy: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  Completed: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  Paid: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  Lead: 'border-accent-200 bg-accent-50 text-accent-700',
+  Processing: 'border-accent-200 bg-accent-50 text-accent-700',
+  Pending: 'border-amber-200 bg-amber-50 text-amber-700',
+  Low: 'border-amber-200 bg-amber-50 text-amber-700',
+  'Low stock': 'border-amber-200 bg-amber-50 text-amber-700',
+  Draft: 'border-ink-200 bg-ink-100 text-ink-600',
+  Inactive: 'border-ink-200 bg-ink-100 text-ink-600',
+  Overdue: 'border-red-200 bg-red-50 text-red-700',
+  Cancelled: 'border-red-200 bg-red-50 text-red-700',
+  'Out of stock': 'border-red-200 bg-red-50 text-red-700',
+  Discontinued: 'border-red-200 bg-red-50 text-red-700',
+}
+
+const defaultTone = 'border-ink-200 bg-ink-100 text-ink-600'
+
+interface StatusBadgeProps {
+  status: string
+  className?: string
+}
+
+/** Colour-coded status pill, shared across every demo table and detail view. */
+export function StatusBadge({ status, className }: StatusBadgeProps) {
+  return (
+    <span
+      className={cn(
+        'inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap',
+        toneStyles[status] ?? defaultTone,
+        className,
+      )}
+    >
+      <span className="size-1.5 shrink-0 rounded-full bg-current" aria-hidden="true" />
+      {status}
+    </span>
+  )
+}

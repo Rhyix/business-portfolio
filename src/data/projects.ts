@@ -15,6 +15,7 @@ export const solutions: Solution[] = [
       'Centralised records, approvals and reporting for day-to-day operations across departments.',
     technologies: ['Laravel', 'MySQL', 'JavaScript'],
     mockup: 'table',
+    demoHref: '/solutions/business-management-system',
   },
   {
     id: 'hr-management',

@@ -44,6 +44,8 @@ export interface Solution {
   description: string
   technologies: string[]
   mockup: SystemMockupVariant
+  /** Internal route to an interactive demo, when one exists for this solution. */
+  demoHref?: string
 }
 
 /** A single phase of the development process. */

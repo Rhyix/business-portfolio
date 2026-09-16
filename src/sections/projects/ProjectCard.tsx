@@ -2,6 +2,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { Tag } from '../../components/ui/Tag'
 import { solutionLabel } from '../../data/projects'
 import type { Solution } from '../../types/content'
+import { Link } from '../../lib/router'
 import { SystemMockup } from './SystemMockup'
 
 interface ProjectCardProps {
@@ -36,13 +37,23 @@ export function ProjectCard({ solution }: ProjectCardProps) {
         </ul>
 
         <div className="mt-auto pt-6">
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-1.5 py-1 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
-          >
-            Discuss a similar system
-            <ArrowUpRight className="size-4" aria-hidden="true" />
-          </a>
+          {solution.demoHref ? (
+            <Link
+              to={solution.demoHref}
+              className="inline-flex items-center gap-1.5 py-1 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
+            >
+              View demo
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </Link>
+          ) : (
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-1.5 py-1 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
+            >
+              Discuss a similar system
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </a>
+          )}
         </div>
       </div>
     </article>
