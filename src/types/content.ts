@@ -46,6 +46,8 @@ export interface Solution {
   mockup: SystemMockupVariant
   /** Internal route to an interactive demo, when one exists for this solution. */
   demoHref?: string
+  /** Marks the flagship solution so ProjectCard can style it distinctly. */
+  featured?: boolean
 }
 
 /** A single phase of the development process. */

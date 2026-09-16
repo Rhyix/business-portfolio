@@ -1,24 +1,6 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
-import { cn } from '../../lib/cn'
-
-type ButtonVariant = 'primary' | 'secondary' | 'ghost'
-type ButtonSize = 'sm' | 'md' | 'lg'
-
-const baseStyles =
-  'inline-flex shrink-0 items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-colors duration-200 ease-out'
-
-const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-ink-950 text-white hover:bg-ink-800',
-  secondary:
-    'border border-ink-200 bg-white text-ink-800 shadow-soft hover:border-ink-300 hover:bg-ink-50',
-  ghost: 'text-ink-600 hover:bg-ink-100 hover:text-ink-900',
-}
-
-const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-9 px-4 text-sm',
-  md: 'h-11 px-5 text-sm',
-  lg: 'h-12 px-6 text-[0.9375rem]',
-}
+import { buttonClassName } from './buttonStyles'
+import type { ButtonSize, ButtonVariant } from './buttonStyles'
 
 interface ButtonBaseProps {
   variant?: ButtonVariant
@@ -42,11 +24,7 @@ export function Button(props: ButtonLinkProps | ButtonNativeProps) {
     const { href, variant = 'primary', size = 'md', className, children, ...anchorProps } = props
 
     return (
-      <a
-        href={href}
-        className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
-        {...anchorProps}
-      >
+      <a href={href} className={buttonClassName(variant, size, className)} {...anchorProps}>
         {children}
       </a>
     )
@@ -62,11 +40,7 @@ export function Button(props: ButtonLinkProps | ButtonNativeProps) {
   } = props
 
   return (
-    <button
-      type={type}
-      className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
-      {...buttonProps}
-    >
+    <button type={type} className={buttonClassName(variant, size, className)} {...buttonProps}>
       {children}
     </button>
   )

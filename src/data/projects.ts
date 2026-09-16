@@ -16,6 +16,7 @@ export const solutions: Solution[] = [
     technologies: ['React', 'Laravel', 'MySQL'],
     mockup: 'chart',
     demoHref: '/solutions/integrated-business-management-platform',
+    featured: true,
   },
   {
     id: 'business-management',

@@ -2,6 +2,7 @@ import { About } from '../sections/about/About'
 import { CallToAction } from '../sections/cta/CallToAction'
 import { Contact } from '../sections/contact/Contact'
 import { Hero } from '../sections/hero/Hero'
+import { FeaturedPlatform } from '../sections/platform/FeaturedPlatform'
 import { Process } from '../sections/process/Process'
 import { Projects } from '../sections/projects/Projects'
 import { Services } from '../sections/services/Services'
@@ -15,6 +16,7 @@ export function Home() {
       <Hero />
       <ValueProps />
       <Services />
+      <FeaturedPlatform />
       <Projects />
       <About />
       <Process />
