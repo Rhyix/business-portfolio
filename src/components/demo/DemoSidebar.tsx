@@ -1,17 +1,14 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from '../../lib/router'
-import { demoNavItems } from '../../data/demos/business-management/navigation'
 import { DemoNotice } from './DemoNotice'
 import { cn } from '../../lib/cn'
+import type { DemoNavItem } from './types'
 
-const DEMO_BASE_PATH = '/solutions/business-management-system'
-
-interface SidebarBodyProps {
-  activeKey: string
-  onNavigate?: () => void
+interface SidebarBrandProps {
+  appName: string
 }
 
-function SidebarBrand() {
+function SidebarBrand({ appName }: SidebarBrandProps) {
   return (
     <div className="px-5 pt-5">
       <Link
@@ -28,9 +25,7 @@ function SidebarBrand() {
         </span>
         <span className="min-w-0">
           <span className="block text-sm font-semibold tracking-tight text-ink-900">AETEX</span>
-          <span className="block truncate text-[0.7rem] text-ink-500">
-            Business Management System
-          </span>
+          <span className="block truncate text-[0.7rem] text-ink-500">{appName}</span>
         </span>
       </div>
 
@@ -39,18 +34,26 @@ function SidebarBrand() {
   )
 }
 
-function SidebarNav({ activeKey, onNavigate }: SidebarBodyProps) {
+interface SidebarNavProps {
+  appName: string
+  basePath: string
+  navItems: readonly DemoNavItem[]
+  activeKey: string
+  onNavigate?: () => void
+}
+
+function SidebarNav({ appName, basePath, navItems, activeKey, onNavigate }: SidebarNavProps) {
   return (
-    <nav aria-label="Business Management System" className="mt-6 flex-1 px-3">
+    <nav aria-label={appName} className="mt-6 flex-1 px-3">
       <ul className="space-y-1">
-        {demoNavItems.map((item) => {
+        {navItems.map((item) => {
           const isActive = item.key === activeKey
           const Icon = item.icon
 
           return (
             <li key={item.key}>
               <Link
-                to={`${DEMO_BASE_PATH}${item.to}`}
+                to={`${basePath}${item.to}`}
                 onClick={onNavigate}
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
@@ -90,28 +93,46 @@ function SidebarAccount() {
   )
 }
 
-/** Persistent left navigation rail shown at lg and above. */
-export function DemoSidebar({ activeKey }: { activeKey: string }) {
+interface DemoSidebarProps {
+  appName: string
+  basePath: string
+  navItems: readonly DemoNavItem[]
+  activeKey: string
+}
+
+/** Persistent left navigation rail shown at lg and above, shared by every demo application. */
+export function DemoSidebar({ appName, basePath, navItems, activeKey }: DemoSidebarProps) {
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-ink-200/80 bg-white lg:flex">
-      <SidebarBrand />
-      <SidebarNav activeKey={activeKey} />
+      <SidebarBrand appName={appName} />
+      <SidebarNav appName={appName} basePath={basePath} navItems={navItems} activeKey={activeKey} />
       <SidebarAccount />
     </aside>
   )
 }
 
-interface DemoMobileNavProps {
-  activeKey: string
+interface DemoMobileNavContentProps extends DemoSidebarProps {
   onNavigate: () => void
 }
 
 /** Inner content reused by the mobile drawer in DemoTopbar. */
-export function DemoMobileNavContent({ activeKey, onNavigate }: DemoMobileNavProps) {
+export function DemoMobileNavContent({
+  appName,
+  basePath,
+  navItems,
+  activeKey,
+  onNavigate,
+}: DemoMobileNavContentProps) {
   return (
     <div className="flex h-full flex-col">
-      <SidebarBrand />
-      <SidebarNav activeKey={activeKey} onNavigate={onNavigate} />
+      <SidebarBrand appName={appName} />
+      <SidebarNav
+        appName={appName}
+        basePath={basePath}
+        navItems={navItems}
+        activeKey={activeKey}
+        onNavigate={onNavigate}
+      />
       <SidebarAccount />
     </div>
   )

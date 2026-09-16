@@ -6,13 +6,13 @@ import {
   basePath,
   demoNavItems,
   demoNotifications,
-} from '../../../data/demos/business-management/navigation'
+} from '../../../data/demos/human-resources/navigation'
 import { Dashboard } from './Dashboard'
-import { Customers } from './Customers'
-import { Products } from './Products'
-import { Orders } from './Orders'
-import { Inventory } from './Inventory'
-import { Invoices } from './Invoices'
+import { Employees } from './Employees'
+import { Attendance } from './Attendance'
+import { Leave } from './Leave'
+import { Recruitment } from './Recruitment'
+import { Documents } from './Documents'
 import { Reports } from './Reports'
 import { Settings } from './Settings'
 
@@ -24,21 +24,22 @@ interface DemoRoute {
 
 const routes: Record<string, DemoRoute> = {
   '': { key: 'dashboard', title: 'Dashboard', Component: Dashboard },
-  '/customers': { key: 'customers', title: 'Customers', Component: Customers },
-  '/products': { key: 'products', title: 'Products', Component: Products },
-  '/orders': { key: 'orders', title: 'Orders', Component: Orders },
-  '/inventory': { key: 'inventory', title: 'Inventory', Component: Inventory },
-  '/invoices': { key: 'invoices', title: 'Invoices', Component: Invoices },
+  '/employees': { key: 'employees', title: 'Employees', Component: Employees },
+  '/attendance': { key: 'attendance', title: 'Attendance', Component: Attendance },
+  '/leave': { key: 'leave', title: 'Leave Requests', Component: Leave },
+  '/recruitment': { key: 'recruitment', title: 'Recruitment', Component: Recruitment },
+  '/documents': { key: 'documents', title: 'Documents', Component: Documents },
   '/reports': { key: 'reports', title: 'Reports', Component: Reports },
   '/settings': { key: 'settings', title: 'Settings', Component: Settings },
 }
 
 /**
- * Flagship demo: a fictional Business Management System shown as a sample
- * solution inside the AETEX portfolio. All data is in-memory demo data —
- * there is no backend, database or real authentication behind this route.
+ * Second demo system: a fictional Human Resource Management System shown as
+ * a sample solution inside the AETEX portfolio. Reuses the same DemoShell,
+ * router and design tokens as the Business Management System demo. All data
+ * is in-memory — there is no backend, database or real authentication.
  */
-export function BusinessManagementSystem() {
+export function HumanResourceManagement() {
   const { path } = useRouter()
   const subPath = path.slice(basePath.length)
   const route = routes[subPath] ?? routes['']

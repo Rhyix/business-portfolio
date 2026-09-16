@@ -7,20 +7,26 @@ import { EASE_OUT_EXPO } from '../../lib/motion'
 import { DemoMobileNavContent } from './DemoSidebar'
 import { SearchInput } from './SearchInput'
 import { cn } from '../../lib/cn'
-
-const demoNotifications = [
-  { id: 'note-1', title: 'Low stock alert', detail: 'Mechanical Keyboard is below its reorder level.' },
-  { id: 'note-2', title: 'New order received', detail: 'Order ORD-5011 was placed by Cielo Ramos.' },
-  { id: 'note-3', title: 'Invoice overdue', detail: 'INV-3004 is 3 weeks past its due date.' },
-]
+import type { DemoNavItem, DemoNotification } from './types'
 
 interface DemoTopbarProps {
+  appName: string
+  basePath: string
+  navItems: readonly DemoNavItem[]
+  notifications: readonly DemoNotification[]
   activeKey: string
   pageTitle: string
 }
 
 /** Application top bar: mobile drawer trigger, page title, search, notifications and user menu. */
-export function DemoTopbar({ activeKey, pageTitle }: DemoTopbarProps) {
+export function DemoTopbar({
+  appName,
+  basePath,
+  navItems,
+  notifications,
+  activeKey,
+  pageTitle,
+}: DemoTopbarProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -127,7 +133,7 @@ export function DemoTopbar({ activeKey, pageTitle }: DemoTopbarProps) {
                 Notifications
               </p>
               <ul className="divide-y divide-ink-100">
-                {demoNotifications.map((notification) => (
+                {notifications.map((notification) => (
                   <li key={notification.id} className="px-4 py-3">
                     <p className="text-sm font-medium text-ink-900">{notification.title}</p>
                     <p className="mt-0.5 text-xs text-ink-500">{notification.detail}</p>
@@ -177,7 +183,7 @@ export function DemoTopbar({ activeKey, pageTitle }: DemoTopbarProps) {
               <ul className="py-1.5">
                 <li>
                   <Link
-                    to="/solutions/business-management-system/settings"
+                    to={`${basePath}/settings`}
                     onClick={() => setUserMenuOpen(false)}
                     className="flex items-center gap-2.5 px-4 py-2 text-sm text-ink-700 transition-colors duration-200 hover:bg-ink-50 hover:text-ink-900"
                   >
@@ -228,7 +234,13 @@ export function DemoTopbar({ activeKey, pageTitle }: DemoTopbarProps) {
               exit={{ x: prefersReducedMotion ? 0 : '-100%' }}
               transition={{ duration: prefersReducedMotion ? 0.01 : 0.25, ease: EASE_OUT_EXPO }}
             >
-              <DemoMobileNavContent activeKey={activeKey} onNavigate={() => setMobileNavOpen(false)} />
+              <DemoMobileNavContent
+                appName={appName}
+                basePath={basePath}
+                navItems={navItems}
+                activeKey={activeKey}
+                onNavigate={() => setMobileNavOpen(false)}
+              />
             </m.div>
           </div>
         ) : null}

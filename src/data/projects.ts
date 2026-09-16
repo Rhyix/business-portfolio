@@ -25,6 +25,7 @@ export const solutions: Solution[] = [
       'Employee records, leave requests, attendance and document tracking in a single system.',
     technologies: ['PHP', 'MySQL', 'React'],
     mockup: 'people',
+    demoHref: '/solutions/human-resource-management',
   },
   {
     id: 'recruitment',
