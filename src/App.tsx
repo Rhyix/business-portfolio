@@ -7,6 +7,7 @@ import { basePath as integratedBasePath } from './data/demos/integrated/navigati
 import { basePath as bmsBasePath } from './data/demos/business-management/navigation'
 import { basePath as hrmsBasePath } from './data/demos/human-resources/navigation'
 import { basePath as recruitmentBasePath } from './data/demos/recruitment/navigation'
+import { basePath as inventoryBasePath } from './data/demos/inventory/navigation'
 import { useRouter } from './lib/useRouter'
 
 // Code-split each demo app: a visitor on the marketing site never needs any
@@ -32,12 +33,18 @@ const RecruitmentManagementSystem = lazy(() =>
     default: module.RecruitmentManagementSystem,
   })),
 )
+const InventoryManagementSystem = lazy(() =>
+  import('./pages/demos/inventory-management/InventoryManagementSystem').then((module) => ({
+    default: module.InventoryManagementSystem,
+  })),
+)
 
 const demoApps: { basePath: string; Component: ComponentType }[] = [
   { basePath: integratedBasePath, Component: IntegratedBusinessManagementPlatform },
   { basePath: bmsBasePath, Component: BusinessManagementSystem },
   { basePath: hrmsBasePath, Component: HumanResourceManagement },
   { basePath: recruitmentBasePath, Component: RecruitmentManagementSystem },
+  { basePath: inventoryBasePath, Component: InventoryManagementSystem },
 ]
 
 function DemoLoadingFallback() {

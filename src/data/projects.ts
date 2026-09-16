@@ -56,6 +56,7 @@ export const solutions: Solution[] = [
       'Stock levels, movement history, reorder thresholds and supplier records with clear audit trails.',
     technologies: ['Laravel', 'MySQL', 'JavaScript'],
     mockup: 'stock',
+    demoHref: '/solutions/inventory-management',
   },
   {
     id: 'appointments',

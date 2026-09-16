@@ -1,0 +1,58 @@
+import type { Supplier } from './types'
+
+export const initialSuppliers: Supplier[] = [
+  {
+    id: 'SUP-201',
+    name: 'Litrato Electronics Supply Co.',
+    contactName: 'Benjamin Ocampo',
+    email: 'benjamin.ocampo@litrato-supply.example',
+    phone: '+63 917 555 4201',
+    category: 'Electronics',
+    status: 'Active',
+  },
+  {
+    id: 'SUP-202',
+    name: 'Bayani Hardware Trading',
+    contactName: 'Estrella Navarro',
+    email: 'estrella.navarro@bayani-hardware.example',
+    phone: '+63 917 555 4202',
+    category: 'Furniture',
+    status: 'Active',
+  },
+  {
+    id: 'SUP-203',
+    name: 'Malayang Office Solutions',
+    contactName: 'Ferdinand Quiambao',
+    email: 'ferdinand.quiambao@malayang-office.example',
+    phone: '+63 917 555 4203',
+    category: 'Office Supplies',
+    status: 'Active',
+  },
+  {
+    id: 'SUP-204',
+    name: 'Tahanan Packaging Corp.',
+    contactName: 'Josefina Almario',
+    email: 'josefina.almario@tahanan-packaging.example',
+    phone: '+63 917 555 4204',
+    category: 'Packaging',
+    status: 'Active',
+  },
+  {
+    id: 'SUP-205',
+    name: 'Dagatan Raw Materials Inc.',
+    contactName: 'Cesar Bonifacio',
+    email: 'cesar.bonifacio@dagatan-materials.example',
+    phone: '+63 917 555 4205',
+    category: 'Raw Materials',
+    status: 'Active',
+  },
+  {
+    id: 'SUP-206',
+    name: 'Ligtas Safety Equipment',
+    contactName: 'Rosario Villaverde',
+    email: 'rosario.villaverde@ligtas-safety.example',
+    phone: '+63 917 555 4206',
+    category: 'Safety Equipment',
+    status: 'Inactive',
+  },
+]
