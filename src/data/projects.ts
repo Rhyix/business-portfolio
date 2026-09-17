@@ -66,6 +66,7 @@ export const solutions: Solution[] = [
       'Availability rules, booking workflows, reminders and rescheduling for service teams.',
     technologies: ['React', 'PHP', 'MySQL'],
     mockup: 'schedule',
+    demoHref: '/solutions/appointment-scheduling',
   },
   {
     id: 'administrative-dashboard',

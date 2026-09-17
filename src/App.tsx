@@ -8,6 +8,7 @@ import { basePath as bmsBasePath } from './data/demos/business-management/naviga
 import { basePath as hrmsBasePath } from './data/demos/human-resources/navigation'
 import { basePath as recruitmentBasePath } from './data/demos/recruitment/navigation'
 import { basePath as inventoryBasePath } from './data/demos/inventory/navigation'
+import { basePath as appointmentsBasePath } from './data/demos/appointments/navigation'
 import { useRouter } from './lib/useRouter'
 
 // Code-split each demo app: a visitor on the marketing site never needs any
@@ -38,6 +39,11 @@ const InventoryManagementSystem = lazy(() =>
     default: module.InventoryManagementSystem,
   })),
 )
+const AppointmentSchedulingSystem = lazy(() =>
+  import('./pages/demos/appointment-scheduling/AppointmentSchedulingSystem').then((module) => ({
+    default: module.AppointmentSchedulingSystem,
+  })),
+)
 
 const demoApps: { basePath: string; Component: ComponentType }[] = [
   { basePath: integratedBasePath, Component: IntegratedBusinessManagementPlatform },
@@ -45,6 +51,7 @@ const demoApps: { basePath: string; Component: ComponentType }[] = [
   { basePath: hrmsBasePath, Component: HumanResourceManagement },
   { basePath: recruitmentBasePath, Component: RecruitmentManagementSystem },
   { basePath: inventoryBasePath, Component: InventoryManagementSystem },
+  { basePath: appointmentsBasePath, Component: AppointmentSchedulingSystem },
 ]
 
 function DemoLoadingFallback() {
