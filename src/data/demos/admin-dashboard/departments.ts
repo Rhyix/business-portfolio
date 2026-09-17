@@ -1,0 +1,58 @@
+import type { Department } from './types'
+
+export const initialDepartments: Department[] = [
+  {
+    id: 'DEPT-1',
+    name: 'Operations',
+    description: 'Day-to-day operational delivery and process oversight.',
+    headcount: 86,
+    openRequests: 5,
+    performance: 78,
+    status: 'Active',
+  },
+  {
+    id: 'DEPT-2',
+    name: 'Human Resources',
+    description: 'Recruitment, employee relations and workplace policy.',
+    headcount: 22,
+    openRequests: 3,
+    performance: 84,
+    status: 'Active',
+  },
+  {
+    id: 'DEPT-3',
+    name: 'Finance',
+    description: 'Budgeting, accounts and financial reporting.',
+    headcount: 18,
+    openRequests: 4,
+    performance: 91,
+    status: 'Active',
+  },
+  {
+    id: 'DEPT-4',
+    name: 'Sales',
+    description: 'Customer acquisition and account management.',
+    headcount: 34,
+    openRequests: 6,
+    performance: 72,
+    status: 'Active',
+  },
+  {
+    id: 'DEPT-5',
+    name: 'Administration',
+    description: 'General administration, facilities and records.',
+    headcount: 12,
+    openRequests: 2,
+    performance: 88,
+    status: 'Active',
+  },
+  {
+    id: 'DEPT-6',
+    name: 'IT',
+    description: 'Systems, infrastructure and technical support.',
+    headcount: 16,
+    openRequests: 7,
+    performance: 65,
+    status: 'Active',
+  },
+]

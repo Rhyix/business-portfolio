@@ -24,7 +24,9 @@ const toneStyles: Record<string, string> = {
   Ordered: 'border-accent-200 bg-accent-50 text-accent-700',
   Confirmed: 'border-accent-200 bg-accent-50 text-accent-700',
   Sent: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+  'On Track': 'border-emerald-200 bg-emerald-50 text-emerald-700',
   Pending: 'border-amber-200 bg-amber-50 text-amber-700',
+  Attention: 'border-amber-200 bg-amber-50 text-amber-700',
   Low: 'border-amber-200 bg-amber-50 text-amber-700',
   'Low stock': 'border-amber-200 bg-amber-50 text-amber-700',
   'Low Stock': 'border-amber-200 bg-amber-50 text-amber-700',
@@ -52,6 +54,7 @@ const toneStyles: Record<string, string> = {
   Missing: 'border-red-200 bg-red-50 text-red-700',
   'Do Not Recommend': 'border-red-200 bg-red-50 text-red-700',
   'No Show': 'border-red-200 bg-red-50 text-red-700',
+  'Below Target': 'border-red-200 bg-red-50 text-red-700',
 }
 
 const defaultTone = 'border-ink-200 bg-ink-100 text-ink-600'

@@ -76,5 +76,6 @@ export const solutions: Solution[] = [
       'Role-based access, consolidated figures and exports built for administrative teams.',
     technologies: ['React', 'Python', 'MySQL'],
     mockup: 'chart',
+    demoHref: '/solutions/administrative-dashboard',
   },
 ]
