@@ -47,6 +47,88 @@ export function useActiveSection(sectionIds: readonly string[]): string | null {
   return activeId
 }
 
+interface SectionProgressEntry {
+  sectionId: string
+  itemIndex: number
+}
+
+/**
+ * Tracks a zero-based `activeIndex` into a fixed-size list of rail items,
+ * given a flattened, document-order table mapping every real section id to
+ * the rail item it belongs to (see `src/data/sectionRail.ts`). Resolution
+ * happens in document order rather than IntersectionObserver callback-batch
+ * order, so the index advances monotonically as the visitor scrolls.
+ * `sections` must be a stable, module-level reference.
+ */
+export function useSectionProgress(sections: readonly SectionProgressEntry[]): {
+  activeIndex: number
+  activeSectionId: string | null
+} {
+  const [state, setState] = useState<{ activeIndex: number; activeSectionId: string | null }>({
+    activeIndex: 0,
+    activeSectionId: null,
+  })
+
+  useEffect(() => {
+    const entries = sections
+      .map((section) => ({ ...section, element: document.getElementById(section.sectionId) }))
+      .filter((section): section is SectionProgressEntry & { element: HTMLElement } => section.element !== null)
+
+    if (entries.length === 0) return
+
+    const visible = new Map<string, boolean>()
+
+    const observer = new IntersectionObserver(
+      (records) => {
+        for (const record of records) visible.set(record.target.id, record.isIntersecting)
+
+        const hit = entries.find((section) => visible.get(section.sectionId))
+        if (!hit) return
+
+        setState((previous) =>
+          previous.activeSectionId === hit.sectionId
+            ? previous
+            : { activeIndex: hit.itemIndex, activeSectionId: hit.sectionId },
+        )
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    )
+
+    entries.forEach((section) => observer.observe(section.element))
+    return () => observer.disconnect()
+  }, [sections])
+
+  return state
+}
+
+/** True while any `[data-tone="dark"]` section is crossing the middle of the viewport. */
+export function useDarkGroundAtMiddle(): boolean {
+  const [dark, setDark] = useState(false)
+
+  useEffect(() => {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-tone="dark"]'))
+    if (targets.length === 0) return
+
+    const visible = new Set<Element>()
+
+    const observer = new IntersectionObserver(
+      (records) => {
+        for (const record of records) {
+          if (record.isIntersecting) visible.add(record.target)
+          else visible.delete(record.target)
+        }
+        setDark(visible.size > 0)
+      },
+      { rootMargin: '-50% 0px -50% 0px' },
+    )
+
+    targets.forEach((target) => observer.observe(target))
+    return () => observer.disconnect()
+  }, [])
+
+  return dark
+}
+
 /**
  * Calls `onOutside` when a pointer press lands outside the returned ref's
  * element. Used by dropdown-style menus (notifications, user menu).

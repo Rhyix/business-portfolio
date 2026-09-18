@@ -44,35 +44,9 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between gap-4 lg:h-20">
           <Logo />
 
-          <nav aria-label="Primary" className="hidden lg:block">
-            <ul className="flex items-center gap-1">
-              {primaryNavigation.map((item) => {
-                const isActive = activeId === item.href.replace('#', '')
-
-                return (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      aria-current={isActive ? 'true' : undefined}
-                      className={cn(
-                        'relative block rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-200',
-                        isActive ? 'text-ink-900' : 'text-ink-500 hover:text-ink-900',
-                      )}
-                    >
-                      {item.label}
-                      <span
-                        aria-hidden="true"
-                        className={cn(
-                          'absolute inset-x-3.5 bottom-0.5 h-px origin-left bg-accent-600 transition-transform duration-300 ease-out-expo',
-                          isActive ? 'scale-x-100' : 'scale-x-0',
-                        )}
-                      />
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-          </nav>
+          {/* No desktop link list: the System Dial is the visual navigation on
+              desktop, and SiteLayout carries the conventional section list for
+              keyboard and assistive use. Below lg the drawer is unchanged. */}
 
           <div className="flex items-center gap-2">
             <Button href={navigationCta.href} size="sm" className="hidden sm:inline-flex">

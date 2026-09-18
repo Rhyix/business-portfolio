@@ -14,6 +14,13 @@ export const DURATION = {
   reveal: 0.55,
 } as const
 
+/**
+ * Seconds between rungs of a chapter's entrance ladder (see <ChapterReveal />).
+ * Five steps land at 0/90/180/270/360ms — slow enough to read as a sequence,
+ * short enough that the whole chapter is settled before the next scroll beat.
+ */
+export const CHAPTER_STEP = 0.09
+
 /** Standard fade + lift entrance used by <Reveal />. */
 export function fadeInUp(delay = 0): Variants {
   return {
@@ -72,5 +79,13 @@ export function drawLineY(delay = 0): Variants {
       scaleY: 1,
       transition: { duration: DURATION.reveal, delay, ease: EASE_OUT_EXPO },
     },
+  }
+}
+
+/** A node mark settling into place at the end of its connector — pair with drawLineX/Y. */
+export function popNode(delay = 0): Variants {
+  return {
+    hidden: { opacity: 0, scale: 0.3 },
+    visible: { opacity: 1, scale: 1, transition: { duration: DURATION.ui, delay, ease: EASE_OUT_EXPO } },
   }
 }

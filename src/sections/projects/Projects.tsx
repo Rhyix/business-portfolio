@@ -4,6 +4,7 @@ import { Reveal } from '../../components/ui/Reveal'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { cn } from '../../lib/cn'
+import { sectionIndexLabel } from '../../data/sectionRail'
 import { solutions } from '../../data/projects'
 import { ProjectCard } from './ProjectCard'
 
@@ -18,6 +19,7 @@ export function Projects() {
         <SectionHeading
           id="solutions-title"
           eyebrow="Solutions"
+          index={sectionIndexLabel('solutions')}
           title="Systems we can design and build for your organisation"
           description="Representative examples that show the scope of a typical build. Every card is marked as a sample solution — these illustrate what we develop, they are not delivered client case studies."
         />

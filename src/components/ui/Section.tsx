@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import type { ReactNode } from 'react'
+import { ChapterContext, useChapterActivation } from '../../lib/chapter'
 import { cn } from '../../lib/cn'
 
 interface SectionProps {
@@ -49,8 +51,12 @@ export function Section({
   seam = true,
   className,
 }: SectionProps) {
+  const sectionRef = useRef<HTMLElement>(null)
+  const activated = useChapterActivation(sectionRef)
+
   return (
     <section
+      ref={sectionRef}
       id={id}
       aria-labelledby={labelledBy}
       data-tone={tone === 'dark' ? 'dark' : undefined}
@@ -62,7 +68,7 @@ export function Section({
         className,
       )}
     >
-      {children}
+      <ChapterContext.Provider value={activated}>{children}</ChapterContext.Provider>
     </section>
   )
 }

@@ -1,10 +1,11 @@
 import { Mail, MapPin, Phone } from 'lucide-react'
+import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
 import { IconFrame } from '../../components/ui/IconFrame'
-import { Reveal } from '../../components/ui/Reveal'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { company } from '../../data/company'
+import { sectionIndexLabel } from '../../data/sectionRail'
 import { ContactForm } from './ContactForm'
 
 const contactDetails = [
@@ -24,15 +25,16 @@ export function Contact() {
     <Section id="contact" labelledBy="contact-title">
       <Container>
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
-          <Reveal>
-            <div>
-              <SectionHeading
-                id="contact-title"
-                eyebrow="Contact"
-                title="Tell us about the system you need"
-                description="Share a few details about your organisation and the problem you want solved. We will come back with questions and a suggested approach."
-              />
+          <div>
+            <SectionHeading
+              id="contact-title"
+              eyebrow="Contact"
+              index={sectionIndexLabel('contact')}
+              title="Tell us about the system you need"
+              description="Share a few details about your organisation and the problem you want solved. We will come back with questions and a suggested approach."
+            />
 
+            <ChapterReveal step={3}>
               <dl className="mt-10 space-y-5">
                 {contactDetails.map((detail) => (
                   <div key={detail.label} className="flex items-start gap-3.5">
@@ -57,10 +59,10 @@ export function Contact() {
                   </div>
                 ))}
               </dl>
-            </div>
-          </Reveal>
+            </ChapterReveal>
+          </div>
 
-          <Reveal delay={0.08}>
+          <ChapterReveal step={4}>
             <div className="relative">
               <div
                 aria-hidden="true"
@@ -70,7 +72,7 @@ export function Contact() {
                 <ContactForm />
               </div>
             </div>
-          </Reveal>
+          </ChapterReveal>
         </div>
       </Container>
     </Section>

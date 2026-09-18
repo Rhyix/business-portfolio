@@ -3,12 +3,15 @@ import { Button } from '../../components/ui/Button'
 import { buttonClassName } from '../../components/ui/buttonStyles'
 import { Container } from '../../components/ui/Container'
 import { IconFrame } from '../../components/ui/IconFrame'
+import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Rail } from '../../components/ui/Rail'
 import { Reveal } from '../../components/ui/Reveal'
+import { ScrambleText } from '../../components/ui/ScrambleText'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { Tag } from '../../components/ui/Tag'
 import { Link } from '../../lib/router'
+import { sectionIndexLabel } from '../../data/sectionRail'
 import {
   featuredPlatformHref,
   platformArchitecture,
@@ -40,40 +43,41 @@ export function FeaturedPlatform() {
 
       <Container className="relative">
         <div className="max-w-2xl">
-          <Reveal>
+          <ChapterReveal step={0}>
             <p className="flex items-center gap-2.5 text-accent-300">
               <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-400" />
               <span aria-hidden="true" className="h-px w-10 shrink-0 bg-ink-800" />
+              <span aria-hidden="true" className="label-mono text-ink-500">
+                {sectionIndexLabel('platform')}
+              </span>
               <span className="label-mono font-medium">Featured solution — interactive demo</span>
             </p>
-          </Reveal>
+          </ChapterReveal>
 
-          <Reveal delay={0.05}>
-            <SectionHeading
-              id="platform-title"
-              title="One workspace for your business, operations and people"
-              description="The Integrated Business Management Platform is our flagship sample solution — a single workspace connecting customers, orders, inventory, workforce management and reporting. It's a demonstration built to explore, not a live client deployment."
-              tone="dark"
-              size="headline"
-              className="mt-5"
-            />
-          </Reveal>
+          <SectionHeading
+            id="platform-title"
+            title="One workspace for your business, operations and people"
+            description="The Integrated Business Management Platform is our flagship sample solution — a single workspace connecting customers, orders, inventory, workforce management and reporting. It's a demonstration built to explore, not a live client deployment."
+            tone="dark"
+            size="headline"
+            className="mt-5"
+          />
 
-          <Reveal delay={0.1}>
+          <ChapterReveal step={3}>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link to={featuredPlatformHref} className={buttonClassName('primary', 'lg', undefined, 'dark')}>
-                Explore Interactive Demo
+                <ScrambleText text="Explore Interactive Demo" />
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
               <Button href="#contact" variant="secondary" size="lg" tone="dark">
-                Discuss a Similar System
+                <ScrambleText text="Discuss a Similar System" />
               </Button>
             </div>
-          </Reveal>
+          </ChapterReveal>
         </div>
 
-        <Reveal delay={0.12}>
-          <div className="relative mt-14 lg:-mx-10">
+        <ChapterReveal step={4}>
+          <div className="relative mt-14 lg:-ml-10">
             <div
               aria-hidden="true"
               className="absolute inset-0 translate-x-3 translate-y-3 rounded-xl border border-ink-800 bg-ink-950"
@@ -86,7 +90,7 @@ export function FeaturedPlatform() {
             <span aria-hidden="true" className="absolute -bottom-1.5 -left-1.5 size-1.5 rounded-full bg-accent-500 ring-4 ring-ink-975" />
             <span aria-hidden="true" className="absolute -bottom-1.5 -right-1.5 size-1.5 rounded-full bg-accent-500 ring-4 ring-ink-975" />
           </div>
-        </Reveal>
+        </ChapterReveal>
 
         {/* Capability groups — a de-boxed spec table instead of three separate cards. */}
         <div className="mt-16 grid divide-y divide-ink-800 border-y border-ink-800 sm:grid-cols-3 sm:divide-x sm:divide-y-0">

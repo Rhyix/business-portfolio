@@ -2,8 +2,10 @@ import { ArrowRight } from 'lucide-react'
 import { Container } from '../../components/ui/Container'
 import { IconFrame } from '../../components/ui/IconFrame'
 import { Reveal } from '../../components/ui/Reveal'
+import { ScrambleText } from '../../components/ui/ScrambleText'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
+import { sectionIndexLabel } from '../../data/sectionRail'
 import { services } from '../../data/services'
 import { ServiceCard } from './ServiceCard'
 
@@ -15,6 +17,7 @@ export function Services() {
         <SectionHeading
           id="services-title"
           eyebrow="Services"
+          index={sectionIndexLabel('services')}
           title="Software services built around the way you work"
           description="From a first working version to a system your team relies on daily, we cover the build, the data behind it and the support that follows."
         />
@@ -43,7 +46,7 @@ export function Services() {
                   </p>
                 </div>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-900 group-hover:text-accent-700">
-                  Start a project
+                  <ScrambleText text="Start a project" />
                   <ArrowRight
                     className="size-4 transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5"
                     aria-hidden="true"

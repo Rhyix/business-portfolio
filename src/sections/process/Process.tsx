@@ -3,6 +3,7 @@ import { Reveal } from '../../components/ui/Reveal'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { processSteps } from '../../data/process'
+import { sectionIndexLabel } from '../../data/sectionRail'
 import { ProcessStep } from './ProcessStep'
 
 /** Six-phase development process shown as a connected track. */
@@ -13,6 +14,7 @@ export function Process() {
         <SectionHeading
           id="process-title"
           eyebrow="Process"
+          index={sectionIndexLabel('process')}
           title="How a project runs, from first conversation to launch"
           description="A defined sequence with checkpoints along the way, so you always know what is happening, what is next and what is expected from both sides."
         />

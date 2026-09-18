@@ -1,9 +1,13 @@
+import { useRef } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
+import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
-import { Reveal } from '../../components/ui/Reveal'
+import { ScrambleText } from '../../components/ui/ScrambleText'
+import { sectionIndexLabel } from '../../data/sectionRail'
+import { ChapterContext, useChapterActivation } from '../../lib/chapter'
 import { cn } from '../../lib/cn'
-import { HeroVisual } from './HeroVisual'
+import { SystemMap } from './SystemMap'
 
 const heroCapabilities = [
   'Business management systems',
@@ -14,8 +18,12 @@ const heroCapabilities = [
 
 /** First impression: positioning statement, primary actions and product visual. */
 export function Hero() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const activated = useChapterActivation(sectionRef)
+
   return (
-    <section id="home" className="relative overflow-hidden border-b border-ink-200">
+    <ChapterContext.Provider value={activated}>
+    <section ref={sectionRef} id="home" className="relative overflow-hidden border-b border-ink-200">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div
           className="absolute inset-x-0 top-0 h-[620px]"
@@ -36,41 +44,44 @@ export function Hero() {
       <Container className="relative py-16 sm:py-20 lg:py-28">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] lg:gap-20">
           <div className="max-w-xl">
-            <Reveal>
+            <ChapterReveal step={0}>
               <p className="flex items-center gap-2.5 text-accent-600">
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500" />
                 <span aria-hidden="true" className="h-px w-10 shrink-0 bg-ink-200" />
+                <span aria-hidden="true" className="label-mono text-ink-400">
+                  {sectionIndexLabel('home')}
+                </span>
                 <span className="label-mono font-medium">Custom software development</span>
               </p>
-            </Reveal>
+            </ChapterReveal>
 
-            <Reveal delay={0.05}>
+            <ChapterReveal step={1}>
               <h1 className="mt-7 text-display font-semibold">
                 Custom software solutions built for your business
               </h1>
-            </Reveal>
+            </ChapterReveal>
 
-            <Reveal delay={0.1}>
+            <ChapterReveal step={2}>
               <p className="mt-6 text-lead text-ink-500">
                 We design and develop reliable web systems tailored to your requirements — from business
                 management platforms and administrative dashboards to the databases and integrations
                 behind them.
               </p>
-            </Reveal>
+            </ChapterReveal>
 
-            <Reveal delay={0.15}>
+            <ChapterReveal step={3}>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button href="#contact" size="lg">
-                  Start a Project
+                  <ScrambleText text="Start a Project" />
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </Button>
                 <Button href="#solutions" variant="secondary" size="lg">
-                  View Solutions
+                  <ScrambleText text="View Solutions" />
                 </Button>
               </div>
-            </Reveal>
+            </ChapterReveal>
 
-            <Reveal delay={0.2}>
+            <ChapterReveal step={4}>
               <div className="mt-12 grid grid-cols-1 border-t border-ink-200 sm:grid-cols-2">
                 {heroCapabilities.map((capability, index) => (
                   <div
@@ -86,14 +97,15 @@ export function Hero() {
                   </div>
                 ))}
               </div>
-            </Reveal>
+            </ChapterReveal>
           </div>
 
-          <Reveal delay={0.1} className="xl:-mr-10 2xl:-mr-20">
-            <HeroVisual />
-          </Reveal>
+          <ChapterReveal step={2}>
+            <SystemMap />
+          </ChapterReveal>
         </div>
       </Container>
     </section>
+    </ChapterContext.Provider>
   )
 }

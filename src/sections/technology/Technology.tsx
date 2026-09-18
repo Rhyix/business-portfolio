@@ -4,6 +4,7 @@ import { Reveal } from '../../components/ui/Reveal'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { Tag } from '../../components/ui/Tag'
+import { sectionIndexLabel } from '../../data/sectionRail'
 import { technologyGroups } from '../../data/technologies'
 
 /** Technology stack, grouped by layer — the dark substrate that opens the closing chapter. */
@@ -14,6 +15,7 @@ export function Technology() {
         <SectionHeading
           id="technology-title"
           eyebrow="Technology"
+          index={sectionIndexLabel('technology')}
           title="A focused, dependable technology stack"
           description="We work with tools that are widely supported, well documented and straightforward to hand over, extend or host on infrastructure you control."
           tone="dark"

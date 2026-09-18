@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react'
+import { ScrambleText } from '../../components/ui/ScrambleText'
 import { Tag } from '../../components/ui/Tag'
 import { solutionLabel } from '../../data/projects'
 import type { Solution } from '../../types/content'
@@ -48,7 +49,7 @@ export function ProjectCard({ solution, index }: ProjectCardProps) {
                 to={solution.demoHref}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
               >
-                View demo
+                <ScrambleText text="View demo" />
                 <ArrowUpRight
                   className="size-4 transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   aria-hidden="true"
@@ -59,7 +60,7 @@ export function ProjectCard({ solution, index }: ProjectCardProps) {
                 href="#contact"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
               >
-                Discuss a similar system
+                <ScrambleText text="Discuss a similar system" />
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
             )}

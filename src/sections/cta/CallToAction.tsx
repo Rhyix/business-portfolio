@@ -1,7 +1,8 @@
 import { ArrowRight } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
+import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
-import { Reveal } from '../../components/ui/Reveal'
+import { ScrambleText } from '../../components/ui/ScrambleText'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { company } from '../../data/company'
@@ -28,27 +29,25 @@ export function CallToAction() {
 
       <Container className="relative">
         <div className="max-w-4xl">
-          <Reveal>
-            <SectionHeading
-              id="cta-title"
-              eyebrow="Start a project"
-              title="Have an idea for a system?"
-              description="Let's turn your business requirements into a working software solution. Tell us what you need and we will outline the next steps."
-              tone="dark"
-              size="headline"
-            />
-          </Reveal>
+          <SectionHeading
+            id="cta-title"
+            eyebrow="Start a project"
+            title="Have an idea for a system?"
+            description="Let's turn your business requirements into a working software solution. Tell us what you need and we will outline the next steps."
+            tone="dark"
+            size="headline"
+          />
 
-          <Reveal delay={0.08}>
+          <ChapterReveal step={3}>
             <div className="mt-9">
               <Button href="#contact" tone="dark" size="lg" className="w-full sm:w-auto">
-                Start a Project
+                <ScrambleText text="Start a Project" />
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Button>
             </div>
-          </Reveal>
+          </ChapterReveal>
 
-          <Reveal delay={0.12}>
+          <ChapterReveal step={4}>
             <div className="mt-10 border-t border-ink-800 pt-6">
               <a
                 href={`mailto:${company.email}`}
@@ -58,7 +57,7 @@ export function CallToAction() {
                 Or email {company.email}
               </a>
             </div>
-          </Reveal>
+          </ChapterReveal>
         </div>
       </Container>
     </Section>

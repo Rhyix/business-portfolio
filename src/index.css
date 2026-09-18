@@ -110,6 +110,90 @@
   line-height: 1;
 }
 
+/* Rail labels: label-mono with tighter tracking, so the widest item
+   ("SOLUTIONS") still fits the right gutter without covering page content. */
+@utility label-rail {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* One-shot glow for the section rail's active-state change. Re-fires by key
+   remount, never loops — see SectionRail.tsx. */
+@keyframes rail-ping {
+  from {
+    opacity: 0.55;
+    transform: translateY(-50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-50%) scale(2.6);
+  }
+}
+
+@utility rail-ping-once {
+  animation: rail-ping 600ms var(--ease-out-expo) 1 both;
+}
+
+/* -----------------------------------------------------------------------------
+ * System Dial gutter
+ * The dial is permanently open from 1280px up, so the content column has to
+ * stop short of it. These mirror dialGeometry.ts — radius caps and the
+ * focusInset formula (0.384r + 40) plus room for the labels — so the reserved
+ * space and the instrument can't drift apart.
+ * -------------------------------------------------------------------------- */
+@media (min-width: 1280px) {
+  :root {
+    --dial-radius: clamp(190px, 34vh, 250px);
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --dial-radius: clamp(190px, 34vh, 310px);
+  }
+}
+
+:root {
+  --dial-reach: calc(var(--dial-radius, 0px) * 0.384 + 152px);
+}
+
+/* Reserves only what the natural page gutter doesn't already cover, so wide
+   screens keep their normal centred padding and never shift. Unlayered, so it
+   wins over Tailwind's padding utilities regardless of class order. */
+@media (min-width: 1280px) {
+  .dial-gutter {
+    padding-right: max(2.5rem, calc(var(--dial-reach) - (100vw - 80rem) / 2));
+  }
+}
+
+/* The System Dial's active arc sweeping in as the instrument engages. Runs
+   once per engagement (re-fired by key remount), never loops. */
+@keyframes arc-draw {
+  from {
+    stroke-dashoffset: var(--arc-length, 200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility arc-draw-once {
+  animation: arc-draw 420ms var(--ease-out-expo) 1 both;
+}
+
+/* While the dial is being operated, the Hero's system map steps back so the
+   instrument owns attention. Map = what AETEX builds, dial = where you are. */
+.system-map-recede {
+  transition: opacity 300ms var(--ease-out-expo);
+}
+
+:root[data-dial-mode="scrubbing"] .system-map-recede {
+  opacity: 0.35;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
