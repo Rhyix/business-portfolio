@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { cn } from '../../lib/cn'
 
 interface SectionHeadingProps {
-  /** Small label rendered above the title. */
+  /** Small label rendered above the title, as a node + rule + mono-label rail. */
   eyebrow?: string
   title: ReactNode
   description?: ReactNode
@@ -10,6 +10,8 @@ interface SectionHeadingProps {
   id?: string
   align?: 'left' | 'center'
   tone?: 'light' | 'dark'
+  /** "headline" is the chapter tier — reserved for FeaturedPlatform and CallToAction. */
+  size?: 'title' | 'headline'
   className?: string
 }
 
@@ -21,6 +23,7 @@ export function SectionHeading({
   id,
   align = 'left',
   tone = 'light',
+  size = 'title',
   className,
 }: SectionHeadingProps) {
   const isDark = tone === 'dark'
@@ -30,14 +33,23 @@ export function SectionHeading({
       {eyebrow ? (
         <p
           className={cn(
-            'mb-4 text-xs font-semibold tracking-[0.16em] uppercase',
+            'mb-5 flex items-center gap-2.5',
+            align === 'center' && 'justify-center',
             isDark ? 'text-accent-300' : 'text-accent-600',
           )}
         >
-          {eyebrow}
+          <span
+            aria-hidden="true"
+            className={cn('size-1.5 shrink-0 rounded-full', isDark ? 'bg-accent-400' : 'bg-accent-500')}
+          />
+          <span aria-hidden="true" className={cn('h-px w-10 shrink-0', isDark ? 'bg-ink-800' : 'bg-ink-200')} />
+          <span className="label-mono font-medium">{eyebrow}</span>
         </p>
       ) : null}
-      <h2 id={id} className={cn('text-title font-semibold', isDark && 'text-white')}>
+      <h2
+        id={id}
+        className={cn(size === 'headline' ? 'text-headline' : 'text-title', 'font-semibold', isDark && 'text-white')}
+      >
         {title}
       </h2>
       {description ? (

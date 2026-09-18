@@ -6,42 +6,55 @@ import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { company } from '../../data/company'
 
-/** Closing call to action, presented on the dark band. */
+/** Closing call to action — continues Technology's dark ground with no seam, the typographic climax of the page. */
 export function CallToAction() {
   return (
     <Section id="get-started" labelledBy="cta-title" tone="dark">
       <div
         aria-hidden="true"
+        className="bg-blueprint-dark pointer-events-none absolute inset-0"
+        style={{
+          maskImage: 'radial-gradient(80% 90% at 20% 100%, #000, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(80% 90% at 20% 100%, #000, transparent 75%)',
+        }}
+      />
+      <div
+        aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            'radial-gradient(65% 60% at 50% 0%, rgba(59, 118, 246, 0.22), rgba(16, 19, 24, 0))',
+          background: 'radial-gradient(55% 60% at 22% 70%, rgba(59, 118, 246, 0.2), rgba(11, 14, 18, 0))',
         }}
       />
 
       <Container className="relative">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="max-w-4xl">
           <Reveal>
             <SectionHeading
               id="cta-title"
               eyebrow="Start a project"
               title="Have an idea for a system?"
               description="Let's turn your business requirements into a working software solution. Tell us what you need and we will outline the next steps."
-              align="center"
               tone="dark"
+              size="headline"
             />
           </Reveal>
 
           <Reveal delay={0.08}>
-            <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button href="#contact" variant="secondary" size="lg">
+            <div className="mt-9">
+              <Button href="#contact" tone="dark" size="lg" className="w-full sm:w-auto">
                 Start a Project
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Button>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.12}>
+            <div className="mt-10 border-t border-ink-800 pt-6">
               <a
                 href={`mailto:${company.email}`}
-                className="text-sm font-medium text-ink-300 underline-offset-4 transition-colors duration-200 hover:text-white hover:underline"
+                className="inline-flex items-center gap-2.5 font-mono text-[0.8125rem] tracking-[0.04em] text-accent-300 transition-colors duration-200 hover:text-white"
               >
+                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-400" />
                 Or email {company.email}
               </a>
             </div>

@@ -1,10 +1,12 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { buttonClassName } from './buttonStyles'
-import type { ButtonSize, ButtonVariant } from './buttonStyles'
+import type { ButtonSize, ButtonTone, ButtonVariant } from './buttonStyles'
 
 interface ButtonBaseProps {
   variant?: ButtonVariant
   size?: ButtonSize
+  /** "dark" swaps in the light-on-dark control set for use on ink-975 sections. */
+  tone?: ButtonTone
   className?: string
   children: ReactNode
 }
@@ -21,10 +23,10 @@ type ButtonNativeProps = ButtonBaseProps &
  */
 export function Button(props: ButtonLinkProps | ButtonNativeProps) {
   if (props.href !== undefined) {
-    const { href, variant = 'primary', size = 'md', className, children, ...anchorProps } = props
+    const { href, variant = 'primary', size = 'md', tone = 'light', className, children, ...anchorProps } = props
 
     return (
-      <a href={href} className={buttonClassName(variant, size, className)} {...anchorProps}>
+      <a href={href} className={buttonClassName(variant, size, className, tone)} {...anchorProps}>
         {children}
       </a>
     )
@@ -33,6 +35,7 @@ export function Button(props: ButtonLinkProps | ButtonNativeProps) {
   const {
     variant = 'primary',
     size = 'md',
+    tone = 'light',
     className,
     children,
     type = 'button',
@@ -40,7 +43,7 @@ export function Button(props: ButtonLinkProps | ButtonNativeProps) {
   } = props
 
   return (
-    <button type={type} className={buttonClassName(variant, size, className)} {...buttonProps}>
+    <button type={type} className={buttonClassName(variant, size, className, tone)} {...buttonProps}>
       {children}
     </button>
   )

@@ -8,11 +8,7 @@ import { valueProps } from '../../data/values'
 /** Trust section: concise reasons to work with the business. */
 export function ValueProps() {
   return (
-    <Section
-      id="why-us"
-      labelledBy="why-us-title"
-      className="border-y border-ink-200/70 bg-ink-50/50"
-    >
+    <Section id="why-us" labelledBy="why-us-title" tone="muted">
       <Container>
         <SectionHeading
           id="why-us-title"

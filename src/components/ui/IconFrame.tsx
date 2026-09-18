@@ -2,23 +2,33 @@ import type { IconComponent } from '../../types/content'
 import { cn } from '../../lib/cn'
 
 type IconFrameSize = 'sm' | 'md' | 'lg'
+type IconFrameShape = 'rounded' | 'square'
 
-const sizeStyles: Record<IconFrameSize, { frame: string; icon: string }> = {
-  sm: { frame: 'size-9 rounded-lg', icon: 'size-4' },
-  md: { frame: 'size-11 rounded-xl', icon: 'size-5' },
-  lg: { frame: 'size-12 rounded-2xl', icon: 'size-5' },
+const sizeStyles: Record<IconFrameShape, Record<IconFrameSize, { frame: string; icon: string }>> = {
+  rounded: {
+    sm: { frame: 'size-9 rounded-lg', icon: 'size-4' },
+    md: { frame: 'size-11 rounded-xl', icon: 'size-5' },
+    lg: { frame: 'size-12 rounded-2xl', icon: 'size-5' },
+  },
+  square: {
+    sm: { frame: 'size-9 rounded-md', icon: 'size-4' },
+    md: { frame: 'size-11 rounded-md', icon: 'size-5' },
+    lg: { frame: 'size-12 rounded-md', icon: 'size-5' },
+  },
 }
 
 interface IconFrameProps {
   icon: IconComponent
   size?: IconFrameSize
+  /** "square" trades the rounded tile for the sharper `rounded-md` corner used by structural/dark treatments. */
+  shape?: IconFrameShape
   tone?: 'light' | 'dark'
   className?: string
 }
 
-/** Rounded tile that frames a decorative icon. */
-export function IconFrame({ icon: Icon, size = 'md', tone = 'light', className }: IconFrameProps) {
-  const { frame, icon } = sizeStyles[size]
+/** Tile that frames a decorative icon. */
+export function IconFrame({ icon: Icon, size = 'md', shape = 'rounded', tone = 'light', className }: IconFrameProps) {
+  const { frame, icon } = sizeStyles[shape][size]
 
   return (
     <span

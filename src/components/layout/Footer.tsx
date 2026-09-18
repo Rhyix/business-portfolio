@@ -13,7 +13,7 @@ const contactLinks = {
 /** Site footer: brand summary, navigation, services, contact details and copyright. */
 export function Footer() {
   return (
-    <footer data-tone="dark" className="bg-ink-950 text-ink-400">
+    <footer data-tone="dark" className="bg-ink-975 text-ink-400">
       <Container>
         <div className="grid gap-12 py-16 sm:py-20 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-5">
@@ -105,7 +105,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/10 py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-ink-800 py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
           <p>{buildCopyright()}</p>
           <p>Built with React, TypeScript and Tailwind CSS.</p>
         </div>

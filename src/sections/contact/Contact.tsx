@@ -61,7 +61,15 @@ export function Contact() {
           </Reveal>
 
           <Reveal delay={0.08}>
-            <ContactForm />
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 translate-x-2 translate-y-2 rounded-xl border border-ink-200 bg-ink-50"
+              />
+              <div className="relative">
+                <ContactForm />
+              </div>
+            </div>
           </Reveal>
         </div>
       </Container>

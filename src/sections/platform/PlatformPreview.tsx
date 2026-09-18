@@ -45,7 +45,7 @@ export function PlatformPreview() {
   return (
     <div
       aria-hidden="true"
-      className="overflow-hidden rounded-2xl border border-ink-200/80 bg-white shadow-lift"
+      className="relative overflow-hidden rounded-xl border border-ink-200/80 bg-white shadow-card"
     >
       {/* Window chrome */}
       <div className="flex items-center gap-1.5 border-b border-ink-200/70 bg-ink-50/80 px-4 py-3">

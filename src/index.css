@@ -3,8 +3,8 @@
 /* -----------------------------------------------------------------------------
  * Design tokens
  * Single place to re-skin the site: colours, typography, elevation and motion.
- * Utilities such as `bg-ink-950`, `text-accent-600`, `shadow-lift`, `text-display`
- * and `animate-float` are generated from the variables declared below.
+ * Utilities such as `bg-ink-950`, `text-accent-600`, `shadow-lift` and
+ * `text-display` are generated from the variables declared below.
  * -------------------------------------------------------------------------- */
 @theme {
   --font-sans:
@@ -24,6 +24,9 @@
   --color-ink-800: #2b313c;
   --color-ink-900: #1b1f27;
   --color-ink-950: #101318;
+  /* One tier below ink-950 — the ground for dark sections, so ink-950/ink-900
+     can act as fully opaque raised surfaces instead of alpha-overlay panels. */
+  --color-ink-975: #0b0e12;
 
   /* Accent scale — highlights, links and iconography */
   --color-accent-50: #eff5ff;
@@ -38,14 +41,20 @@
   --color-accent-900: #1e348a;
   --color-accent-950: #172254;
 
-  /* Fluid display type */
-  --text-display: clamp(2.5rem, 1.6rem + 3.4vw, 4.25rem);
-  --text-display--line-height: 1.04;
-  --text-display--letter-spacing: -0.035em;
+  /* Fluid display type — three tiers (display > headline > title) so the
+     page's ranking stays unambiguous: hero, chapter, section. */
+  --text-display: clamp(2.5rem, 1.15rem + 5.4vw, 5.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.04em;
 
-  --text-title: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
-  --text-title--line-height: 1.12;
-  --text-title--letter-spacing: -0.025em;
+  /* Chapter tier — used only by FeaturedPlatform's heading and the CTA headline. */
+  --text-headline: clamp(2.25rem, 1.5rem + 2.6vw, 3.5rem);
+  --text-headline--line-height: 1.08;
+  --text-headline--letter-spacing: -0.03em;
+
+  --text-title: clamp(1.875rem, 1.25rem + 2.1vw, 3rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.028em;
 
   --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
   --text-lead--line-height: 1.65;
@@ -57,17 +66,48 @@
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
-  --animate-float: float 9s ease-in-out infinite;
+}
 
-  @keyframes float {
-    0%,
-    100% {
-      transform: translate3d(0, 0, 0);
-    }
-    50% {
-      transform: translate3d(0, -10px, 0);
-    }
-  }
+/* -----------------------------------------------------------------------------
+ * Custom utilities — the AETEX "connected systems" visual signature.
+ * Centralised here instead of inline styles so every consumer stays in sync.
+ * -------------------------------------------------------------------------- */
+
+/* Two-tier structural grid: 96px major lines + 24px minor lines. Always used
+   masked (per-usage, since each placement masks from a different origin). */
+@utility bg-blueprint {
+  background-image:
+    linear-gradient(to right, rgb(16 19 24 / 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(16 19 24 / 0.055) 1px, transparent 1px),
+    linear-gradient(to right, rgb(16 19 24 / 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(16 19 24 / 0.022) 1px, transparent 1px);
+  background-size:
+    96px 96px,
+    96px 96px,
+    24px 24px,
+    24px 24px;
+}
+
+@utility bg-blueprint-dark {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgb(255 255 255 / 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.022) 1px, transparent 1px);
+  background-size:
+    96px 96px,
+    96px 96px,
+    24px 24px,
+    24px 24px;
+}
+
+/* Mono micro-label: zero-padded indices, eyebrows, captions. */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 @layer base {

@@ -50,3 +50,27 @@ export function fadeSwap(): Variants {
     exit: { opacity: 0, transition: { duration: DURATION.ui * 0.7, ease: EASE_OUT_EXPO } },
   }
 }
+
+/** Draws a horizontal rule in from the left — pair with `origin-left`. Only ever used inside <Reveal>/<RevealStagger>, so it inherits their reduced-motion gate. */
+export function drawLineX(delay = 0): Variants {
+  return {
+    hidden: { opacity: 0, scaleX: 0 },
+    visible: {
+      opacity: 1,
+      scaleX: 1,
+      transition: { duration: DURATION.reveal, delay, ease: EASE_OUT_EXPO },
+    },
+  }
+}
+
+/** Draws a vertical rule in from the top — pair with `origin-top`. Same gating as drawLineX. */
+export function drawLineY(delay = 0): Variants {
+  return {
+    hidden: { opacity: 0, scaleY: 0 },
+    visible: {
+      opacity: 1,
+      scaleY: 1,
+      transition: { duration: DURATION.reveal, delay, ease: EASE_OUT_EXPO },
+    },
+  }
+}

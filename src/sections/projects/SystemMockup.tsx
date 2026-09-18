@@ -172,7 +172,7 @@ export function SystemMockup({ variant, className }: SystemMockupProps) {
         <span className="size-1.5 rounded-full bg-ink-200" />
         <span className={cn(barTone, 'ml-2 flex-1')} style={{ height: 5 }} />
       </div>
-      <div className="h-[9.5rem] p-3.5">
+      <div className="h-44 p-3.5">
         <MockupBody variant={variant} />
       </div>
     </div>

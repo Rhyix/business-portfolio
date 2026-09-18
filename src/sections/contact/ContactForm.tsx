@@ -100,7 +100,7 @@ export function ContactForm() {
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-ink-200/80 bg-white p-6 shadow-card sm:p-8"
+      className="relative rounded-xl border border-ink-200/80 bg-white p-6 shadow-card sm:p-8"
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField id="contact-name" label="Name" error={errors.name}>
