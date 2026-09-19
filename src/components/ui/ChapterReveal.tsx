@@ -1,14 +1,28 @@
 import { useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { m } from 'motion/react'
-import { CHAPTER_STEP, fadeInUp } from '../../lib/motion'
-import { useChapterActivated } from '../../lib/chapter'
+import {
+  CHAPTER_STEP,
+  CHAPTER_STEP_STRONG,
+  CHAPTER_TRAVEL,
+  CHAPTER_TRAVEL_STRONG,
+  COMPACT_CHAPTER_STEP,
+  COMPACT_CHAPTER_STEP_STRONG,
+  COMPACT_CHAPTER_TRAVEL,
+  COMPACT_CHAPTER_TRAVEL_STRONG,
+  enterFrom,
+} from '../../lib/motion'
+import { useChapterState } from '../../lib/chapter'
+import { useCompactMotion } from '../../lib/hooks'
 import { useRevealEnabled } from './useRevealEnabled'
 
 interface ChapterRevealProps {
   children: ReactNode
-  /** Rung on the chapter's entrance ladder — 0 arrives first, 4 last. */
-  step?: 0 | 1 | 2 | 3 | 4
+  /**
+   * Rung on the chapter's entrance ladder — 0 arrives first. Fractional rungs
+   * are fine: a grid uses them to space a wave between the integer beats.
+   */
+  step?: number
   className?: string
 }
 
@@ -24,15 +38,36 @@ interface ChapterRevealProps {
  */
 export function ChapterReveal({ children, step = 0, className }: ChapterRevealProps) {
   const revealEnabled = useRevealEnabled()
-  const activated = useChapterActivated()
-  const variants = useMemo(() => fadeInUp(step * CHAPTER_STEP), [step])
+  const chapter = useChapterState()
+  const compact = useCompactMotion()
+
+  const strong = chapter?.intensity === 'strong'
+  const rung = compact
+    ? strong
+      ? COMPACT_CHAPTER_STEP_STRONG
+      : COMPACT_CHAPTER_STEP
+    : strong
+      ? CHAPTER_STEP_STRONG
+      : CHAPTER_STEP
+  const travel = compact
+    ? strong
+      ? COMPACT_CHAPTER_TRAVEL_STRONG
+      : COMPACT_CHAPTER_TRAVEL
+    : strong
+      ? CHAPTER_TRAVEL_STRONG
+      : CHAPTER_TRAVEL
+
+  const variants = useMemo(
+    () => enterFrom(step * rung, travel, chapter?.direction ?? 'forward'),
+    [step, rung, travel, chapter?.direction],
+  )
 
   if (!revealEnabled) {
     return <div className={className}>{children}</div>
   }
 
   // No chapter boundary above us — behave exactly like <Reveal>.
-  if (activated === null) {
+  if (chapter === null) {
     return (
       <m.div
         className={className}
@@ -47,10 +82,14 @@ export function ChapterReveal({ children, step = 0, className }: ChapterRevealPr
   }
 
   return (
+    // Keying on replayKey remounts on a deliberate re-entry, which is what
+    // lets an already-seen chapter play again. It stays 0 for scrolling, so
+    // ordinary reading never remounts and never loses focus.
     <m.div
+      key={chapter.replayKey}
       className={className}
       initial="hidden"
-      animate={activated ? 'visible' : 'hidden'}
+      animate={chapter.activated ? 'visible' : 'hidden'}
       variants={variants}
     >
       {children}

@@ -28,6 +28,11 @@ export const railSections: readonly RailSection[] = [
  * matching index shown in that section's heading. Derived from `railSections`
  * so the page and the dial can never disagree about what `04 / 08` means.
  */
+/** Rail position a section belongs to, following `absorbs`. -1 when it has none. */
+export function railIndexForSection(id: string): number {
+  return railObservedSections.find((entry) => entry.sectionId === id)?.itemIndex ?? -1
+}
+
 export function sectionIndexLabel(id: string): string | undefined {
   const index = railSections.findIndex((section) => section.id === id)
   return index === -1 ? undefined : String(index + 1).padStart(2, '0')

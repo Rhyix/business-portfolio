@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'motion/react'
 import { ScrambleText } from '../ui/ScrambleText'
-import { railObservedSections, railSections } from '../../data/sectionRail'
+import { railSections } from '../../data/sectionRail'
 import {
   DIAL_MIN_WIDTH,
   angleForOffset,
@@ -12,7 +12,8 @@ import {
   weightForOffset,
 } from '../../lib/dialGeometry'
 import { useDialController } from '../../lib/useDialController'
-import { useDarkGroundAtMiddle, useSectionProgress } from '../../lib/hooks'
+import { useDarkGroundAtMiddle } from '../../lib/hooks'
+import { useNavigation } from '../../lib/useNavigation'
 import { cn } from '../../lib/cn'
 
 const supportsIntersectionObserver =
@@ -48,7 +49,10 @@ export function SectionDial() {
 }
 
 function SectionDialInner() {
-  const { activeIndex } = useSectionProgress(railObservedSections)
+  // Section progress lives in NavigationProvider — one observer for the page,
+  // and one source of truth for which way the visitor is travelling.
+  const navigation = useNavigation()
+  const activeIndex = navigation?.activeIndex ?? 0
   const dark = useDarkGroundAtMiddle()
   const prefersReducedMotion = useReducedMotion()
 
@@ -93,6 +97,9 @@ function SectionDialInner() {
     (index: number) => {
       const target = document.getElementById(railSections[index].id)
       if (!target) return
+      // Tell the page this was a deliberate move, and which way — that is what
+      // upgrades the destination's entrance and lets it replay.
+      navigation?.notifyDialCommit(index)
       // Computed rather than scrollIntoView: the offset is explicit, and it
       // doesn't depend on scroll-margin being honoured by the engine.
       const top = target.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
@@ -103,7 +110,7 @@ function SectionDialInner() {
         behavior: prefersReducedMotion ? 'instant' : 'smooth',
       })
     },
-    [prefersReducedMotion],
+    [prefersReducedMotion, navigation],
   )
 
   const { mode, selectedIndex, surfaceProps, onKeyDown } = useDialController({
@@ -137,6 +144,16 @@ function SectionDialInner() {
       delete document.documentElement.dataset.dialMode
     }
   }, [mode])
+
+  // Publishes which section is the current system state, so sections can
+  // de-emphasise when they stop being it — a CSS-only relationship that costs
+  // one attribute write per section change and no page re-render.
+  useEffect(() => {
+    document.documentElement.dataset.activeSection = railSections[activeIndex]?.id ?? ''
+    return () => {
+      delete document.documentElement.dataset.activeSection
+    }
+  }, [activeIndex])
 
   const svgSize = (geometry.radius + ARC_PAD) * 2
   const svgLeft = geometry.centerOffsetX - geometry.radius - ARC_PAD

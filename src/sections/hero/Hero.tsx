@@ -5,7 +5,9 @@ import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
 import { ScrambleText } from '../../components/ui/ScrambleText'
 import { sectionIndexLabel } from '../../data/sectionRail'
-import { ChapterContext, useChapterActivation } from '../../lib/chapter'
+import { ChapterContext, useChapterActivation, useSectionChapter } from '../../lib/chapter'
+import { useNavigation } from '../../lib/useNavigation'
+import { railIndexForSection } from '../../data/sectionRail'
 import { cn } from '../../lib/cn'
 import { SystemMap } from './SystemMap'
 
@@ -20,10 +22,18 @@ const heroCapabilities = [
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const activated = useChapterActivation(sectionRef)
+  const chapter = useSectionChapter('home', activated)
+  const navigation = useNavigation()
+  const isActiveSection = navigation ? navigation.activeIndex === railIndexForSection('home') : true
 
   return (
-    <ChapterContext.Provider value={activated}>
-    <section ref={sectionRef} id="home" className="relative overflow-hidden border-b border-ink-200">
+    <ChapterContext.Provider value={chapter}>
+    <section
+      ref={sectionRef}
+      id="home"
+      data-chapter-active={isActiveSection ? 'true' : 'false'}
+      className="relative overflow-hidden border-b border-ink-200"
+    >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div
           className="absolute inset-x-0 top-0 h-[620px]"
@@ -44,7 +54,7 @@ export function Hero() {
       <Container className="relative py-16 sm:py-20 lg:py-28">
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] lg:gap-20">
           <div className="max-w-xl">
-            <ChapterReveal step={0}>
+            <ChapterReveal step={0} className="chapter-recede">
               <p className="flex items-center gap-2.5 text-accent-600">
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500" />
                 <span aria-hidden="true" className="h-px w-10 shrink-0 bg-ink-200" />
@@ -55,13 +65,13 @@ export function Hero() {
               </p>
             </ChapterReveal>
 
-            <ChapterReveal step={1}>
+            <ChapterReveal step={1} className="chapter-recede">
               <h1 className="mt-7 text-display font-semibold">
                 Custom software solutions built for your business
               </h1>
             </ChapterReveal>
 
-            <ChapterReveal step={2}>
+            <ChapterReveal step={2} className="chapter-recede">
               <p className="mt-6 text-lead text-ink-500">
                 We design and develop reliable web systems tailored to your requirements — from business
                 management platforms and administrative dashboards to the databases and integrations
@@ -81,7 +91,7 @@ export function Hero() {
               </div>
             </ChapterReveal>
 
-            <ChapterReveal step={4}>
+            <ChapterReveal step={4} className="chapter-recede">
               <div className="mt-12 grid grid-cols-1 border-t border-ink-200 sm:grid-cols-2">
                 {heroCapabilities.map((capability, index) => (
                   <div

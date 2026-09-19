@@ -3,6 +3,7 @@ import { Footer } from './Footer'
 import { Navbar } from './Navbar'
 import { SectionDial } from './SectionDial'
 import { railSections } from '../../data/sectionRail'
+import { NavigationProvider } from '../../lib/navigation'
 
 interface SiteLayoutProps {
   children: ReactNode
@@ -11,6 +12,7 @@ interface SiteLayoutProps {
 /** Application shell: skip link, sticky navigation, page content and footer. */
 export function SiteLayout({ children }: SiteLayoutProps) {
   return (
+    <NavigationProvider>
     <div className="flex min-h-svh flex-col bg-white">
       <a
         href="#main-content"
@@ -49,5 +51,6 @@ export function SiteLayout({ children }: SiteLayoutProps) {
       <SectionDial />
       <Footer />
     </div>
+    </NavigationProvider>
   )
 }

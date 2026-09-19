@@ -1,13 +1,17 @@
 import { ArrowRight } from 'lucide-react'
+import { ChapterBoundary } from '../../components/ui/ChapterBoundary'
+import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
 import { IconFrame } from '../../components/ui/IconFrame'
-import { Reveal } from '../../components/ui/Reveal'
 import { ScrambleText } from '../../components/ui/ScrambleText'
 import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { sectionIndexLabel } from '../../data/sectionRail'
 import { services } from '../../data/services'
 import { ServiceCard } from './ServiceCard'
+
+/** Spacing between cards in the grid's wave, as a fraction of a chapter rung. */
+const GRID_RUNG = 0.6
 
 /** Services offered by the business, rendered from src/data/services.ts. */
 export function Services() {
@@ -22,18 +26,23 @@ export function Services() {
           description="From a first working version to a system your team relies on daily, we cover the build, the data behind it and the support that follows."
         />
 
+      {/* The grid gets its own chapter: the section activates while these cards
+          are still below the fold, so tying them to the section's own chapter
+          would play the wave where nobody can see it. One boundary here also
+          replaces the eight per-card observers this used to run. */}
+      <ChapterBoundary>
         <ul className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
             <li key={service.title} className="h-full">
-              <Reveal delay={(index % 4) * 0.05} className="h-full">
+              <ChapterReveal step={index * GRID_RUNG} className="h-full">
                 <ServiceCard service={service} />
-              </Reveal>
+              </ChapterReveal>
             </li>
           ))}
           {/* Keeps the grid even (7 services + this cell = 8) and gives visitors with an
               unlisted need a direct path forward — a navigation affordance, not a claim. */}
           <li className="h-full">
-            <Reveal delay={(services.length % 4) * 0.05} className="h-full">
+            <ChapterReveal step={services.length * GRID_RUNG} className="h-full">
               <a
                 href="#contact"
                 className="group flex h-full flex-col justify-between rounded-2xl border border-dashed border-ink-300 bg-white p-6 transition-colors duration-200 hover:border-ink-400 hover:bg-ink-50/70 sm:p-7"
@@ -53,9 +62,10 @@ export function Services() {
                   />
                 </span>
               </a>
-            </Reveal>
+            </ChapterReveal>
           </li>
         </ul>
+      </ChapterBoundary>
       </Container>
     </Section>
   )

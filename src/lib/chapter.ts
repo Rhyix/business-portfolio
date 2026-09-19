@@ -1,12 +1,26 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { RefObject } from 'react'
+import { railIndexForSection } from '../data/sectionRail'
+import { useNavigation } from './useNavigation'
+import type { TransitionDirection } from './motion'
+
+export interface ChapterState {
+  /** The latch: has this chapter opened at all yet. */
+  activated: boolean
+  /** Changes when the chapter is re-entered deliberately, forcing a replay. */
+  replayKey: number
+  /** Which way the visitor travelled to get here. */
+  direction: TransitionDirection
+  /** Deliberate dial navigation gets more travel than an incidental scroll. */
+  intensity: 'subtle' | 'strong'
+}
 
 /**
- * True once the surrounding section has opened as a "chapter". `null` means
- * there is no chapter boundary above the consumer, which lets <ChapterReveal />
- * fall back to per-element scroll reveal outside of a <Section>.
+ * State of the surrounding chapter. `null` means there is no chapter boundary
+ * above the consumer, which lets <ChapterReveal /> fall back to per-element
+ * scroll reveal outside of a <Section>.
  */
-export const ChapterContext = createContext<boolean | null>(null)
+export const ChapterContext = createContext<ChapterState | null>(null)
 
 const supportsIntersectionObserver =
   typeof window !== 'undefined' && 'IntersectionObserver' in window
@@ -61,6 +75,30 @@ export function useChapterActivation(ref: RefObject<HTMLElement | null>): boolea
 }
 
 /** Chapter state of the nearest <Section>, or null when there isn't one. */
-export function useChapterActivated(): boolean | null {
+export function useChapterState(): ChapterState | null {
   return useContext(ChapterContext)
+}
+
+/**
+ * Combines a section's own latch with the navigation that brought the visitor
+ * here. Being the destination of a deliberate dial commit is what upgrades a
+ * chapter to the strong intensity and gives it a replay key — scrolling past
+ * leaves it at the subtle, play-once baseline.
+ */
+export function useSectionChapter(sectionId: string, activated: boolean): ChapterState {
+  const navigation = useNavigation()
+  const transition = navigation?.transition ?? null
+  const railIndex = railIndexForSection(sectionId)
+  const isDialTarget =
+    transition !== null && transition.source === 'dial' && railIndex !== -1 && transition.toIndex === railIndex
+
+  return useMemo(
+    () => ({
+      activated: activated || isDialTarget,
+      replayKey: isDialTarget && transition !== null ? transition.key : 0,
+      direction: transition?.direction ?? 'forward',
+      intensity: isDialTarget ? 'strong' : 'subtle',
+    }),
+    [activated, isDialTarget, transition],
+  )
 }

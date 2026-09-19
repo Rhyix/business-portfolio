@@ -101,6 +101,28 @@ export function useSectionProgress(sections: readonly SectionProgressEntry[]): {
   return state
 }
 
+const COMPACT_MOTION_QUERY = '(max-width: 639px)'
+
+/**
+ * True on small screens, where chapter choreography uses a tighter ladder and
+ * less travel. Subscribes to the media query rather than resize, so it costs
+ * nothing until the breakpoint is actually crossed.
+ */
+export function useCompactMotion(): boolean {
+  const [compact, setCompact] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(COMPACT_MOTION_QUERY).matches,
+  )
+
+  useEffect(() => {
+    const query = window.matchMedia(COMPACT_MOTION_QUERY)
+    const handleChange = (event: MediaQueryListEvent) => setCompact(event.matches)
+    query.addEventListener('change', handleChange)
+    return () => query.removeEventListener('change', handleChange)
+  }, [])
+
+  return compact
+}
+
 /** True while any `[data-tone="dark"]` section is crossing the middle of the viewport. */
 export function useDarkGroundAtMiddle(): boolean {
   const [dark, setDark] = useState(false)

@@ -184,6 +184,45 @@
   animation: arc-draw 420ms var(--ease-out-expo) 1 both;
 }
 
+/* System state transition: content recedes once its section stops being the
+   active state, and returns when it becomes active again. Reversible by
+   design — this is a state, not an exit animation — and deliberately small,
+   so it reads as de-emphasis rather than as something breaking. */
+.chapter-recede {
+  transition:
+    opacity 400ms var(--ease-out-expo),
+    transform 400ms var(--ease-out-expo);
+}
+
+[data-chapter-active="false"] .chapter-recede {
+  opacity: 0.55;
+}
+
+/* Movement is reserved for a deliberate turn of the dial: shifting content
+   that someone is mid-way through reading reads as a fault, not a state
+   change. Direction follows the way the visitor travelled — forward settles
+   the outgoing section upward, backward settles it down. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-nav-source="dial"][data-nav-direction="forward"]
+    [data-chapter-active="false"]
+    .chapter-recede {
+    transform: translateY(-14px);
+  }
+
+  :root[data-nav-source="dial"][data-nav-direction="backward"]
+    [data-chapter-active="false"]
+    .chapter-recede {
+    transform: translateY(14px);
+  }
+}
+
+/* Small screens keep the dimming but drop the drift entirely. */
+@media (max-width: 639px) {
+  [data-chapter-active="false"] .chapter-recede {
+    transform: none;
+  }
+}
+
 /* While the dial is being operated, the Hero's system map steps back so the
    instrument owns attention. Map = what AETEX builds, dial = where you are. */
 .system-map-recede {

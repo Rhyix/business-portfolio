@@ -21,10 +21,51 @@ export const DURATION = {
  */
 export const CHAPTER_STEP = 0.09
 
-/** Standard fade + lift entrance used by <Reveal />. */
-export function fadeInUp(delay = 0): Variants {
+/**
+ * Small screens get fewer moving parts rather than the same motion scaled
+ * down: a tighter ladder and less travel, so a grid lands in about a third of
+ * the time without losing its order.
+ */
+export const COMPACT_CHAPTER_STEP = 0.05
+export const CHAPTER_TRAVEL = 18
+export const COMPACT_CHAPTER_TRAVEL = 10
+
+/**
+ * Turning the dial is a deliberate act, so its destination gets roughly twice
+ * the travel and a slightly wider ladder than a section you merely scrolled
+ * past. Same language, two intensities — not two systems.
+ */
+export const CHAPTER_STEP_STRONG = 0.11
+export const COMPACT_CHAPTER_STEP_STRONG = 0.06
+export const CHAPTER_TRAVEL_STRONG = 40
+export const COMPACT_CHAPTER_TRAVEL_STRONG = 20
+
+export type TransitionDirection = 'forward' | 'backward'
+
+/**
+ * Direction-aware entrance. Moving forward through the page, content arrives
+ * from below; moving backward, it arrives from above — so the motion agrees
+ * with the direction the visitor travelled.
+ */
+export function enterFrom(
+  delay = 0,
+  travel = CHAPTER_TRAVEL,
+  direction: TransitionDirection = 'forward',
+): Variants {
   return {
-    hidden: { opacity: 0, y: 18 },
+    hidden: { opacity: 0, y: direction === 'forward' ? travel : -travel },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: DURATION.reveal, delay, ease: EASE_OUT_EXPO },
+    },
+  }
+}
+
+/** Standard fade + lift entrance used by <Reveal />. */
+export function fadeInUp(delay = 0, travel = CHAPTER_TRAVEL): Variants {
+  return {
+    hidden: { opacity: 0, y: travel },
     visible: {
       opacity: 1,
       y: 0,

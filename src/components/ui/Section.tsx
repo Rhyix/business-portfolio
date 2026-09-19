@@ -1,6 +1,8 @@
 import { useRef } from 'react'
 import type { ReactNode } from 'react'
-import { ChapterContext, useChapterActivation } from '../../lib/chapter'
+import { ChapterContext, useChapterActivation, useSectionChapter } from '../../lib/chapter'
+import { useNavigation } from '../../lib/useNavigation'
+import { railIndexForSection } from '../../data/sectionRail'
 import { cn } from '../../lib/cn'
 
 interface SectionProps {
@@ -53,6 +55,9 @@ export function Section({
 }: SectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const activated = useChapterActivation(sectionRef)
+  const chapter = useSectionChapter(id, activated)
+  const navigation = useNavigation()
+  const isActiveSection = navigation ? navigation.activeIndex === railIndexForSection(id) : true
 
   return (
     <section
@@ -60,6 +65,7 @@ export function Section({
       id={id}
       aria-labelledby={labelledBy}
       data-tone={tone === 'dark' ? 'dark' : undefined}
+      data-chapter-active={isActiveSection ? 'true' : 'false'}
       className={cn(
         'relative scroll-mt-24',
         sizeStyles[size].pt,
@@ -68,7 +74,7 @@ export function Section({
         className,
       )}
     >
-      <ChapterContext.Provider value={activated}>{children}</ChapterContext.Provider>
+      <ChapterContext.Provider value={chapter}>{children}</ChapterContext.Provider>
     </section>
   )
 }
