@@ -29,9 +29,6 @@ export interface SocialLink {
   href: string
 }
 
-/** Illustrative system interface rendered on a solution card. */
-export type SystemMockupVariant = 'table' | 'people' | 'board' | 'stock' | 'schedule' | 'chart'
-
 /**
  * A representative system the business can build.
  * These are sample solutions, never presented as delivered client projects.
@@ -43,10 +40,9 @@ export interface Solution {
   title: string
   description: string
   technologies: string[]
-  mockup: SystemMockupVariant
   /** Internal route to an interactive demo, when one exists for this solution. */
   demoHref?: string
-  /** Marks the flagship solution so ProjectCard can style it distinctly. */
+  /** Marks the flagship solution — the root of the architecture in src/data/solutionFamily.ts. */
   featured?: boolean
 }
 

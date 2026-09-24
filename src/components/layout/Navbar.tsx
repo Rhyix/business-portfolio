@@ -49,7 +49,10 @@ export function Navbar() {
               keyboard and assistive use. Below lg the drawer is unchanged. */}
 
           <div className="flex items-center gap-2">
-            <Button href={navigationCta.href} size="sm" className="hidden sm:inline-flex">
+            {/* Button's base class list already sets inline-flex and cn() does not
+                resolve conflicts, so `hidden` alone would lose to it. The drawer
+                carries this CTA below sm. */}
+            <Button href={navigationCta.href} size="sm" className="max-sm:hidden">
               {navigationCta.label}
             </Button>
 

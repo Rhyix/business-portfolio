@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!--
+      Points at real brand artwork rather than the placeholder favicon.svg that
+      was removed. The wordmark is 4.74:1, so it is a stopgap at 16px — a square
+      brand mark is the proper fix, and no official one exists yet.
+    -->
+    <link rel="icon" type="image/png" href="/brand/aetex-logo-1.png" />
     <meta name="theme-color" content="#101318" />
     <meta name="color-scheme" content="light" />
 
@@ -20,6 +25,8 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AETEX Tech Solution" />
+    <!-- A wide wordmark is the right shape for a share card, unlike a favicon. -->
+    <meta property="og:image" content="/brand/aetex-logo-1.png" />
     <meta
       property="og:title"
       content="AETEX Tech Solution — Custom Software Solutions for Business"

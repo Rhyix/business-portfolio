@@ -89,16 +89,22 @@ export function useSectionChapter(sectionId: string, activated: boolean): Chapte
   const navigation = useNavigation()
   const transition = navigation?.transition ?? null
   const railIndex = railIndexForSection(sectionId)
-  const isDialTarget =
-    transition !== null && transition.source === 'dial' && railIndex !== -1 && transition.toIndex === railIndex
+
+  const isTarget = transition !== null && railIndex !== -1 && transition.toIndex === railIndex
+  const isDialTarget = isTarget && transition.source === 'dial'
+
+  // Everything below is reduced to primitives *before* the memo, and only the
+  // section actually being navigated to reads anything off the transition.
+  // Memoising on the transition object instead would hand every section a new
+  // ChapterState on every navigation, invalidating every ChapterReveal on the
+  // page rather than the handful that are about to animate.
+  const isActivated = activated || isDialTarget
+  const replayKey = isDialTarget ? transition.key : 0
+  const direction = isTarget ? transition.direction : 'forward'
+  const intensity: ChapterState['intensity'] = isDialTarget ? 'strong' : 'subtle'
 
   return useMemo(
-    () => ({
-      activated: activated || isDialTarget,
-      replayKey: isDialTarget && transition !== null ? transition.key : 0,
-      direction: transition?.direction ?? 'forward',
-      intensity: isDialTarget ? 'strong' : 'subtle',
-    }),
-    [activated, isDialTarget, transition],
+    () => ({ activated: isActivated, replayKey, direction, intensity }),
+    [isActivated, replayKey, direction, intensity],
   )
 }

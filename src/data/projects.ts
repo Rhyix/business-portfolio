@@ -14,7 +14,6 @@ export const solutions: Solution[] = [
     description:
       'An integrated platform combining business operations, workforce management and reporting in one workspace.',
     technologies: ['React', 'Laravel', 'MySQL'],
-    mockup: 'chart',
     demoHref: '/solutions/integrated-business-management-platform',
     featured: true,
   },
@@ -25,7 +24,6 @@ export const solutions: Solution[] = [
     description:
       'Centralised records, approvals and reporting for day-to-day operations across departments.',
     technologies: ['Laravel', 'MySQL', 'JavaScript'],
-    mockup: 'table',
     demoHref: '/solutions/business-management-system',
   },
   {
@@ -35,7 +33,6 @@ export const solutions: Solution[] = [
     description:
       'Employee records, leave requests, attendance and document tracking in a single system.',
     technologies: ['PHP', 'MySQL', 'React'],
-    mockup: 'people',
     demoHref: '/solutions/human-resource-management',
   },
   {
@@ -45,7 +42,6 @@ export const solutions: Solution[] = [
     description:
       'Job postings, applicant pipelines, interview scheduling and evaluation records.',
     technologies: ['Django', 'MySQL', 'React'],
-    mockup: 'board',
     demoHref: '/solutions/recruitment-management',
   },
   {
@@ -55,7 +51,6 @@ export const solutions: Solution[] = [
     description:
       'Stock levels, movement history, reorder thresholds and supplier records with clear audit trails.',
     technologies: ['Laravel', 'MySQL', 'JavaScript'],
-    mockup: 'stock',
     demoHref: '/solutions/inventory-management',
   },
   {
@@ -65,7 +60,6 @@ export const solutions: Solution[] = [
     description:
       'Availability rules, booking workflows, reminders and rescheduling for service teams.',
     technologies: ['React', 'PHP', 'MySQL'],
-    mockup: 'schedule',
     demoHref: '/solutions/appointment-scheduling',
   },
   {
@@ -75,7 +69,6 @@ export const solutions: Solution[] = [
     description:
       'Role-based access, consolidated figures and exports built for administrative teams.',
     technologies: ['React', 'Python', 'MySQL'],
-    mockup: 'chart',
     demoHref: '/solutions/administrative-dashboard',
   },
 ]
