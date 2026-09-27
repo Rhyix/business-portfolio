@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
 import { DataTable } from '../../../components/demo/DataTable'
 import type { DataTableColumn } from '../../../components/demo/DataTable'
 import { SearchInput } from '../../../components/demo/SearchInput'
@@ -8,6 +9,8 @@ import { formatNumber } from '../../../lib/format'
 import { useInventoryData } from '../../../data/demos/inventory/context'
 import { getStockStatus } from '../../../data/demos/inventory/types'
 import type { Product } from '../../../data/demos/inventory/types'
+import { Button } from '../../../components/ui/Button'
+import { StockAdjustmentModal } from './StockAdjustmentModal'
 
 function matchesSearch(product: Product, term: string): boolean {
   const needle = term.trim().toLowerCase()
@@ -22,12 +25,16 @@ function matchesSearch(product: Product, term: string): boolean {
  * Product records Products.tsx manages.
  */
 export function Stock() {
-  const { products, warehouses } = useInventoryData()
+  const { products, warehouses, adjustStock } = useInventoryData()
 
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [warehouseFilter, setWarehouseFilter] = useState('All')
   const [lowStockOnly, setLowStockOnly] = useState(false)
+  const [adjusting, setAdjusting] = useState<Product | null>(null)
+  // Names what just happened rather than saying "Saved", and clears on the next
+  // adjustment so it never lingers as a stale claim.
+  const [lastAdjustment, setLastAdjustment] = useState<string | null>(null)
 
   const warehouseNameById = useMemo(() => new Map(warehouses.map((warehouse) => [warehouse.id, warehouse.name])), [warehouses])
   const categories = useMemo(() => Array.from(new Set(products.map((product) => product.category))).sort(), [products])
@@ -65,13 +72,38 @@ export function Stock() {
     },
     { key: 'reorder', header: 'Reorder Level', render: (product) => formatNumber(product.reorderLevel) },
     { key: 'status', header: 'Stock Status', render: (product) => <StatusBadge status={getStockStatus(product)} /> },
+    {
+      key: 'actions',
+      header: 'Actions',
+      headerClassName: 'text-right',
+      cellClassName: 'text-right',
+      render: (product) => (
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => setAdjusting(product)}
+          aria-label={`Adjust stock for ${product.name}`}
+        >
+          <SlidersHorizontal className="size-3.5" aria-hidden="true" />
+          Adjust
+        </Button>
+      ),
+    },
   ]
 
   return (
     <div className="space-y-5">
-      <p className="text-sm text-ink-500">
-        {filteredProducts.length} item{filteredProducts.length === 1 ? '' : 's'}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-ink-500">
+          {filteredProducts.length} item{filteredProducts.length === 1 ? '' : 's'}
+        </p>
+        {lastAdjustment ? (
+          <p role="status" className="text-xs font-medium text-emerald-600">
+            {lastAdjustment}
+          </p>
+        ) : null}
+      </div>
 
       <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
         <SearchInput
@@ -109,6 +141,19 @@ export function Stock() {
         rowKey={(product) => product.id}
         emptyTitle="No stock records found"
         emptyMessage="Try a different search term or filter."
+      />
+
+      <StockAdjustmentModal
+        key={adjusting?.id ?? 'none'}
+        product={adjusting}
+        onClose={() => setAdjusting(null)}
+        onAdjust={(productId, quantityDelta, reference) => {
+          adjustStock(productId, quantityDelta, reference)
+          const product = products.find((item) => item.id === productId)
+          setLastAdjustment(
+            `${product?.name ?? 'Product'} adjusted by ${quantityDelta > 0 ? '+' : ''}${quantityDelta} — ${reference.toLowerCase()}`,
+          )
+        }}
       />
     </div>
   )

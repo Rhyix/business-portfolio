@@ -24,6 +24,7 @@ export function PurchaseOrders() {
     addPurchaseOrder,
     cancelPurchaseOrder,
     receivePurchaseOrder,
+    markPurchaseOrderOrdered,
     pendingPurchaseOrderProductId,
     setPendingPurchaseOrderProductId,
   } = useInventoryData()
@@ -33,6 +34,8 @@ export function PurchaseOrders() {
   const [detailOrderId, setDetailOrderId] = useState<string | null>(null)
   const [cancelTarget, setCancelTarget] = useState<PurchaseOrder | null>(null)
   const [receiveQuantities, setReceiveQuantities] = useState<Record<string, string>>({})
+  // Names the transition that just happened rather than a generic "Saved".
+  const [actionNotice, setActionNotice] = useState<string | null>(null)
 
   // The form opens either from the regular "Create purchase order" button, or
   // because a low-stock action elsewhere set a pending product id — derived
@@ -68,6 +71,7 @@ export function PurchaseOrders() {
   const confirmCancel = () => {
     if (!cancelTarget) return
     cancelPurchaseOrder(cancelTarget.id)
+    setActionNotice(`${cancelTarget.id} cancelled`)
     setCancelTarget(null)
   }
 
@@ -78,6 +82,7 @@ export function PurchaseOrders() {
       quantityReceived: Number(receiveQuantities[item.productId]) || 0,
     }))
     receivePurchaseOrder(detailOrder.id, lines)
+    setActionNotice(`Stock received against ${detailOrder.id}`)
     setDetailOrderId(null)
   }
 
@@ -126,9 +131,16 @@ export function PurchaseOrders() {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-ink-500">
-          {filteredOrders.length} purchase order{filteredOrders.length === 1 ? '' : 's'}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-sm text-ink-500">
+            {filteredOrders.length} purchase order{filteredOrders.length === 1 ? '' : 's'}
+          </p>
+          {actionNotice ? (
+            <p role="status" className="text-xs font-medium text-emerald-600">
+              {actionNotice}
+            </p>
+          ) : null}
+        </div>
         <Button type="button" size="md" onClick={openCreateModal}>
           <Plus className="size-4" aria-hidden="true" />
           Create purchase order
@@ -236,13 +248,33 @@ export function PurchaseOrders() {
             </div>
 
             {detailOrder.status !== 'Received' && detailOrder.status !== 'Cancelled' ? (
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+                {/* Draft is the only state that can still be placed; once it is
+                    Ordered the receipt controls above take over. */}
+                {detailOrder.status === 'Draft' ? (
+                  <p className="mr-auto text-xs text-ink-500">
+                    Still a draft — place it with the supplier before recording a receipt.
+                  </p>
+                ) : null}
                 <Button type="button" variant="secondary" size="md" onClick={() => setDetailOrderId(null)}>
                   Close
                 </Button>
-                <Button type="button" size="md" onClick={handleReceive} disabled={!canReceive}>
-                  Confirm receipt
-                </Button>
+                {detailOrder.status === 'Draft' ? (
+                  <Button
+                    type="button"
+                    size="md"
+                    onClick={() => {
+                      markPurchaseOrderOrdered(detailOrder.id)
+                      setActionNotice(`${detailOrder.id} marked as ordered`)
+                    }}
+                  >
+                    Mark as ordered
+                  </Button>
+                ) : (
+                  <Button type="button" size="md" onClick={handleReceive} disabled={!canReceive}>
+                    Confirm receipt
+                  </Button>
+                )}
               </div>
             ) : null}
           </div>

@@ -3,7 +3,7 @@ import { Modal } from '../../../components/demo/Modal'
 import { FormField } from '../../../sections/contact/FormField'
 import { demoControlStyles } from '../../../components/demo/formControlStyles'
 import { Button } from '../../../components/ui/Button'
-import { DASHBOARD_WIDGETS, DATE_RANGE_OPTIONS } from '../../../data/demos/admin-dashboard/types'
+import { DASHBOARD_WIDGETS, DATE_RANGE_OPTIONS, DEFAULT_VISIBLE_WIDGETS } from '../../../data/demos/admin-dashboard/types'
 import type { DashboardDateRange, DashboardWidgetId } from '../../../data/demos/admin-dashboard/types'
 
 interface CustomizeDashboardModalProps {
@@ -48,8 +48,11 @@ function CustomizePanel({
     setDraftVisibleIds((current) => (current.includes(id) ? current.filter((widgetId) => widgetId !== id) : [...current, id]))
   }
 
+  // Restores the documented default set rather than switching every widget on:
+  // "reset" should return the layout to how it ships, which is not the same as
+  // showing everything.
   const handleResetLayout = () => {
-    setDraftVisibleIds(DASHBOARD_WIDGETS.map((widget) => widget.id))
+    setDraftVisibleIds(DEFAULT_VISIBLE_WIDGETS)
   }
 
   const handleDone = () => {

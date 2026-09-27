@@ -5,6 +5,8 @@ import { demoControlStyles } from '../../../components/demo/formControlStyles'
 import { DemoNotice } from '../../../components/demo/DemoNotice'
 import { Button } from '../../../components/ui/Button'
 import { cn } from '../../../lib/cn'
+import { DemoDataReset } from '../../../components/demo/DemoDataReset'
+import { appName } from '../../../data/demos/recruitment/navigation'
 
 type SettingsTab = 'general' | 'workflow' | 'notifications' | 'criteria'
 
@@ -248,6 +250,8 @@ export function Settings() {
           />
         </div>
       ) : null}
+
+      <DemoDataReset system="recruitment" appName={appName} />
     </div>
   )
 }

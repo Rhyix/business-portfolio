@@ -6,6 +6,8 @@ import { DemoNotice } from '../../../components/demo/DemoNotice'
 import { Button } from '../../../components/ui/Button'
 import { cn } from '../../../lib/cn'
 import { useInventoryData } from '../../../data/demos/inventory/context'
+import { DemoDataReset } from '../../../components/demo/DemoDataReset'
+import { appName } from '../../../data/demos/inventory/navigation'
 
 type SettingsTab = 'general' | 'rules' | 'notifications' | 'warehouses'
 
@@ -238,6 +240,8 @@ export function Settings() {
           </FormField>
         </div>
       ) : null}
+
+      <DemoDataReset system="inventory" appName={appName} />
     </div>
   )
 }

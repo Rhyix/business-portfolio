@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { readDemoValue, useDemoPersistence } from '../../../lib/demoPersistence'
 import type { ReactNode } from 'react'
 import { RecruitmentDataContext } from './context'
 import type { IntegrationStatus, SyncOutcome } from './context'
@@ -48,13 +49,25 @@ interface RecruitmentDataProviderProps {
  * entirely to this demo — it does not read or write the Integrated
  * Platform's store.
  */
+/** Namespace for this demo's persisted entities (see src/lib/demoPersistence.ts). */
+const SYSTEM = 'recruitment' as const
+
 export function RecruitmentDataProvider({ children, onHiringDecision }: RecruitmentDataProviderProps) {
-  const [vacancies, setVacancies] = useState<Vacancy[]>(initialVacancies)
-  const [applicants, setApplicants] = useState<Applicant[]>(initialApplicants)
-  const [interviews, setInterviews] = useState<Interview[]>(initialInterviews)
-  const [assessments, setAssessments] = useState<Assessment[]>(initialAssessments)
-  const [evaluations, setEvaluations] = useState<Evaluation[]>(initialEvaluations)
-  const [activity, setActivity] = useState<RecruitmentActivityItem[]>(initialActivity)
+  const [vacancies, setVacancies] = useState<Vacancy[]>(() => readDemoValue(SYSTEM, 'vacancies', initialVacancies))
+  const [applicants, setApplicants] = useState<Applicant[]>(() => readDemoValue(SYSTEM, 'applicants', initialApplicants))
+  const [interviews, setInterviews] = useState<Interview[]>(() => readDemoValue(SYSTEM, 'interviews', initialInterviews))
+  const [assessments, setAssessments] = useState<Assessment[]>(() => readDemoValue(SYSTEM, 'assessments', initialAssessments))
+  const [evaluations, setEvaluations] = useState<Evaluation[]>(() => readDemoValue(SYSTEM, 'evaluations', initialEvaluations))
+  const [activity, setActivity] = useState<RecruitmentActivityItem[]>(() => readDemoValue(SYSTEM, 'activity', initialActivity))
+
+  // Mirrors each entity into localStorage whenever it changes, so a visitor's
+  // session survives a refresh. Write-only: the seeds above already read it.
+  useDemoPersistence(SYSTEM, 'vacancies', vacancies)
+  useDemoPersistence(SYSTEM, 'applicants', applicants)
+  useDemoPersistence(SYSTEM, 'interviews', interviews)
+  useDemoPersistence(SYSTEM, 'assessments', assessments)
+  useDemoPersistence(SYSTEM, 'evaluations', evaluations)
+  useDemoPersistence(SYSTEM, 'activity', activity)
   const [integrationRecords, setIntegrationRecords] = useState<Record<string, RecruitmentHireRecord>>(() =>
     Object.fromEntries(getAllHireRecords().map((record) => [record.applicantId, record])),
   )

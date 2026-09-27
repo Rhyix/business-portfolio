@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { readDemoValue, useDemoPersistence } from '../../../lib/demoPersistence'
 import type { ReactNode } from 'react'
 import { AdminDashboardDataContext } from './context'
 import { initialKpis } from './kpis'
@@ -29,14 +30,26 @@ function today(): string {
  * entirely to this demo — no cross-demo integration yet (matching every
  * other standalone demo in this portfolio).
  */
+/** Namespace for this demo's persisted entities (see src/lib/demoPersistence.ts). */
+const SYSTEM = 'admin-dashboard' as const
+
 export function AdminDashboardDataProvider({ children }: { children: ReactNode }) {
-  const [kpis, setKpis] = useState<Kpi[]>(initialKpis)
-  const [departments, setDepartments] = useState<Department[]>(initialDepartments)
-  const [approvals, setApprovals] = useState<Approval[]>(initialApprovals)
+  const [kpis, setKpis] = useState<Kpi[]>(() => readDemoValue(SYSTEM, 'kpis', initialKpis))
+  const [departments, setDepartments] = useState<Department[]>(() => readDemoValue(SYSTEM, 'departments', initialDepartments))
+  const [approvals, setApprovals] = useState<Approval[]>(() => readDemoValue(SYSTEM, 'approvals', initialApprovals))
   const [records] = useState<DataRecord[]>(initialRecords)
-  const [activity, setActivity] = useState(initialActivity)
-  const [visibleWidgetIds, setVisibleWidgetIdsState] = useState<DashboardWidgetId[]>(DEFAULT_VISIBLE_WIDGETS)
-  const [dateRange, setDateRangeState] = useState<DashboardDateRange>('This Month')
+  const [activity, setActivity] = useState(() => readDemoValue(SYSTEM, 'activity', initialActivity))
+  const [visibleWidgetIds, setVisibleWidgetIdsState] = useState<DashboardWidgetId[]>(() => readDemoValue(SYSTEM, 'visibleWidgets', DEFAULT_VISIBLE_WIDGETS))
+  const [dateRange, setDateRangeState] = useState<DashboardDateRange>(() => readDemoValue(SYSTEM, 'dateRange', 'This Month'))
+
+  // Mirrors each entity into localStorage whenever it changes, so a visitor's
+  // session survives a refresh. Write-only: the seeds above already read it.
+  useDemoPersistence(SYSTEM, 'kpis', kpis)
+  useDemoPersistence(SYSTEM, 'departments', departments)
+  useDemoPersistence(SYSTEM, 'approvals', approvals)
+  useDemoPersistence(SYSTEM, 'activity', activity)
+  useDemoPersistence(SYSTEM, 'visibleWidgets', visibleWidgetIds)
+  useDemoPersistence(SYSTEM, 'dateRange', dateRange)
 
   const nextKpiId = useRef(11)
   const nextActivityId = useRef(8)
@@ -112,11 +125,6 @@ export function AdminDashboardDataProvider({ children }: { children: ReactNode }
     [logActivity],
   )
 
-  const resetWidgetLayout = useCallback(() => {
-    setVisibleWidgetIdsState(DEFAULT_VISIBLE_WIDGETS)
-    logActivity('dashboard.widgets_changed', 'Dashboard layout was reset to the default widget set.')
-  }, [logActivity])
-
   const setDateRange = useCallback(
     (range: DashboardDateRange) => {
       setDateRangeState(range)
@@ -139,7 +147,6 @@ export function AdminDashboardDataProvider({ children }: { children: ReactNode }
     rejectRequest,
     visibleWidgetIds,
     setVisibleWidgets,
-    resetWidgetLayout,
     dateRange,
     setDateRange,
   }

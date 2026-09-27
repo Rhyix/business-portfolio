@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { readDemoValue, useDemoPersistence } from '../../../lib/demoPersistence'
 import type { ReactNode } from 'react'
 import { IntegratedDataContext } from './context'
 import type { IntegratedDataContextValue } from './context'
@@ -50,15 +51,29 @@ function today(): string {
  * inside the standalone BMS/HRMS demos (local state, no provider) and inside
  * this integrated platform (shared state, provider present).
  */
+/** Namespace for this demo's persisted entities (see src/lib/demoPersistence.ts). */
+const SYSTEM = 'integrated' as const
+
 export function IntegratedDataProvider({ children }: { children: ReactNode }) {
-  const [customers, setCustomers] = useState<Customer[]>(seedCustomers)
-  const [products, setProducts] = useState<Product[]>(seedProducts)
-  const [orders, setOrders] = useState<Order[]>(seedOrders)
-  const [invoices, setInvoices] = useState<Invoice[]>(seedInvoices)
-  const [employees, setEmployees] = useState<Employee[]>(seedEmployeesList)
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(seedLeaveRequestsList)
-  const [applicants, setApplicants] = useState(seedApplicantsList)
-  const [activity, setActivity] = useState<ActivityItem[]>(seedActivity)
+  const [customers, setCustomers] = useState<Customer[]>(() => readDemoValue(SYSTEM, 'customers', seedCustomers))
+  const [products, setProducts] = useState<Product[]>(() => readDemoValue(SYSTEM, 'products', seedProducts))
+  const [orders, setOrders] = useState<Order[]>(() => readDemoValue(SYSTEM, 'orders', seedOrders))
+  const [invoices, setInvoices] = useState<Invoice[]>(() => readDemoValue(SYSTEM, 'invoices', seedInvoices))
+  const [employees, setEmployees] = useState<Employee[]>(() => readDemoValue(SYSTEM, 'employees', seedEmployeesList))
+  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(() => readDemoValue(SYSTEM, 'leaveRequests', seedLeaveRequestsList))
+  const [applicants, setApplicants] = useState(() => readDemoValue(SYSTEM, 'applicants', seedApplicantsList))
+  const [activity, setActivity] = useState<ActivityItem[]>(() => readDemoValue(SYSTEM, 'activity', seedActivity))
+
+  // Mirrors each entity into localStorage whenever it changes, so a visitor's
+  // session survives a refresh. Write-only: the seeds above already read it.
+  useDemoPersistence(SYSTEM, 'customers', customers)
+  useDemoPersistence(SYSTEM, 'products', products)
+  useDemoPersistence(SYSTEM, 'orders', orders)
+  useDemoPersistence(SYSTEM, 'invoices', invoices)
+  useDemoPersistence(SYSTEM, 'employees', employees)
+  useDemoPersistence(SYSTEM, 'leaveRequests', leaveRequests)
+  useDemoPersistence(SYSTEM, 'applicants', applicants)
+  useDemoPersistence(SYSTEM, 'activity', activity)
 
   const nextCustomerId = useRef(1015)
   const nextProductId = useRef(2015)

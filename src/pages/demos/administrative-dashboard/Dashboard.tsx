@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { SlidersHorizontal, AlertTriangle } from 'lucide-react'
+import { SlidersHorizontal, AlertTriangle, ArrowUpRight } from 'lucide-react'
 import { Link } from '../../../lib/router'
 import { ChartCard } from '../../../components/demo/ChartCard'
 import { BarChart } from '../../../components/demo/BarChart'
@@ -20,6 +20,7 @@ import {
   pendingApprovalsCount,
 } from '../../../data/demos/admin-dashboard/types'
 import type { DashboardWidgetId } from '../../../data/demos/admin-dashboard/types'
+import { readDerivedIndicators } from '../../../data/demos/admin-dashboard/derived'
 import { CustomizeDashboardModal } from './CustomizeDashboardModal'
 
 function WidgetCard({ title, className, children }: { title: string; className?: string; children: ReactNode }) {
@@ -153,6 +154,76 @@ function OperationalSnapshotWidget() {
   )
 }
 
+/**
+ * The one widget whose numbers are not this demo's own data: each row is read
+ * from another AETEX system's saved records. Computed once on mount rather than
+ * polled — navigating back to the dashboard remounts this page, which is the
+ * natural moment to re-read, and it keeps the demo free of background timers.
+ *
+ * A system with nothing saved yet reports that plainly instead of borrowing its
+ * seed data, which keeps the distinction between derived and invented honest.
+ */
+function ConnectedSystemsWidget() {
+  const [indicators] = useState(readDerivedIndicators)
+  const live = indicators.filter((indicator) => indicator.available)
+  const waiting = indicators.filter((indicator) => !indicator.available)
+
+  return (
+    <WidgetCard title="Across the business" className="lg:col-span-2">
+      <p className="-mt-2 mb-4 text-xs text-ink-500">
+        Read from the other demo systems, not entered here. Change something in one of them and
+        return to this page to see these update.
+      </p>
+
+      {live.length > 0 ? (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {live.map((indicator) => (
+            <Link
+              key={indicator.id}
+              to={indicator.sourceHref}
+              className="group rounded-xl border border-ink-200/80 p-3.5 transition-colors duration-200 hover:border-accent-300 hover:bg-accent-50/40"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-2xl font-semibold text-ink-900">{formatNumber(indicator.value ?? 0)}</p>
+                <ArrowUpRight
+                  className="size-4 shrink-0 text-ink-300 transition-colors duration-200 group-hover:text-accent-600"
+                  aria-hidden="true"
+                />
+              </div>
+              <p className="mt-1 text-xs font-medium text-ink-800">{indicator.label}</p>
+              <p className="mt-0.5 text-xs text-ink-500">{indicator.detail}</p>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+
+      {waiting.length > 0 ? (
+        <div className={cn('rounded-xl border border-dashed border-ink-200 bg-ink-50/50 p-3.5', live.length > 0 && 'mt-3')}>
+          <p className="text-xs font-medium text-ink-800">
+            {waiting.length} indicator{waiting.length === 1 ? '' : 's'} not available yet
+          </p>
+          <p className="mt-1 text-xs text-ink-500">
+            These read from systems you have not opened in this browser. Open one and come back.
+          </p>
+          <ul className="mt-2.5 flex flex-wrap gap-2">
+            {waiting.map((indicator) => (
+              <li key={indicator.id}>
+                <Link
+                  to={indicator.sourceHref}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-ink-200 bg-white px-2 py-1 text-xs font-medium text-ink-700 transition-colors duration-200 hover:border-accent-300 hover:text-accent-700"
+                >
+                  {indicator.label}
+                  <ArrowUpRight className="size-3" aria-hidden="true" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </WidgetCard>
+  )
+}
+
 const widgetRenderers: Record<DashboardWidgetId, () => ReactNode> = {
   kpis: () => <KpiSummaryWidget />,
   performance: () => <PerformanceTrendWidget />,
@@ -160,6 +231,7 @@ const widgetRenderers: Record<DashboardWidgetId, () => ReactNode> = {
   approvals: () => <PendingApprovalsWidget />,
   activity: () => <RecentActivityWidget />,
   operations: () => <OperationalSnapshotWidget />,
+  connected: () => <ConnectedSystemsWidget />,
 }
 
 /** Dashboard: the configurable centerpiece of the demo. Widget visibility and date range are session state, changed via "Customize Dashboard". */

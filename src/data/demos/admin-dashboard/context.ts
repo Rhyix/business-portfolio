@@ -30,7 +30,6 @@ export interface AdminDashboardDataContextValue {
   /** Dashboard customization state — lives in the same store as the entity data, read/written by both the Dashboard page and Settings' Dashboard Preferences tab. */
   visibleWidgetIds: DashboardWidgetId[]
   setVisibleWidgets: (ids: DashboardWidgetId[]) => void
-  resetWidgetLayout: () => void
   dateRange: DashboardDateRange
   setDateRange: (range: DashboardDateRange) => void
 }

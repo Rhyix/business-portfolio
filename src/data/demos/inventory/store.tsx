@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { readDemoValue, useDemoPersistence } from '../../../lib/demoPersistence'
 import type { ReactNode } from 'react'
 import { InventoryDataContext } from './context'
 import { initialProducts } from './products'
@@ -32,13 +33,25 @@ function today(): string {
  * Platform's or the Business Management System's state (see Stage 13 plan:
  * no cross-demo integration yet).
  */
+/** Namespace for this demo's persisted entities (see src/lib/demoPersistence.ts). */
+const SYSTEM = 'inventory' as const
+
 export function InventoryDataProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
-  const [warehouses, setWarehouses] = useState<Warehouse[]>(initialWarehouses)
-  const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers)
-  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders)
-  const [movements, setMovements] = useState<StockMovement[]>(initialMovements)
-  const [activity, setActivity] = useState<InventoryActivityItem[]>(initialActivity)
+  const [products, setProducts] = useState<Product[]>(() => readDemoValue(SYSTEM, 'products', initialProducts))
+  const [warehouses, setWarehouses] = useState<Warehouse[]>(() => readDemoValue(SYSTEM, 'warehouses', initialWarehouses))
+  const [suppliers, setSuppliers] = useState<Supplier[]>(() => readDemoValue(SYSTEM, 'suppliers', initialSuppliers))
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(() => readDemoValue(SYSTEM, 'purchaseOrders', initialPurchaseOrders))
+  const [movements, setMovements] = useState<StockMovement[]>(() => readDemoValue(SYSTEM, 'movements', initialMovements))
+  const [activity, setActivity] = useState<InventoryActivityItem[]>(() => readDemoValue(SYSTEM, 'activity', initialActivity))
+
+  // Mirrors each entity into localStorage whenever it changes, so a visitor's
+  // session survives a refresh. Write-only: the seeds above already read it.
+  useDemoPersistence(SYSTEM, 'products', products)
+  useDemoPersistence(SYSTEM, 'warehouses', warehouses)
+  useDemoPersistence(SYSTEM, 'suppliers', suppliers)
+  useDemoPersistence(SYSTEM, 'purchaseOrders', purchaseOrders)
+  useDemoPersistence(SYSTEM, 'movements', movements)
+  useDemoPersistence(SYSTEM, 'activity', activity)
   const [pendingPurchaseOrderProductId, setPendingPurchaseOrderProductId] = useState<string | null>(null)
 
   const nextProductId = useRef(3019)
@@ -189,9 +202,17 @@ export function InventoryDataProvider({ children }: { children: ReactNode }) {
     [suppliers, warehouses, products, logActivity],
   )
 
-  const markPurchaseOrderOrdered = useCallback((id: string) => {
-    setPurchaseOrders((current) => current.map((order) => (order.id === id ? { ...order, status: 'Ordered' } : order)))
-  }, [])
+  const markPurchaseOrderOrdered = useCallback(
+    (id: string) => {
+      const order = purchaseOrders.find((item) => item.id === id)
+      // Only a Draft can be placed; anything further along has already left
+      // that state and re-placing it would rewrite its history.
+      if (!order || order.status !== 'Draft') return
+      setPurchaseOrders((current) => current.map((item) => (item.id === id ? { ...item, status: 'Ordered' } : item)))
+      logActivity('po.created', `${order.id} for ${order.supplierName} was placed with the supplier.`)
+    },
+    [purchaseOrders, logActivity],
+  )
 
   const cancelPurchaseOrder = useCallback(
     (id: string) => {

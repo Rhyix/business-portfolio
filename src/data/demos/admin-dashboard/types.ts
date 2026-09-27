@@ -165,7 +165,14 @@ export interface AdminActivityItem {
 // Dashboard widget system — visibility-only, fixed order, no drag-and-drop.
 // ---------------------------------------------------------------------------
 
-export type DashboardWidgetId = 'kpis' | 'performance' | 'departments' | 'approvals' | 'activity' | 'operations'
+export type DashboardWidgetId =
+  | 'kpis'
+  | 'performance'
+  | 'departments'
+  | 'approvals'
+  | 'activity'
+  | 'operations'
+  | 'connected'
 
 export interface DashboardWidgetDefinition {
   id: DashboardWidgetId
@@ -182,9 +189,22 @@ export const DASHBOARD_WIDGETS: DashboardWidgetDefinition[] = [
   { id: 'approvals', title: 'Pending Approvals', description: 'Requests waiting for a decision.' },
   { id: 'activity', title: 'Recent Activity', description: 'The latest actions across the workspace.' },
   { id: 'operations', title: 'Operational Snapshot', description: 'Quick operational indicators for today.' },
+  {
+    id: 'connected',
+    title: 'Across the business',
+    description: "Counts read from the other AETEX demo systems' own saved data.",
+  },
 ]
 
-export const DEFAULT_VISIBLE_WIDGETS: DashboardWidgetId[] = ['kpis', 'performance', 'departments', 'approvals', 'activity', 'operations']
+export const DEFAULT_VISIBLE_WIDGETS: DashboardWidgetId[] = [
+  'kpis',
+  'connected',
+  'performance',
+  'departments',
+  'approvals',
+  'activity',
+  'operations',
+]
 
 // ---------------------------------------------------------------------------
 // Date range — four fixed illustrative options, not a calendar picker.

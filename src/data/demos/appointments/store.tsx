@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { readDemoValue, useDemoPersistence } from '../../../lib/demoPersistence'
 import type { ReactNode } from 'react'
 import { AppointmentsDataContext } from './context'
 import { formatDate } from '../../../lib/format'
@@ -34,14 +35,27 @@ function today(): string {
  * lightweight custom store (useState + plain updater functions), scoped
  * entirely to this demo — no cross-demo integration yet (see Stage 14 plan).
  */
+/** Namespace for this demo's persisted entities (see src/lib/demoPersistence.ts). */
+const SYSTEM = 'appointments' as const
+
 export function AppointmentsDataProvider({ children }: { children: ReactNode }) {
-  const [customers, setCustomers] = useState<Customer[]>(initialCustomers)
-  const [services, setServices] = useState<Service[]>(initialServices)
-  const [staff, setStaff] = useState<Staff[]>(initialStaff)
-  const [availability, setAvailability] = useState<StaffAvailability[]>(initialAvailability)
-  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments)
-  const [reminders, setReminders] = useState<Reminder[]>(initialReminders)
-  const [activity, setActivity] = useState(initialActivity)
+  const [customers, setCustomers] = useState<Customer[]>(() => readDemoValue(SYSTEM, 'customers', initialCustomers))
+  const [services, setServices] = useState<Service[]>(() => readDemoValue(SYSTEM, 'services', initialServices))
+  const [staff, setStaff] = useState<Staff[]>(() => readDemoValue(SYSTEM, 'staff', initialStaff))
+  const [availability, setAvailability] = useState<StaffAvailability[]>(() => readDemoValue(SYSTEM, 'availability', initialAvailability))
+  const [appointments, setAppointments] = useState<Appointment[]>(() => readDemoValue(SYSTEM, 'appointments', initialAppointments))
+  const [reminders, setReminders] = useState<Reminder[]>(() => readDemoValue(SYSTEM, 'reminders', initialReminders))
+  const [activity, setActivity] = useState(() => readDemoValue(SYSTEM, 'activity', initialActivity))
+
+  // Mirrors each entity into localStorage whenever it changes, so a visitor's
+  // session survives a refresh. Write-only: the seeds above already read it.
+  useDemoPersistence(SYSTEM, 'customers', customers)
+  useDemoPersistence(SYSTEM, 'services', services)
+  useDemoPersistence(SYSTEM, 'staff', staff)
+  useDemoPersistence(SYSTEM, 'availability', availability)
+  useDemoPersistence(SYSTEM, 'appointments', appointments)
+  useDemoPersistence(SYSTEM, 'reminders', reminders)
+  useDemoPersistence(SYSTEM, 'activity', activity)
   const [pendingBooking, setPendingBooking] = useState<PendingBooking | null>(null)
 
   const nextCustomerId = useRef(2011)

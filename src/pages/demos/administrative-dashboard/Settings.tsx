@@ -8,6 +8,8 @@ import { cn } from '../../../lib/cn'
 import { useAdminDashboardData } from '../../../data/demos/admin-dashboard/context'
 import { DASHBOARD_WIDGETS, DATE_RANGE_OPTIONS } from '../../../data/demos/admin-dashboard/types'
 import type { DashboardWidgetId } from '../../../data/demos/admin-dashboard/types'
+import { DemoDataReset } from '../../../components/demo/DemoDataReset'
+import { appName } from '../../../data/demos/admin-dashboard/navigation'
 
 type SettingsTab = 'general' | 'dashboard' | 'notifications' | 'display'
 
@@ -207,6 +209,8 @@ export function Settings() {
           <p className="text-xs text-ink-500">Density is a demo-only preference and does not currently change table row height.</p>
         </div>
       ) : null}
+
+      <DemoDataReset system="admin-dashboard" appName={appName} />
     </div>
   )
 }
