@@ -22,7 +22,7 @@ export function Projects() {
           eyebrow="Solutions"
           index={sectionIndexLabel('solutions')}
           title="Seven systems, one architecture"
-          description={`Each system below is a ${solutionLabel.toLowerCase()} you can open and use — a demonstration of what we build, not a delivered client deployment. Their modules are the ones the demos actually ship.`}
+          description={`Each system below is a ${solutionLabel.toLowerCase()} you can open and use — a demonstration of what we build, not a delivered client deployment. The modules listed are the ones each system actually ships, and the records inside them are fictional.`}
         />
 
         <SolutionArchitecture />

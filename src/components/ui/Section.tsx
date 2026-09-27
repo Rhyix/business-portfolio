@@ -37,10 +37,15 @@ const toneStyles: Record<'light' | 'muted' | 'dark', string> = {
  * order, so a bare `pb-0` can never win against `lg:py-32`. Choosing one
  * complete padding-bottom utility string or the other in JS (never both)
  * sidesteps that layer-ordering pitfall entirely.
+ *
+ * The base step is 56px rather than the 80px used from sm up: ten sections of
+ * 80px top and bottom spent roughly 1,600px of a phone's scroll on air alone,
+ * which reads as dead space at that width rather than as rhythm. Every sm/lg
+ * value is unchanged, so desktop spacing is exactly as before.
  */
 const sizeStyles: Record<'default' | 'feature', { pt: string; pb: string }> = {
-  default: { pt: 'pt-20 sm:pt-24 lg:pt-32', pb: 'pb-20 sm:pb-24 lg:pb-32' },
-  feature: { pt: 'pt-20 sm:pt-28 lg:pt-40', pb: 'pb-20 sm:pb-28 lg:pb-40' },
+  default: { pt: 'pt-14 sm:pt-24 lg:pt-32', pb: 'pb-14 sm:pb-24 lg:pb-32' },
+  feature: { pt: 'pt-14 sm:pt-28 lg:pt-40', pb: 'pb-14 sm:pb-28 lg:pb-40' },
 }
 
 /** Semantic page section with consistent vertical rhythm and anchor offset. */

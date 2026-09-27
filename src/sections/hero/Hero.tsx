@@ -5,6 +5,7 @@ import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
 import { ScrambleText } from '../../components/ui/ScrambleText'
 import { sectionIndexLabel } from '../../data/sectionRail'
+import { solutions } from '../../data/projects'
 import { ChapterContext, useChapterActivation, useSectionChapter } from '../../lib/chapter'
 import { useNavigation } from '../../lib/useNavigation'
 import { railIndexForSection } from '../../data/sectionRail'
@@ -17,6 +18,13 @@ const heroCapabilities = [
   'Database-driven applications',
   'Responsive web experiences',
 ] as const
+
+/**
+ * Counted from the solutions that actually carry a demo route, so the figure
+ * quoted in the first viewport can never drift from the number of demos the
+ * site ships.
+ */
+const interactiveSystemCount = solutions.filter((solution) => solution.demoHref).length
 
 /** First impression: positioning statement, primary actions and product visual. */
 export function Hero() {
@@ -51,30 +59,51 @@ export function Hero() {
         />
       </div>
 
-      <Container className="relative py-16 sm:py-20 lg:py-28">
-        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] lg:gap-20">
-          <div className="max-w-xl">
-            <ChapterReveal step={0} className="chapter-recede">
-              <p className="flex items-center gap-2.5 text-accent-600">
-                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500" />
-                <span aria-hidden="true" className="h-px w-10 shrink-0 bg-ink-200" />
-                <span aria-hidden="true" className="label-mono text-ink-400">
-                  {sectionIndexLabel('home')}
-                </span>
-                <span className="label-mono font-medium">Custom software development</span>
-              </p>
-            </ChapterReveal>
+      <Container className="relative py-16 sm:py-20 lg:pt-20 lg:pb-28">
+        <ChapterReveal step={0} className="chapter-recede">
+          <p className="flex items-center gap-2.5 text-accent-600">
+            <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500" />
+            <span aria-hidden="true" className="h-px w-10 shrink-0 bg-ink-200" />
+            <span aria-hidden="true" className="label-mono text-ink-400">
+              {sectionIndexLabel('home')}
+            </span>
+            <span className="label-mono font-medium">Custom software development</span>
+          </p>
+        </ChapterReveal>
 
-            <ChapterReveal step={1} className="chapter-recede">
-              <h1 className="mt-7 text-display font-semibold">
-                Custom software solutions built for your business
-              </h1>
-            </ChapterReveal>
+        {/*
+          The headline sits above the two-column split rather than inside the
+          left track. In the old arrangement the track narrowed as the display
+          type scaled up — 88px set in a 393–491px column — which forced six
+          lines of roughly eight characters and pushed the CTAs out of the
+          first viewport on every laptop width. Spanning the content width and
+          capping the measure instead keeps the display scale untouched and
+          resolves it to three lines. No typography token changes.
+        */}
+        <ChapterReveal step={1} className="chapter-recede">
+          {/*
+            Hero-scoped only: --text-display's clamp bottoms out at 40px, which
+            on a 320px screen sets 40px type in a 280px column and wraps this
+            headline to five lines. Overriding the size below 400px restores a
+            usable measure; the token itself is untouched, so every other
+            display-tier heading is unaffected.
+          */}
+          <h1 className="mt-7 max-w-4xl text-display font-semibold max-[400px]:text-[2rem]">
+            Custom software solutions built for your business
+          </h1>
+        </ChapterReveal>
 
+        {/*
+          Top-aligned, not centred: the SystemMap column is the taller of the
+          two, so centring pushed the lede and CTAs down by the difference —
+          enough to drop the primary action below a 780px-tall viewport.
+        */}
+        <div className="mt-10 grid items-start gap-14 lg:mt-12 lg:grid-cols-2 lg:gap-20">
+          <div>
             <ChapterReveal step={2} className="chapter-recede">
-              <p className="mt-6 text-lead text-ink-500">
-                We design and develop reliable web systems tailored to your requirements — from business
-                management platforms and administrative dashboards to the databases and integrations
+              <p className="max-w-xl text-lead text-ink-500">
+                We build web systems for organisations whose processes don&apos;t fit off-the-shelf
+                software — business platforms, dashboards, and the databases and integrations
                 behind them.
               </p>
             </ChapterReveal>
@@ -89,24 +118,30 @@ export function Hero() {
                   <ScrambleText text="View Solutions" />
                 </Button>
               </div>
-            </ChapterReveal>
 
-            <ChapterReveal step={4} className="chapter-recede">
-              <div className="mt-12 grid grid-cols-1 border-t border-ink-200 sm:grid-cols-2">
-                {heroCapabilities.map((capability, index) => (
-                  <div
-                    key={capability}
-                    className={cn(
-                      'border-b border-ink-200 py-4',
-                      index % 2 === 0 && 'sm:border-r sm:pr-6',
-                      index % 2 === 1 && 'sm:pl-6',
-                    )}
-                  >
-                    <span className="label-mono block text-ink-400">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="mt-1.5 block text-sm font-medium text-ink-900">{capability}</span>
-                  </div>
-                ))}
-              </div>
+              {/*
+                Third, quieter path: the demos are the site's strongest proof and
+                previously went unmentioned until several viewports down. A text
+                link rather than a button keeps the CTA pair unambiguous.
+              */}
+              <a
+                href="#solutions"
+                className="group mt-6 inline-flex items-center gap-2.5 text-sm text-ink-500 transition-colors duration-200 hover:text-ink-900"
+              >
+                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500" />
+                <span className="font-semibold text-ink-900">
+                  {interactiveSystemCount} interactive systems
+                </span>
+                {/* The rule is decorative, so without this the two halves run
+                    together into "systemsExplore" in the accessible name. */}
+                <span className="sr-only"> — </span>
+                <span aria-hidden="true" className="h-px w-6 shrink-0 bg-ink-200" />
+                <ScrambleText text="Explore the architecture" />
+                <ArrowRight
+                  className="size-3.5 shrink-0 transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
+              </a>
             </ChapterReveal>
           </div>
 
@@ -114,6 +149,35 @@ export function Hero() {
             <SystemMap />
           </ChapterReveal>
         </div>
+
+        {/*
+          Full width below both columns now that the headline no longer shares
+          the left track — four abreast at lg reads as a spec strip closing the
+          chapter rather than a list squeezed beside the diagram.
+        */}
+        <ChapterReveal step={4} className="chapter-recede">
+          <div className="mt-14 grid grid-cols-1 border-t border-ink-200 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
+            {heroCapabilities.map((capability, index) => (
+              <div
+                key={capability}
+                className={cn(
+                  'border-b border-ink-200 py-4',
+                  // Two-up band: rule between the pair, not after the row.
+                  index % 2 === 0 && 'sm:max-lg:border-r sm:max-lg:pr-6',
+                  index % 2 === 1 && 'sm:max-lg:pl-6',
+                  // Four-up: even gutters, flush at both outer edges.
+                  'lg:px-6',
+                  index === 0 && 'lg:pl-0',
+                  index === heroCapabilities.length - 1 && 'lg:pr-0',
+                  index < heroCapabilities.length - 1 && 'lg:border-r',
+                )}
+              >
+                <span className="label-mono block text-ink-400">{String(index + 1).padStart(2, '0')}</span>
+                <span className="mt-1.5 block text-sm font-medium text-ink-900">{capability}</span>
+              </div>
+            ))}
+          </div>
+        </ChapterReveal>
       </Container>
     </section>
     </ChapterContext.Provider>

@@ -36,7 +36,7 @@ export function About() {
               </p>
               <div className="mt-8 border-t border-ink-200 pt-8">
                 <Button href="#contact" variant="secondary">
-                  <ScrambleText text="Get in Touch" />
+                  <ScrambleText text="Start a Project" />
                 </Button>
               </div>
             </ChapterReveal>

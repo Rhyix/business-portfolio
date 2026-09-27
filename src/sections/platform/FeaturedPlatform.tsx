@@ -90,6 +90,13 @@ export function FeaturedPlatform() {
             <span aria-hidden="true" className="absolute -bottom-1.5 -left-1.5 size-1.5 rounded-full bg-accent-500 ring-4 ring-ink-975" />
             <span aria-hidden="true" className="absolute -bottom-1.5 -right-1.5 size-1.5 rounded-full bg-accent-500 ring-4 ring-ink-975" />
           </div>
+          {/* The demo applications state that their data is fictional; this
+              replica of the same dashboard shows figures too, so it says so as
+              well rather than leaving a revenue number unqualified. */}
+          <p className="label-mono mt-5 flex items-center gap-2.5 text-ink-500">
+            <span aria-hidden="true" className="h-px w-6 shrink-0 bg-ink-800" />
+            Sample data — the figures shown are illustrative, not a real deployment
+          </p>
         </ChapterReveal>
 
         {/* Capability groups — a de-boxed spec table instead of three separate cards. */}
@@ -176,9 +183,19 @@ export function FeaturedPlatform() {
             {platformHighlights.map((highlight, index) => (
               <li key={highlight.title}>
                 <Reveal delay={(index % 5) * 0.04}>
-                  <IconFrame icon={highlight.icon} size="sm" tone="dark" />
-                  <h4 className="mt-4 text-sm font-semibold text-white">{highlight.title}</h4>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-400">{highlight.description}</p>
+                  {/*
+                    Stacked on desktop, inline on a phone: the icon sitting in
+                    its own row above the title cost roughly 50px per item with
+                    nothing in the space beside it. Same five highlights, same
+                    text and order — only the arrangement changes.
+                  */}
+                  <div className="flex items-start gap-3.5 sm:block">
+                    <IconFrame icon={highlight.icon} size="sm" tone="dark" className="shrink-0" />
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-semibold text-white sm:mt-4">{highlight.title}</h4>
+                      <p className="mt-2 text-sm leading-relaxed text-ink-400">{highlight.description}</p>
+                    </div>
+                  </div>
                 </Reveal>
               </li>
             ))}

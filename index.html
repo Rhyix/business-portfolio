@@ -3,11 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--
-      Points at real brand artwork rather than the placeholder favicon.svg that
-      was removed. The wordmark is 4.74:1, so it is a stopgap at 16px — a square
-      brand mark is the proper fix, and no official one exists yet.
-    -->
     <link rel="icon" type="image/png" href="/brand/aetex-logo-1.png" />
     <meta name="theme-color" content="#101318" />
     <meta name="color-scheme" content="light" />
@@ -19,21 +14,23 @@
     <title>AETEX Tech Solution — Custom Software Solutions for Business</title>
     <meta
       name="description"
-      content="AETEX Tech Solution develops custom software solutions, web applications, business systems, databases, and technology solutions for organisations."
+      content="AETEX Tech Solution builds custom web systems for organisations whose processes don't fit off-the-shelf software — business platforms, dashboards and the databases behind them. Explore seven interactive demo systems."
     />
+    <!--
+      Demo sub-routes swap this to "noindex, follow" while mounted and restore
+      it on unmount — see src/components/demo/DemoShell.tsx.
+    -->
     <meta name="robots" content="index, follow" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AETEX Tech Solution" />
-    <!-- A wide wordmark is the right shape for a share card, unlike a favicon. -->
-    <meta property="og:image" content="/brand/aetex-logo-1.png" />
     <meta
       property="og:title"
       content="AETEX Tech Solution — Custom Software Solutions for Business"
     />
     <meta
       property="og:description"
-      content="AETEX Tech Solution develops custom software solutions, web applications, business systems, databases, and technology solutions for organisations."
+      content="AETEX Tech Solution builds custom web systems for organisations whose processes don't fit off-the-shelf software — business platforms, dashboards and the databases behind them. Explore seven interactive demo systems."
     />
 
     <meta name="twitter:card" content="summary" />
@@ -43,8 +40,17 @@
     />
     <meta
       name="twitter:description"
-      content="AETEX Tech Solution develops custom software solutions, web applications, business systems, databases, and technology solutions for organisations."
+      content="AETEX Tech Solution builds custom web systems for organisations whose processes don't fit off-the-shelf software — business platforms, dashboards and the databases behind them. Explore seven interactive demo systems."
     />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "AETEX Tech Solution",
+        "description": "AETEX Tech Solution builds custom web systems for organisations whose processes don't fit off-the-shelf software — business platforms, dashboards and the databases behind them. Explore seven interactive demo systems."
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

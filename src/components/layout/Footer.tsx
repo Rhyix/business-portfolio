@@ -56,7 +56,14 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div className="lg:col-span-3">
+          {/*
+            Hidden on phones. All seven links point at #services, and the
+            Navigate column above already carries a "Services" entry, so on a
+            small screen this column was seven 28px taps to a destination
+            already one tap away. At sm and up the list still earns its place as
+            an index of what we do.
+          */}
+          <div className="max-sm:hidden lg:col-span-3">
             <h2 className="text-xs font-semibold tracking-[0.16em] text-white uppercase">
               Services
             </h2>

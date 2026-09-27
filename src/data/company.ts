@@ -7,7 +7,11 @@ export interface CompanyProfile {
   monogram: string
   /** One-line positioning statement. */
   tagline: string
-  /** Short company summary used in the footer. */
+  /**
+   * Short company summary. Rendered in the footer and mirrored by the
+   * Organization JSON-LD description in index.html, so it has to read as a
+   * standalone sentence about the business rather than footer-only filler.
+   */
   description: string
   email: string
   phone: string
@@ -27,7 +31,7 @@ export const company: CompanyProfile = {
   monogram: 'A',
   tagline: 'Custom software solutions built for your business.',
   description:
-    'We design, develop and maintain custom web systems, business management software and responsive web applications, built around your requirements.',
+    'We build custom web systems for organisations whose processes do not fit off-the-shelf software — business platforms, dashboards and the databases and integrations behind them.',
   // PLACEHOLDER: replace with the real business email once confirmed.
   email: 'hello@example.com',
   // PLACEHOLDER: replace with the real business phone number once confirmed.

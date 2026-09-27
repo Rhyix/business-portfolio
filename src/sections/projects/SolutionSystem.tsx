@@ -61,7 +61,14 @@ export function SolutionSystem({ system, index }: SolutionSystemProps) {
         <span className="label-mono text-ink-400 transition-colors duration-200 ease-out-expo group-hover:text-accent-600 group-focus-within:text-accent-600">
           {String(index).padStart(2, '0')}
         </span>
-        <span className="label-mono text-ink-400">
+        {/*
+          Desktop separates the two tiers by panel width. Stacked on a phone that
+          difference disappears, so the tier label picks the work up: it takes the
+          page's existing dot-plus-mono-label vocabulary and a darker weight below
+          sm, and reverts to the quiet caption above it.
+        */}
+        <span className="label-mono flex items-center gap-2 text-ink-700 sm:text-ink-400">
+          <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500 sm:hidden" />
           {isHalf ? 'Platform half' : 'Specialist'}
         </span>
       </div>
@@ -105,10 +112,16 @@ export function SolutionSystem({ system, index }: SolutionSystemProps) {
       />
 
       <div className="mt-auto pt-6">
-        <div className="border-t border-ink-100 pt-4">
+        {/*
+          The rule's padding shrinks on mobile while the link itself grows to a
+          44px minimum, so the tap target reaches a comfortable size without the
+          text drifting away from the hairline above it. Above sm the link
+          returns to its natural height and the padding does the spacing.
+        */}
+        <div className="border-t border-ink-100 pt-1 sm:pt-4">
           <Link
             to={system.demoHref}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700"
+            className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-ink-900 transition-colors duration-200 hover:text-accent-700 sm:min-h-0"
           >
             <ScrambleText text="Open demo" />
             <span className="sr-only">: {system.title}</span>

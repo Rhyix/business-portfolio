@@ -45,7 +45,7 @@ export function FlagshipRoot() {
             <div className="mt-7 flex flex-col gap-x-6 gap-y-3 sm:flex-row sm:items-center">
               <Link
                 to={flagship.demoHref}
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-900 transition-colors duration-200 hover:text-accent-700"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-ink-900 transition-colors duration-200 hover:text-accent-700 sm:min-h-0"
               >
                 <ScrambleText text="Open the platform demo" />
                 <ArrowRight className="size-4" aria-hidden="true" />
@@ -53,7 +53,7 @@ export function FlagshipRoot() {
               {/* Back to the deep-dive chapter rather than restating it here. */}
               <a
                 href="#platform"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-500 transition-colors duration-200 hover:text-ink-900"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-ink-500 transition-colors duration-200 hover:text-ink-900 sm:min-h-0"
               >
                 <ArrowUp className="size-3.5" aria-hidden="true" />
                 See the full platform

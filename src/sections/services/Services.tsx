@@ -23,7 +23,7 @@ export function Services() {
           eyebrow="Services"
           index={sectionIndexLabel('services')}
           title="Software services built around the way you work"
-          description="From a first working version to a system your team relies on daily, we cover the build, the data behind it and the support that follows."
+          description="From a first working version to a system your team relies on daily, we cover the build, the data behind it and the support that follows. These are the services we provide; the seven systems further down are working examples you can open and use."
         />
 
       {/* The grid gets its own chapter: the section activates while these cards
@@ -55,7 +55,7 @@ export function Services() {
                   </p>
                 </div>
                 <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink-900 group-hover:text-accent-700">
-                  <ScrambleText text="Start a project" />
+                  <ScrambleText text="Start a Project" />
                   <ArrowRight
                     className="size-4 transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5"
                     aria-hidden="true"

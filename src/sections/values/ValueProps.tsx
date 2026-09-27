@@ -5,16 +5,21 @@ import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { valueProps } from '../../data/values'
 
-/** Trust section: concise reasons to work with the business. */
+/**
+ * The conditions under which building beats buying. Deliberately opens by
+ * conceding the general case: a reader who recognises none of these should not
+ * be commissioning custom software, and saying so is what makes the list
+ * credible to one who recognises several.
+ */
 export function ValueProps() {
   return (
     <Section id="why-us" labelledBy="why-us-title" tone="muted">
       <Container>
         <SectionHeading
           id="why-us-title"
-          eyebrow="Why work with us"
-          title="A development partner focused on your requirements"
-          description="Every system starts from how your organisation actually operates, then gets built with technology that stays maintainable long after launch."
+          eyebrow="When custom makes sense"
+          title="Most organisations should buy their software"
+          description="Off-the-shelf products are cheaper, faster and better supported than anything built from scratch, and for most work they are the right answer. A custom system earns its cost in the cases below, where the gap between the product and the process has stopped being worth working around."
         />
 
         <ul className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">

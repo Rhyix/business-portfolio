@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useDocumentMeta } from '../../lib/useDocumentMeta'
+import { useRouter } from '../../lib/useRouter'
 import { DemoSidebar } from './DemoSidebar'
 import { DemoTopbar } from './DemoTopbar'
 import type { DemoNavGroup, DemoNavItem, DemoNotification, GlobalSearchResult } from './types'
@@ -41,9 +42,24 @@ export function DemoShell({
   globalSearch,
   children,
 }: DemoShellProps) {
+  const { path } = useRouter()
+  // Same root test App.tsx routes with, plus tolerance for a trailing slash so
+  // "/solutions/inventory-management/" is still the root rather than a child.
+  const normalizedPath = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+  const isDemoRoot = normalizedPath === basePath
+
   useDocumentMeta({
     title: `${pageTitle} — ${appName} Demo | AETEX Tech Solution`,
     description: `Interactive sample solution demonstrating the ${appName} workflows AETEX Tech Solution designs and builds. All data shown is fictional demo data.`,
+    /*
+      A demo's landing page is a genuine destination worth finding, so it stays
+      indexable. Its inner pages are not: across the seven demos they reuse the
+      same page names — "Dashboard", "Reports" and "Settings" appear in all
+      seven — over tables of fictional records, which is thin, duplicated
+      content with no standalone context. "follow" is kept so their links still
+      lead crawlers back to the marketing page.
+    */
+    robots: isDemoRoot ? undefined : 'noindex, follow',
   })
 
   return (

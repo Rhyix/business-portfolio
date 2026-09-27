@@ -4,8 +4,9 @@ import { Button } from '../ui/Button'
 import { Container } from '../ui/Container'
 import { Logo } from '../ui/Logo'
 import { MobileMenu } from './MobileMenu'
-import { navigationCta, primaryNavigation, sectionIds } from '../../data/navigation'
-import { useActiveSection, useScrolled } from '../../lib/hooks'
+import { navigationCta, primaryNavigation, primaryNavIdForRailIndex } from '../../data/navigation'
+import { useScrolled } from '../../lib/hooks'
+import { useNavigation } from '../../lib/useNavigation'
 import { cn } from '../../lib/cn'
 
 const MOBILE_MENU_ID = 'mobile-navigation'
@@ -14,7 +15,12 @@ const MOBILE_MENU_ID = 'mobile-navigation'
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const scrolled = useScrolled(8)
-  const activeId = useActiveSection(sectionIds)
+  // Active section comes from NavigationProvider, which already runs the one
+  // section observer on the page. The navbar used to run a second one over the
+  // same sections, giving the dial and the mobile menu two sources of truth
+  // that could disagree.
+  const navigation = useNavigation()
+  const activeId = navigation ? primaryNavIdForRailIndex(navigation.activeIndex) : null
   const toggleButtonRef = useRef<HTMLButtonElement>(null)
 
   const closeMenu = useCallback(() => setMenuOpen(false), [])
