@@ -12,6 +12,7 @@ import { formatDate } from '../../../lib/format'
 import { leaveRequests as initialLeaveRequests } from '../../../data/demos/human-resources/leave'
 import type { LeaveRequest, LeaveStatus, LeaveType } from '../../../data/demos/human-resources/types'
 import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
+import { useOptionalHumanResourcesData } from '../../../data/demos/human-resources/context'
 
 const STATUS_OPTIONS: LeaveStatus[] = ['Pending', 'Approved', 'Rejected']
 const TYPE_OPTIONS: LeaveType[] = ['Vacation Leave', 'Sick Leave', 'Emergency Leave', 'Personal Leave']
@@ -32,8 +33,10 @@ type PendingAction = { request: LeaveRequest; action: 'Approved' | 'Rejected' } 
  */
 export function Leave() {
   const shared = useOptionalIntegratedData()
-  const [localRequests, setLocalRequests] = useState<LeaveRequest[]>(initialLeaveRequests)
-  const requests = shared ? shared.leaveRequests : localRequests
+  // Standalone: the HRMS provider mounted above the router. Inside the
+  // integrated platform that provider is absent and `shared` supplies these.
+  const local = useOptionalHumanResourcesData()
+  const requests = shared ? shared.leaveRequests : (local?.leaveRequests ?? initialLeaveRequests)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [typeFilter, setTypeFilter] = useState('All')
@@ -56,11 +59,7 @@ export function Leave() {
     if (shared) {
       shared.updateLeaveStatus(pendingAction.request.id, pendingAction.action)
     } else {
-      setLocalRequests((current) =>
-        current.map((request) =>
-          request.id === pendingAction.request.id ? { ...request, status: pendingAction.action } : request,
-        ),
-      )
+      local?.updateLeaveStatus(pendingAction.request.id, pendingAction.action)
     }
     setPendingAction(null)
     setDetailRequestId(null)
@@ -74,7 +73,7 @@ export function Leave() {
         <button
           type="button"
           onClick={() => setDetailRequestId(request.id)}
-          className="font-medium text-ink-900 hover:text-accent-700 hover:underline"
+          className="inline-block -my-2 py-2 font-medium text-ink-900 hover:text-accent-700 hover:underline"
         >
           {request.id}
         </button>

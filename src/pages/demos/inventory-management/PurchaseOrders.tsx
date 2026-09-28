@@ -97,7 +97,7 @@ export function PurchaseOrders() {
       key: 'id',
       header: 'PO Number',
       render: (order) => (
-        <button type="button" onClick={() => openDetail(order)} className="block text-left font-medium text-ink-900 hover:text-accent-600">
+        <button type="button" onClick={() => openDetail(order)} className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600">
           {order.id}
         </button>
       ),
@@ -120,7 +120,7 @@ export function PurchaseOrders() {
             type="button"
             onClick={() => setCancelTarget(order)}
             aria-label={`Cancel ${order.id}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
           >
             <X className="size-4" aria-hidden="true" />
           </button>

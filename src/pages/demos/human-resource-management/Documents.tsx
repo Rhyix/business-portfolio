@@ -53,7 +53,7 @@ export function Documents() {
         <button
           type="button"
           onClick={() => setDetailDocId(doc.id)}
-          className="font-medium text-ink-900 hover:text-accent-700 hover:underline"
+          className="inline-block -my-2 py-2 font-medium text-ink-900 hover:text-accent-700 hover:underline"
         >
           {documentTitle(doc.type)}
         </button>

@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import { useRouter } from '../../../lib/useRouter'
 import { DemoShell } from '../../../components/demo/DemoShell'
+import { BusinessManagementDataProvider } from '../../../data/demos/business-management/store'
 import {
   appName,
   basePath,
@@ -45,15 +46,20 @@ export function BusinessManagementSystem() {
   const { Component } = route
 
   return (
-    <DemoShell
-      appName={appName}
-      basePath={basePath}
-      navItems={demoNavItems}
-      notifications={demoNotifications}
-      activeKey={route.key}
-      pageTitle={route.title}
-    >
-      <Component />
-    </DemoShell>
+    // Above the routed <Component />, so state outlives a module change. The
+    // integrated platform never mounts this: it owns these same pages through
+    // IntegratedDataProvider instead.
+    <BusinessManagementDataProvider>
+      <DemoShell
+        appName={appName}
+        basePath={basePath}
+        navItems={demoNavItems}
+        notifications={demoNotifications}
+        activeKey={route.key}
+        pageTitle={route.title}
+      >
+        <Component />
+      </DemoShell>
+    </BusinessManagementDataProvider>
   )
 }

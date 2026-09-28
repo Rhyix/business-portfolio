@@ -141,12 +141,12 @@ export function Vacancies() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (vacancy) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(vacancy)}
             aria-label={`Edit ${vacancy.title}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -154,7 +154,7 @@ export function Vacancies() {
             type="button"
             onClick={() => setDeleteTarget(vacancy)}
             aria-label={`Remove ${vacancy.title}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="size-4" aria-hidden="true" />
           </button>
@@ -259,7 +259,7 @@ export function Vacancies() {
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage <= 1}
               aria-label="Previous page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -271,7 +271,7 @@ export function Vacancies() {
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={currentPage >= totalPages}
               aria-label="Next page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>

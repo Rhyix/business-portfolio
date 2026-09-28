@@ -70,7 +70,7 @@ export function Movements() {
         <button
           type="button"
           onClick={() => setDetailMovementId(movement.id)}
-          className="block text-left font-medium text-ink-900 hover:text-accent-600"
+          className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600"
         >
           {movement.id}
         </button>

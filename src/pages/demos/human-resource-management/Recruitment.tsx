@@ -13,6 +13,7 @@ import { formatDate } from '../../../lib/format'
 import { applicants as initialApplicants, interviewSchedule, jobOpenings } from '../../../data/demos/human-resources/recruitment'
 import type { Applicant, ApplicantStatus } from '../../../data/demos/human-resources/types'
 import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
+import { useOptionalHumanResourcesData } from '../../../data/demos/human-resources/context'
 import { cn } from '../../../lib/cn'
 
 type RecruitmentTab = 'openings' | 'applicants' | 'interviews'
@@ -66,8 +67,10 @@ function matchesSearch(applicant: Applicant, term: string): boolean {
 export function Recruitment() {
   const shared = useOptionalIntegratedData()
   const [activeTab, setActiveTab] = useState<RecruitmentTab>('openings')
-  const [localApplicants, setLocalApplicants] = useState<Applicant[]>(initialApplicants)
-  const applicants = shared ? shared.applicants : localApplicants
+  // Standalone: the HRMS provider mounted above the router. Inside the
+  // integrated platform that provider is absent and `shared` supplies these.
+  const local = useOptionalHumanResourcesData()
+  const applicants = shared ? shared.applicants : (local?.applicants ?? initialApplicants)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [positionFilter, setPositionFilter] = useState('All')
@@ -99,7 +102,7 @@ export function Recruitment() {
         <button
           type="button"
           onClick={() => setDetailApplicantId(applicant.id)}
-          className="font-medium text-ink-900 hover:text-accent-700 hover:underline"
+          className="inline-block -my-2 py-2 font-medium text-ink-900 hover:text-accent-700 hover:underline"
         >
           {applicant.name}
         </button>
@@ -116,11 +119,7 @@ export function Recruitment() {
     if (shared) {
       shared.updateApplicantStatus(detailApplicant.id, nextStatus)
     } else {
-      setLocalApplicants((current) =>
-        current.map((applicant) =>
-          applicant.id === detailApplicant.id ? { ...applicant, status: nextStatus } : applicant,
-        ),
-      )
+      local?.updateApplicantStatus(detailApplicant.id, nextStatus)
     }
   }
 

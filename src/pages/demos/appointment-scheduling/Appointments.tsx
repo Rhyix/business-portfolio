@@ -85,7 +85,7 @@ export function Appointments() {
         <button
           type="button"
           onClick={() => setSelectedAppointmentId(appointment.id)}
-          className="block text-left font-medium text-ink-900 hover:text-accent-600"
+          className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600"
         >
           {appointment.id}
         </button>
@@ -208,7 +208,7 @@ export function Appointments() {
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage <= 1}
               aria-label="Previous page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -220,7 +220,7 @@ export function Appointments() {
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={currentPage >= totalPages}
               aria-label="Next page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>

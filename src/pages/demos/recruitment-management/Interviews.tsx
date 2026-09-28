@@ -95,7 +95,7 @@ export function Interviews() {
       key: 'candidate',
       header: 'Candidate',
       render: (interview) => (
-        <button type="button" onClick={() => setDetailInterviewId(interview.id)} className="block text-left font-medium text-ink-900 hover:text-accent-600">
+        <button type="button" onClick={() => setDetailInterviewId(interview.id)} className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600">
           {interview.candidateName}
           <span className="block text-xs font-normal text-ink-500">{interview.positionTitle}</span>
         </button>
@@ -111,12 +111,12 @@ export function Interviews() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (interview) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => setDetailInterviewId(interview.id)}
             aria-label={`View ${interview.candidateName}'s interview`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Eye className="size-4" aria-hidden="true" />
           </button>
@@ -124,7 +124,7 @@ export function Interviews() {
             type="button"
             onClick={() => openEditModal(interview)}
             aria-label={`Edit ${interview.candidateName}'s interview`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -133,7 +133,7 @@ export function Interviews() {
               type="button"
               onClick={() => setCancelTarget(interview)}
               aria-label={`Cancel ${interview.candidateName}'s interview`}
-              className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
             >
               <X className="size-4" aria-hidden="true" />
             </button>

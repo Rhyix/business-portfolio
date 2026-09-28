@@ -215,7 +215,7 @@ function PurchaseOrderForm({
                         onClick={() => removeRow(index)}
                         disabled={rows.length === 1}
                         aria-label={`Remove line ${index + 1}`}
-                        className="inline-flex size-9 items-center justify-center rounded-lg text-ink-400 transition-colors duration-200 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink-400"
+                        className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-400 transition-colors duration-200 hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-ink-400"
                       >
                         <Trash2 className="size-4" aria-hidden="true" />
                       </button>

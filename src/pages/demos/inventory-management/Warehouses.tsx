@@ -110,7 +110,7 @@ export function Warehouses() {
                     type="button"
                     onClick={() => openEditModal(warehouse)}
                     aria-label={`Edit ${warehouse.name}`}
-                    className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+                    className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
                   >
                     <Pencil className="size-4" aria-hidden="true" />
                   </button>
@@ -119,7 +119,7 @@ export function Warehouses() {
                       type="button"
                       onClick={() => setDeactivateTarget(warehouse)}
                       aria-label={`Deactivate ${warehouse.name}`}
-                      className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+                      className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
                     >
                       <PowerOff className="size-4" aria-hidden="true" />
                     </button>

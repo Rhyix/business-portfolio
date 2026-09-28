@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { ChevronDown, ChevronLeft, ChevronRight, Pencil, Plus, Trash2, UserRound } from 'lucide-react'
 import { DataTable } from '../../../components/demo/DataTable'
 import type { DataTableColumn } from '../../../components/demo/DataTable'
@@ -14,6 +14,7 @@ import { employees as initialEmployees } from '../../../data/demos/human-resourc
 import { recentActivity } from '../../../data/demos/human-resources/dashboard'
 import type { Employee, EmployeeStatus, EmploymentType } from '../../../data/demos/human-resources/types'
 import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
+import { useOptionalHumanResourcesData } from '../../../data/demos/human-resources/context'
 import { basePath as recruitmentBasePath } from '../../../data/demos/recruitment/navigation'
 import { EmployeeFormModal } from './EmployeeFormModal'
 import type { EmployeeFormValues } from './EmployeeFormModal'
@@ -57,8 +58,10 @@ function sortEmployees(list: Employee[], sort: SortOption): Employee[] {
  */
 export function Employees() {
   const shared = useOptionalIntegratedData()
-  const [localEmployees, setLocalEmployees] = useState<Employee[]>(initialEmployees)
-  const employees = shared ? shared.employees : localEmployees
+  // Standalone: the HRMS provider mounted above the router. Inside the
+  // integrated platform that provider is absent and `shared` supplies these.
+  const local = useOptionalHumanResourcesData()
+  const employees = shared ? shared.employees : (local?.employees ?? initialEmployees)
   const [searchTerm, setSearchTerm] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
@@ -71,7 +74,6 @@ export function Employees() {
   const [detailEmployee, setDetailEmployee] = useState<Employee | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Employee | null>(null)
 
-  const nextIdRef = useRef(1017)
   const sortSelectId = useId()
 
   const departments = useMemo(
@@ -112,22 +114,12 @@ export function Employees() {
       if (shared) {
         shared.updateEmployee(editingEmployee.id, values)
       } else {
-        setLocalEmployees((current) =>
-          current.map((employee) =>
-            employee.id === editingEmployee.id ? { ...employee, ...values } : employee,
-          ),
-        )
+        local?.updateEmployee(editingEmployee.id, values)
       }
     } else if (shared) {
       shared.addEmployee(values)
     } else {
-      const newEmployee: Employee = {
-        id: `EMP-${nextIdRef.current}`,
-        ...values,
-        joined: new Date().toISOString().slice(0, 10),
-      }
-      nextIdRef.current += 1
-      setLocalEmployees((current) => [newEmployee, ...current])
+      local?.addEmployee(values)
     }
     setFormOpen(false)
   }
@@ -137,7 +129,7 @@ export function Employees() {
     if (shared) {
       shared.deleteEmployee(deleteTarget.id)
     } else {
-      setLocalEmployees((current) => current.filter((employee) => employee.id !== deleteTarget.id))
+      local?.deleteEmployee(deleteTarget.id)
     }
     setDeleteTarget(null)
   }
@@ -170,12 +162,12 @@ export function Employees() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (employee) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(employee)}
             aria-label={`Edit ${employee.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -183,7 +175,7 @@ export function Employees() {
             type="button"
             onClick={() => setDeleteTarget(employee)}
             aria-label={`Remove ${employee.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="size-4" aria-hidden="true" />
           </button>
@@ -293,7 +285,7 @@ export function Employees() {
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage <= 1}
               aria-label="Previous page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -305,7 +297,7 @@ export function Employees() {
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={currentPage >= totalPages}
               aria-label="Next page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>

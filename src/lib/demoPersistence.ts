@@ -22,6 +22,8 @@ export type DemoSystem =
   | 'inventory'
   | 'appointments'
   | 'admin-dashboard'
+  | 'business-management'
+  | 'human-resources'
 
 export function demoKey(system: DemoSystem, entity: string): string {
   return `aetex-demo:${system}:${entity}`
@@ -78,6 +80,11 @@ export const DEMO_ENTITIES: Record<DemoSystem, readonly string[]> = {
   inventory: ['products', 'warehouses', 'suppliers', 'purchaseOrders', 'movements', 'activity'],
   appointments: ['customers', 'services', 'staff', 'availability', 'appointments', 'reminders', 'activity'],
   'admin-dashboard': ['kpis', 'departments', 'approvals', 'activity', 'visibleWidgets', 'dateRange'],
+  // Only what each standalone demo actually lets a visitor change. Orders,
+  // invoices, attendance and documents stay read-only outside the integrated
+  // platform, so they are seeded fresh rather than persisted.
+  'business-management': ['customers', 'products'],
+  'human-resources': ['employees', 'leaveRequests', 'applicants'],
 }
 
 /**

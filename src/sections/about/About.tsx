@@ -23,7 +23,7 @@ export function About() {
             />
             <ChapterReveal step={3} className="mt-6">
               <p className="max-w-[20ch] text-title font-semibold text-ink-900">
-                We build web-based systems for organisations that need software shaped around their own
+                We build web-based systems for organizations that need software shaped around their own
                 processes instead of a product they have to adapt to.
               </p>
             </ChapterReveal>

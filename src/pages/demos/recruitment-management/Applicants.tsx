@@ -157,7 +157,7 @@ export function Applicants() {
         <button
           type="button"
           onClick={() => setDetailApplicantId(applicant.id)}
-          className="block text-left font-medium text-ink-900 hover:text-accent-600"
+          className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600"
         >
           {applicant.name}
           <span className="block text-xs font-normal text-ink-500">{applicant.id}</span>
@@ -175,12 +175,12 @@ export function Applicants() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (applicant) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(applicant)}
             aria-label={`Edit ${applicant.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -285,7 +285,7 @@ export function Applicants() {
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage <= 1}
               aria-label="Previous page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -297,7 +297,7 @@ export function Applicants() {
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={currentPage >= totalPages}
               aria-label="Next page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>

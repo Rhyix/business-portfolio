@@ -5,6 +5,8 @@ import { demoControlStyles } from '../../../components/demo/formControlStyles'
 import { DemoNotice } from '../../../components/demo/DemoNotice'
 import { Button } from '../../../components/ui/Button'
 import { cn } from '../../../lib/cn'
+import { DemoDataReset } from '../../../components/demo/DemoDataReset'
+import { appName } from '../../../data/demos/business-management/navigation'
 
 type SettingsTab = 'profile' | 'preferences' | 'notifications'
 
@@ -224,6 +226,8 @@ export function Settings() {
           />
         </div>
       ) : null}
+
+      <DemoDataReset system="business-management" appName={appName} />
     </div>
   )
 }

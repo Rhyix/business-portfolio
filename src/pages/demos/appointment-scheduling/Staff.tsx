@@ -96,12 +96,12 @@ export function Staff() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (member) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(member)}
             aria-label={`Edit ${member.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -110,7 +110,7 @@ export function Staff() {
               type="button"
               onClick={() => setDeactivateTarget(member)}
               aria-label={`Deactivate ${member.name}`}
-              className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
             >
               <PowerOff className="size-4" aria-hidden="true" />
             </button>

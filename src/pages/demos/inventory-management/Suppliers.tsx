@@ -96,7 +96,7 @@ export function Suppliers() {
         <button
           type="button"
           onClick={() => setDetailSupplierId(supplier.id)}
-          className="block text-left font-medium text-ink-900 hover:text-accent-600"
+          className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600"
         >
           {supplier.name}
           <span className="block text-xs font-normal text-ink-500">{supplier.contactName}</span>
@@ -117,12 +117,12 @@ export function Suppliers() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (supplier) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(supplier)}
             aria-label={`Edit ${supplier.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -131,7 +131,7 @@ export function Suppliers() {
               type="button"
               onClick={() => setDeactivateTarget(supplier)}
               aria-label={`Deactivate ${supplier.name}`}
-              className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
             >
               <PowerOff className="size-4" aria-hidden="true" />
             </button>

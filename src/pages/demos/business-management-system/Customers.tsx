@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2, UserRound } from 'lucide-react'
 import { DataTable } from '../../../components/demo/DataTable'
 import type { DataTableColumn } from '../../../components/demo/DataTable'
@@ -11,6 +11,7 @@ import { formatDate } from '../../../lib/format'
 import { initialCustomers } from '../../../data/demos/business-management/customers'
 import type { Customer, CustomerStatus } from '../../../data/demos/business-management/types'
 import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
+import { useOptionalBusinessManagementData } from '../../../data/demos/business-management/context'
 import { CustomerFormModal } from './CustomerFormModal'
 import type { CustomerFormValues } from './CustomerFormModal'
 
@@ -36,8 +37,10 @@ function matchesSearch(customer: Customer, term: string): boolean {
  */
 export function Customers() {
   const shared = useOptionalIntegratedData()
-  const [localCustomers, setLocalCustomers] = useState<Customer[]>(initialCustomers)
-  const customers = shared ? shared.customers : localCustomers
+  // Standalone: the BMS provider mounted above the router. Inside the
+  // integrated platform that provider is absent and `shared` supplies these.
+  const local = useOptionalBusinessManagementData()
+  const customers = shared ? shared.customers : (local?.customers ?? initialCustomers)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [page, setPage] = useState(1)
@@ -47,7 +50,6 @@ export function Customers() {
   const [detailCustomer, setDetailCustomer] = useState<Customer | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Customer | null>(null)
 
-  const nextIdRef = useRef(1015)
 
   const filteredCustomers = useMemo(() => {
     return customers.filter(
@@ -87,23 +89,12 @@ export function Customers() {
       if (shared) {
         shared.updateCustomer(editingCustomer.id, values)
       } else {
-        setLocalCustomers((current) =>
-          current.map((customer) =>
-            customer.id === editingCustomer.id ? { ...customer, ...values } : customer,
-          ),
-        )
+        local?.updateCustomer(editingCustomer.id, values)
       }
     } else if (shared) {
       shared.addCustomer(values)
     } else {
-      const newCustomer: Customer = {
-        id: `CUS-${nextIdRef.current}`,
-        ...values,
-        orders: 0,
-        joined: new Date().toISOString().slice(0, 10),
-      }
-      nextIdRef.current += 1
-      setLocalCustomers((current) => [newCustomer, ...current])
+      local?.addCustomer(values)
     }
     setFormOpen(false)
   }
@@ -113,7 +104,7 @@ export function Customers() {
     if (shared) {
       shared.deleteCustomer(deleteTarget.id)
     } else {
-      setLocalCustomers((current) => current.filter((customer) => customer.id !== deleteTarget.id))
+      local?.deleteCustomer(deleteTarget.id)
     }
     setDeleteTarget(null)
   }
@@ -146,7 +137,7 @@ export function Customers() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (customer) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={(event) => {
@@ -154,7 +145,7 @@ export function Customers() {
               openEditModal(customer)
             }}
             aria-label={`Edit ${customer.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -165,7 +156,7 @@ export function Customers() {
               setDeleteTarget(customer)
             }}
             aria-label={`Delete ${customer.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="size-4" aria-hidden="true" />
           </button>
@@ -223,7 +214,7 @@ export function Customers() {
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage <= 1}
               aria-label="Previous page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -235,7 +226,7 @@ export function Customers() {
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={currentPage >= totalPages}
               aria-label="Next page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>

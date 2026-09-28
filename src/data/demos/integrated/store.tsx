@@ -188,11 +188,15 @@ export function IntegratedDataProvider({ children }: { children: ReactNode }) {
   const reconciledHireApplicantIds = useRef<Set<string>>(new Set())
 
   useEffect(() => {
-    // The Employee list itself doesn't persist across a mount (no backend),
-    // only the bridge's own small record does — so on every mount this
-    // re-creates an Employee for every queued-or-already-synced hire that
-    // isn't already present in this session, reusing the same Employee ID
-    // a previous mount assigned. See src/lib/integrationBridge.ts.
+    // Turns each queued-or-already-synced hire from the bridge into an
+    // Employee, reusing the Employee ID a previous visit assigned.
+    //
+    // The Employee list itself now persists (see useDemoPersistence above), so
+    // a hire reconciled on an earlier visit is already in the list when this
+    // runs. The guard inside setEmployees is what stops it being re-created on
+    // every reload — before persistence the list always started from seed, so
+    // an unconditional insert was correct and is no longer.
+    // See src/lib/integrationBridge.ts.
     reconcileHires((record) => {
       if (reconciledHireApplicantIds.current.has(record.applicantId)) {
         return record.employeeId ?? ''
@@ -213,11 +217,22 @@ export function IntegratedDataProvider({ children }: { children: ReactNode }) {
         source: 'Recruitment System',
         recruitmentApplicantId: record.applicantId,
       }
-      setEmployees((current) => [newEmployee, ...current])
-      logActivity(
-        'employee.added',
-        `${newEmployee.name} joined ${newEmployee.department} as ${newEmployee.position} — added from Recruitment System.`,
-      )
+      let created = false
+      setEmployees((current) => {
+        // Checked against current state rather than a mount-scoped ref, so a
+        // record persisted by an earlier visit counts as already reconciled.
+        if (current.some((employee) => employee.recruitmentApplicantId === record.applicantId)) {
+          return current
+        }
+        created = true
+        return [newEmployee, ...current]
+      })
+      if (created) {
+        logActivity(
+          'employee.added',
+          `${newEmployee.name} joined ${newEmployee.department} as ${newEmployee.position} — added from Recruitment System.`,
+        )
+      }
       return id
     })
   }, [logActivity])

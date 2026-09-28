@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { DataTable } from '../../../components/demo/DataTable'
 import type { DataTableColumn } from '../../../components/demo/DataTable'
@@ -11,6 +11,7 @@ import { formatCurrency, formatNumber } from '../../../lib/format'
 import { initialProducts } from '../../../data/demos/business-management/products'
 import type { Product } from '../../../data/demos/business-management/types'
 import { useOptionalIntegratedData } from '../../../data/demos/integrated/context'
+import { useOptionalBusinessManagementData } from '../../../data/demos/business-management/context'
 import { ProductFormModal } from './ProductFormModal'
 import type { ProductFormValues } from './ProductFormModal'
 
@@ -41,8 +42,10 @@ function matchesSearch(product: Product, term: string): boolean {
  */
 export function Products() {
   const shared = useOptionalIntegratedData()
-  const [localProducts, setLocalProducts] = useState<Product[]>(initialProducts)
-  const products = shared ? shared.products : localProducts
+  // Standalone: the BMS provider mounted above the router. Inside the
+  // integrated platform that provider is absent and `shared` supplies these.
+  const local = useOptionalBusinessManagementData()
+  const products = shared ? shared.products : (local?.products ?? initialProducts)
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [page, setPage] = useState(1)
@@ -51,7 +54,6 @@ export function Products() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null)
 
-  const nextIdRef = useRef(2015)
 
   const categories = useMemo(
     () => Array.from(new Set(products.map((product) => product.category))).sort(),
@@ -96,18 +98,12 @@ export function Products() {
       if (shared) {
         shared.updateProduct(editingProduct.id, values)
       } else {
-        setLocalProducts((current) =>
-          current.map((product) =>
-            product.id === editingProduct.id ? { ...product, ...values } : product,
-          ),
-        )
+        local?.updateProduct(editingProduct.id, values)
       }
     } else if (shared) {
       shared.addProduct(values)
     } else {
-      const newProduct: Product = { id: `PRD-${nextIdRef.current}`, ...values }
-      nextIdRef.current += 1
-      setLocalProducts((current) => [newProduct, ...current])
+      local?.addProduct(values)
     }
     setFormOpen(false)
   }
@@ -117,7 +113,7 @@ export function Products() {
     if (shared) {
       shared.deleteProduct(deleteTarget.id)
     } else {
-      setLocalProducts((current) => current.filter((product) => product.id !== deleteTarget.id))
+      local?.deleteProduct(deleteTarget.id)
     }
     setDeleteTarget(null)
   }
@@ -156,12 +152,12 @@ export function Products() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (product) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(product)}
             aria-label={`Edit ${product.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -169,7 +165,7 @@ export function Products() {
             type="button"
             onClick={() => setDeleteTarget(product)}
             aria-label={`Remove ${product.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="size-4" aria-hidden="true" />
           </button>
@@ -227,7 +223,7 @@ export function Products() {
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage <= 1}
               aria-label="Previous page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
             </button>
@@ -239,7 +235,7 @@ export function Products() {
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={currentPage >= totalPages}
               aria-label="Next page"
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ChevronRight className="size-4" aria-hidden="true" />
             </button>

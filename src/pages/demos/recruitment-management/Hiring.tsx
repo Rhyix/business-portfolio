@@ -76,7 +76,7 @@ export function Hiring() {
           <button
             type="button"
             onClick={() => setDetailApplicantId(applicant.id)}
-            className="block text-left font-medium text-ink-900 hover:text-accent-600"
+            className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600"
           >
             {applicant.name}
             <span className="block text-xs font-normal text-ink-500">{applicant.positionTitle}</span>
@@ -93,14 +93,14 @@ export function Hiring() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (applicant) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           {stage === 'Shortlisted' ? (
             <>
               <button
                 type="button"
                 onClick={() => openDecisionModal('hire', applicant)}
                 aria-label={`Mark ${applicant.name} hired`}
-                className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-emerald-50 hover:text-emerald-600"
+                className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-emerald-50 hover:text-emerald-600"
               >
                 <UserCheck className="size-4" aria-hidden="true" />
               </button>
@@ -108,7 +108,7 @@ export function Hiring() {
                 type="button"
                 onClick={() => openDecisionModal('reject', applicant)}
                 aria-label={`Reject ${applicant.name}`}
-                className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+                className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
               >
                 <UserX className="size-4" aria-hidden="true" />
               </button>
@@ -118,7 +118,7 @@ export function Hiring() {
               type="button"
               onClick={() => openReturnModal(applicant)}
               aria-label={`Return ${applicant.name} to pipeline`}
-              className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
             >
               <RotateCcw className="size-4" aria-hidden="true" />
             </button>

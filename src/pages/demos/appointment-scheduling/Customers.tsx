@@ -71,7 +71,7 @@ export function Customers() {
       key: 'name',
       header: 'Customer',
       render: (customer) => (
-        <button type="button" onClick={() => setDetailCustomerId(customer.id)} className="block text-left font-medium text-ink-900 hover:text-accent-600">
+        <button type="button" onClick={() => setDetailCustomerId(customer.id)} className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600">
           {customer.name}
         </button>
       ),
@@ -94,12 +94,12 @@ export function Customers() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (customer) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => setDetailCustomerId(customer.id)}
             aria-label={`View ${customer.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Eye className="size-4" aria-hidden="true" />
           </button>
@@ -107,7 +107,7 @@ export function Customers() {
             type="button"
             onClick={() => openEditModal(customer)}
             aria-label={`Edit ${customer.name}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -116,7 +116,7 @@ export function Customers() {
               type="button"
               onClick={() => setDeactivateTarget(customer)}
               aria-label={`Deactivate ${customer.name}`}
-              className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+              className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
             >
               <PowerOff className="size-4" aria-hidden="true" />
             </button>

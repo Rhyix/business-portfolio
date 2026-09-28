@@ -5,6 +5,10 @@ import { X } from 'lucide-react'
 import { EASE_OUT_EXPO } from '../../lib/motion'
 import { cn } from '../../lib/cn'
 
+/** Everything the browser would ordinarily put in the tab order. */
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
 interface ModalProps {
   open: boolean
   onClose: () => void
@@ -39,7 +43,47 @@ export function Modal({ open, onClose, title, description, children, className }
     if (!open) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+
+      // Keep Tab inside the dialog. `aria-modal` tells assistive tech the rest
+      // of the page is inert, but it does not stop the browser's own tab order
+      // walking into it — without this, tabbing off the last control lands on
+      // the navigation behind the overlay.
+      if (event.key !== 'Tab') return
+
+      const panel = panelRef.current
+      if (!panel) return
+
+      const focusable = [...panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)].filter(
+        (element) => !element.hasAttribute('disabled') && element.offsetParent !== null,
+      )
+      if (focusable.length === 0) {
+        // Nothing to move to; hold focus on the panel itself rather than
+        // letting it escape to the page behind.
+        event.preventDefault()
+        panel.focus()
+        return
+      }
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const active = document.activeElement
+
+      if (event.shiftKey && (active === first || active === panel)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault()
+        first.focus()
+      } else if (active instanceof Node && !panel.contains(active)) {
+        // Focus was outside to begin with (e.g. the browser chrome handed it
+        // back); pull it to the expected end of the dialog.
+        event.preventDefault()
+        ;(event.shiftKey ? last : first).focus()
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -104,7 +148,7 @@ export function Modal({ open, onClose, title, description, children, className }
                 type="button"
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-400 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-700"
+                className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-400 transition-colors duration-200 after:absolute after:-inset-1 after:content-[''] hover:bg-ink-100 hover:text-ink-700"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>

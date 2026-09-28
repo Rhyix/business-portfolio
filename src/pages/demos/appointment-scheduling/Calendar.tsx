@@ -130,7 +130,7 @@ export function Calendar() {
             type="button"
             onClick={goPrevious}
             aria-label="Previous"
-            className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50"
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
           </button>
@@ -145,7 +145,7 @@ export function Calendar() {
             type="button"
             onClick={goNext}
             aria-label="Next"
-            className="inline-flex size-9 items-center justify-center rounded-lg border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] border border-ink-200 text-ink-600 transition-colors duration-200 hover:bg-ink-50"
           >
             <ChevronRight className="size-4" aria-hidden="true" />
           </button>

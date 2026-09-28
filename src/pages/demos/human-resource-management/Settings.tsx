@@ -5,6 +5,8 @@ import { demoControlStyles } from '../../../components/demo/formControlStyles'
 import { DemoNotice } from '../../../components/demo/DemoNotice'
 import { Button } from '../../../components/ui/Button'
 import { cn } from '../../../lib/cn'
+import { DemoDataReset } from '../../../components/demo/DemoDataReset'
+import { appName } from '../../../data/demos/human-resources/navigation'
 
 type SettingsTab = 'organization' | 'preferences' | 'notifications' | 'attendance'
 
@@ -269,6 +271,8 @@ export function Settings() {
           </FormField>
         </div>
       ) : null}
+
+      <DemoDataReset system="human-resources" appName={appName} />
     </div>
   )
 }

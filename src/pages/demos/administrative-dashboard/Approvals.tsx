@@ -66,7 +66,7 @@ export function Approvals() {
       key: 'id',
       header: 'Request ID',
       render: (approval) => (
-        <button type="button" onClick={() => openDetail(approval)} className="block text-left font-medium text-ink-900 hover:text-accent-600">
+        <button type="button" onClick={() => openDetail(approval)} className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600">
           {approval.id}
         </button>
       ),

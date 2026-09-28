@@ -77,7 +77,7 @@ export function Kpis() {
       key: 'metric',
       header: 'Metric',
       render: (kpi) => (
-        <button type="button" onClick={() => setDetailKpiId(kpi.id)} className="block text-left font-medium text-ink-900 hover:text-accent-600">
+        <button type="button" onClick={() => setDetailKpiId(kpi.id)} className="block -my-2 py-2 text-left font-medium text-ink-900 hover:text-accent-600">
           {kpi.metric}
         </button>
       ),
@@ -102,12 +102,12 @@ export function Kpis() {
       headerClassName: 'text-right',
       cellClassName: 'text-right',
       render: (kpi) => (
-        <span className="inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-2">
           <button
             type="button"
             onClick={() => openEditModal(kpi)}
             aria-label={`Edit ${kpi.metric}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-ink-100 hover:text-ink-900"
           >
             <Pencil className="size-4" aria-hidden="true" />
           </button>
@@ -115,7 +115,7 @@ export function Kpis() {
             type="button"
             onClick={() => setDeleteTarget(kpi)}
             aria-label={`Remove ${kpi.metric}`}
-            className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            className="inline-flex size-9 items-center justify-center rounded-lg relative after:absolute after:-inset-1 after:content-[''] text-ink-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="size-4" aria-hidden="true" />
           </button>
