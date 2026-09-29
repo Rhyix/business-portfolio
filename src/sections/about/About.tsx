@@ -1,3 +1,4 @@
+import { AnimatedBrandSignature } from '../../components/ui/AnimatedBrandSignature'
 import { Button } from '../../components/ui/Button'
 import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Container } from '../../components/ui/Container'
@@ -13,6 +14,8 @@ export function About() {
   return (
     <Section id="about" labelledBy="about-title" tone="muted">
       <Container>
+        <AnimatedBrandSignature className="mx-auto mb-14 w-[240px] sm:w-[300px] md:w-[340px] lg:mb-16 lg:w-[440px]" />
+
         <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-0">
           <div className="lg:pr-14">
             <SectionHeading
