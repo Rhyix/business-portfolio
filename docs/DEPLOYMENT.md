@@ -236,8 +236,20 @@ rewrite rule, a direct visit or refresh returns a server 404 — verified:
 serving `dist/` from a plain static server gives HTTP 404 for
 `/solutions/inventory-management` while `/` returns 200.
 
-No host has been chosen, and the options are mutually incompatible, so no
-configuration is committed. Once the host is known:
+**Resolved: the host is Vercel, and `vercel.json` is committed** with a
+catch-all rewrite to `/index.html`. Vercel matches the filesystem before
+applying rewrites, so assets, `robots.txt` and the brand files are still served
+as real files — verified against the production build: every demo route returns
+200 and renders, `/assets/*.js` keeps `text/javascript` and the logo keeps
+`image/png`.
+
+One consequence worth knowing: a catch-all means an unknown URL returns HTTP
+200 and renders the marketing page rather than a 404. The router has no
+not-found branch, so this is a soft 404. Harmless for visitors, slightly untidy
+for crawlers; fixing it means adding a not-found route, not changing the
+rewrite.
+
+The table below is kept for reference if the host ever changes:
 
 | Host | Configuration |
 | --- | --- |
