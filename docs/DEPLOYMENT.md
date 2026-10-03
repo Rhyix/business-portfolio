@@ -33,9 +33,11 @@ fixed, add inside `<head>`:
 
 ### JSON-LD
 
-The `Organization` block in `index.html` carries only `name` and `description`.
-`url` and `logo` need absolute URLs; `contactPoint` and `address` need the real
-business details from item 2. All four are omitted rather than invented:
+The `Organization` block in `index.html` carries `name`, `description`, `email`
+and `telephone`. `url` and `logo` still need absolute URLs and remain omitted
+rather than invented. `address` stays out permanently: the business is remote,
+and "Remote" is not a postal address — inventing one to satisfy the schema
+would be worse than leaving it absent.
 
 ```jsonc
 "url": "https://DOMAIN/",
@@ -95,21 +97,79 @@ sub-routes — see item 4. Do not invent `lastmod` dates.
 
 ---
 
-## 2. Real contact details
+## 2. Contact details and form delivery
 
-`src/data/company.ts` still carries placeholders, and they render as live
-`mailto:` and `tel:` links:
+### Contact details — resolved
 
-| Field | Placeholder | Needed |
-| --- | --- | --- |
-| `email` | `hello@example.com` | Real business email |
-| `phone` | `+00 000 0000` | Real business phone |
-| `location` | `Remote` | Real city/region, or confirmation that "Remote" is accurate |
+`src/data/company.ts` now carries the real business details. Nothing here is
+outstanding; the table is kept as a record of what the values are and where
+they come from.
 
-This is the highest-severity item: the contact form has no backend by design,
-and its fallback tells visitors to email `company.email` — so every contact path
-currently dead-ends. Replacing the three strings is the only change required;
-no component or layout work follows from it.
+| Field | Value |
+| --- | --- |
+| `email` | `aetextechsolutions@gmail.com` |
+| `phone` | `+63 961 394 6736` (links derive `tel:+639613946736`) |
+| `location` | `Remote` — accurate, not a placeholder |
+
+All twelve consumers — Contact, Footer, CallToAction, FormSuccess — read from
+that one source, so these are changed in a single place.
+
+### Form delivery — implemented, awaiting a key
+
+The contact form posts directly to **Web3Forms**, which delivers the enquiry to
+`aetextechsolutions@gmail.com`. All provider-specific code is isolated in
+`src/lib/submitEnquiry.ts`.
+
+A managed endpoint was chosen because it is the only arrangement that delivers
+real mail while the deployment host is still undecided (item 1): it needs no
+server, no serverless runtime and no verified sending domain, and it ships no
+private credential. If a host is later chosen and you would rather own the
+endpoint, rewriting that one module is the whole migration.
+
+**No Gmail password, Gmail app password or SMTP credential is used anywhere in
+this project, and none should ever be added.**
+
+#### Required environment variable
+
+```
+VITE_WEB3FORMS_ACCESS_KEY=<key from the Web3Forms dashboard>
+```
+
+Set it in `.env.local`, which git ignores. `.env.example` documents it and is
+committed; the real key never is.
+
+This key is **client-visible by design** — the browser calls the provider
+directly, so it is compiled into the bundle. That is not a leak. It authorises
+one thing only: delivering a submission to the address it is registered
+against. It cannot read mail, redirect delivery, or send anywhere else. It is
+not a password, and nothing resembling one belongs in a `VITE_` variable, all
+of which are readable by anyone who loads the site.
+
+#### Status
+
+External setup is complete. The account exists, the address is verified, and
+the key is installed in `.env.local`.
+
+An end-to-end test was run against the production build on 2026-10-03. A real
+submission returned HTTP 200 and `{"success": true, "message": "Form submitted
+successfully!"}`, with Web3Forms echoing back all five fields, the `replyto`
+and the subject. A second submission with the honeypot deliberately filled was
+rejected by the provider with HTTP 400 ("Honeypot Error"), and the form showed
+a delivery failure rather than a success — confirming both directions.
+
+**Provider acceptance is verified; final inbox receipt is confirmed by the
+account owner**, since nothing in this repository can read the mailbox.
+
+The failure behaviour is worth keeping in mind when changing this code: with no
+key configured the form reports that the enquiry was not sent. It never reports
+a success it has not been given, and that property is the point of the module.
+
+#### If delivery ever needs re-establishing
+
+1. Create a Web3Forms account using `aetextechsolutions@gmail.com`.
+2. Verify that address.
+3. Copy the access key into `.env.local`.
+4. Re-run the end-to-end test and confirm the enquiry arrives.
 
 ---
 

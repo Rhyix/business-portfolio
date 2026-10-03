@@ -89,10 +89,12 @@ export function Footer() {
               <li>
                 <a
                   href={contactLinks.email}
-                  className="inline-flex items-center gap-2 py-1 transition-colors duration-200 hover:text-white"
+                  className="flex items-start gap-2 py-1 transition-colors duration-200 hover:text-white"
                 >
-                  <Mail className="size-4 text-ink-400" aria-hidden="true" />
-                  {company.email}
+                  <Mail className="mt-0.5 size-4 shrink-0 text-ink-400" aria-hidden="true" />
+                  {/* An address is one unbreakable token and this column is the
+                      narrowest in the grid, so it has to be allowed to wrap. */}
+                  <span className="min-w-0 break-words">{company.email}</span>
                 </a>
               </li>
               <li>

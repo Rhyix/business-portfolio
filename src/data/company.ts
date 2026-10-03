@@ -21,10 +21,9 @@ export interface CompanyProfile {
 }
 
 /**
- * Single source of truth for brand and contact details.
- * Contact fields below are still placeholders — replace `email` and `phone`
- * with the real business information once it is confirmed; no component or
- * layout change is required.
+ * Single source of truth for brand and contact details. Every surface that
+ * shows contact information — Contact, Footer, CallToAction, FormSuccess —
+ * reads from here, so a change lands everywhere at once.
  */
 export const company: CompanyProfile = {
   name: 'AETEX Tech Solution',
@@ -32,11 +31,14 @@ export const company: CompanyProfile = {
   tagline: 'Custom software solutions built for your business.',
   description:
     'We build custom web systems for organisations whose processes do not fit off-the-shelf software — business platforms, dashboards and the databases and integrations behind them.',
-  // PLACEHOLDER: replace with the real business email once confirmed.
-  email: 'hello@example.com',
-  // PLACEHOLDER: replace with the real business phone number once confirmed.
-  phone: '+00 000 0000',
-  // PLACEHOLDER: add a city/region once a physical office location is confirmed.
+  email: 'aetextechsolutions@gmail.com',
+  /**
+   * Display format. Every `tel:` link derives from this by stripping all but
+   * digits and the leading `+`, so the spacing is presentational only and
+   * reformatting it cannot break the link.
+   */
+  phone: '+63 961 394 6736',
+  /** The business operates remotely. This is not a postal address. */
   location: 'Remote',
   social: [],
 }

@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment. .env.example is committed; real values never are.
+.env
+.env.local
+.env.*.local
