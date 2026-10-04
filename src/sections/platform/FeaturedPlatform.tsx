@@ -1,10 +1,14 @@
 import { ArrowRight } from 'lucide-react'
+import { useReducedMotion } from 'motion/react'
+import { useMediaQuery } from '../../lib/hooks'
 import { Button } from '../../components/ui/Button'
 import { buttonClassName } from '../../components/ui/buttonStyles'
 import { Container } from '../../components/ui/Container'
 import { IconFrame } from '../../components/ui/IconFrame'
 import { ChapterReveal } from '../../components/ui/ChapterReveal'
 import { Rail } from '../../components/ui/Rail'
+import { SceneSequence } from '../../components/ui/SceneSequence'
+import type { SceneSpec } from '../../components/ui/SceneSequence'
 import { Reveal } from '../../components/ui/Reveal'
 import { ScrambleText } from '../../components/ui/ScrambleText'
 import { Section } from '../../components/ui/Section'
@@ -20,9 +24,61 @@ import {
   platformHighlights,
 } from '../../data/platform'
 import { PlatformPreview } from './PlatformPreview'
+import {
+  BenefitsScene,
+  ModulesScene,
+  OverviewScene,
+  PLATFORM_DESCRIPTION,
+  PLATFORM_TITLE,
+  SAMPLE_DATA_NOTE,
+  StructureScene,
+  WorkflowsScene,
+  WorkspaceScene,
+} from './PlatformScenes'
+import { workflowEffects } from './previewState'
 
-/** Flagship showcase: the Integrated Business Management Platform, presented as AETEX's primary sample solution — the page's dark chapter. */
+/** Pinning needs a wide viewport and enough height for the dashboard scenes. */
+const PINNED_QUERY = '(min-width: 1024px) and (min-height: 680px)'
+
+/**
+ * The chapter as a sequence of scenes. The workflow scene is long because
+ * scroll walks it through a resting state and then each of its steps.
+ */
+const scenes: SceneSpec[] = [
+  { label: 'Overview', weight: 1 },
+  { label: 'Workspace', weight: 1.2 },
+  { label: 'Modules', weight: 1.2 },
+  { label: 'Workflows', weight: 3, steps: workflowEffects.length + 1 },
+  { label: 'Structure', weight: 1, dark: true },
+  { label: 'Benefits', weight: 1.2, dark: true },
+]
+
+const sceneViews = [OverviewScene, WorkspaceScene, ModulesScene, WorkflowsScene, StructureScene, BenefitsScene]
+
+/** Flagship showcase: the Integrated Business Management Platform, presented as AETEX's primary sample solution. */
 export function FeaturedPlatform() {
+  const prefersReducedMotion = useReducedMotion()
+  const wide = useMediaQuery(PINNED_QUERY)
+
+  if (!wide || prefersReducedMotion) return <StaticFeaturedPlatform />
+
+  // Wide screens: six pinned scenes, the ground turning dark for the two
+  // closing scenes about how the platform is built.
+  return (
+    <SceneSequence
+      id="platform"
+      labelledBy="platform-title"
+      scenes={scenes}
+      renderScene={(index, { active, step }) => {
+        const View = sceneViews[index]
+        return <View active={active} step={step} />
+      }}
+    />
+  )
+}
+
+/** Small screens and reduced motion: the full showcase as one long dark chapter. */
+function StaticFeaturedPlatform() {
   return (
     <Section id="platform" labelledBy="platform-title" tone="dark" size="feature">
       <div
@@ -56,8 +112,8 @@ export function FeaturedPlatform() {
 
           <SectionHeading
             id="platform-title"
-            title="One workspace for your business, operations and people"
-            description="The Integrated Business Management Platform is our flagship sample solution — a single workspace connecting customers, orders, inventory, workforce management and reporting. It's a demonstration built to explore, not a live client deployment."
+            title={PLATFORM_TITLE}
+            description={PLATFORM_DESCRIPTION}
             tone="dark"
             size="headline"
             className="mt-5"
@@ -95,7 +151,7 @@ export function FeaturedPlatform() {
               well rather than leaving a revenue number unqualified. */}
           <p className="label-mono mt-5 flex items-center gap-2.5 text-ink-500">
             <span aria-hidden="true" className="h-px w-6 shrink-0 bg-ink-800" />
-            Sample data — the figures shown are illustrative, not a real deployment
+            {SAMPLE_DATA_NOTE}
           </p>
         </ChapterReveal>
 

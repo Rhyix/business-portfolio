@@ -1,6 +1,7 @@
 import { About } from '../sections/about/About'
 import { CallToAction } from '../sections/cta/CallToAction'
 import { Contact } from '../sections/contact/Contact'
+import { IntroReveal } from '../components/layout/IntroReveal'
 import { Hero } from '../sections/hero/Hero'
 import { FeaturedPlatform } from '../sections/platform/FeaturedPlatform'
 import { Process } from '../sections/process/Process'
@@ -13,7 +14,9 @@ import { ValueProps } from '../sections/values/ValueProps'
 export function Home() {
   return (
     <>
-      <Hero />
+      <IntroReveal>
+        <Hero />
+      </IntroReveal>
       <ValueProps />
       <Services />
       <FeaturedPlatform />

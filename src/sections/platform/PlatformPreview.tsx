@@ -1,27 +1,23 @@
+import type { ReactNode } from 'react'
 import { BarChart3, LayoutDashboard, ShoppingCart, Users, UsersRound } from 'lucide-react'
 import { RevealStagger } from '../../components/ui/RevealStagger'
 import { cn } from '../../lib/cn'
 import { featuredPlatformHref } from '../../data/platform'
+import { BASE_PREVIEW_STATS } from './previewState'
+import type { PreviewHighlight, PreviewStats } from './previewState'
 
 const navGroups = [
-  { label: 'Overview', items: [{ icon: LayoutDashboard, label: 'Dashboard', active: true }] },
+  { label: 'Overview', items: [{ icon: LayoutDashboard, label: 'Dashboard', active: true, key: null }] },
   {
     label: 'Operations',
     items: [
-      { icon: Users, label: 'Customers', active: false },
-      { icon: ShoppingCart, label: 'Orders', active: false },
+      { icon: Users, label: 'Customers', active: false, key: 'nav-customers' },
+      { icon: ShoppingCart, label: 'Orders', active: false, key: null },
     ],
   },
-  { label: 'People & HR', items: [{ icon: UsersRound, label: 'Employees', active: false }] },
-  { label: 'Analytics', items: [{ icon: BarChart3, label: 'Reports', active: false }] },
-]
-
-const statTiles = [
-  { label: 'Revenue', value: '₱213,855' },
-  { label: 'Orders', value: '12' },
-  { label: 'Employees', value: '16' },
-  { label: 'Attendance', value: '75%' },
-]
+  { label: 'People & HR', items: [{ icon: UsersRound, label: 'Employees', active: false, key: 'nav-employees' }] },
+  { label: 'Analytics', items: [{ icon: BarChart3, label: 'Reports', active: false, key: null }] },
+] as const
 
 const revenueBars = [45, 52, 48, 58, 68, 100]
 const activityBars = [55, 68, 60, 76, 88, 30, 96]
@@ -32,16 +28,42 @@ const recentRows = [
   { name: 'Marilou Fajardo', status: 'Completed' },
 ]
 
+const HIGHLIGHT_RING = 'outline-2 outline-offset-2 outline-accent-400'
+
+interface PlatformPreviewProps {
+  stats?: PreviewStats
+  /** 0–1: how far the chart bars have grown. */
+  growth?: number
+  highlight?: PreviewHighlight | null
+  /** False when a parent choreographs the entrance, so the preview doesn't run its own scroll reveal. */
+  reveal?: boolean
+}
+
 /**
- * Large, static replica of the Integrated Business Management Platform
- * dashboard — same design tokens and layout structure as the real app (see
+ * Large replica of the Integrated Business Management Platform dashboard —
+ * same design tokens and layout structure as the real app (see
  * src/pages/demos/integrated-platform/Dashboard.tsx), but built from plain
- * markup with no state, data layer or interactivity. Kept out of the
- * marketing bundle's dependency on the demo/store code entirely, so the
- * homepage never loads the interactive application just to show a preview.
- * Purely decorative — the real demo is one click away via the CTA.
+ * markup with no data layer. Kept out of the marketing bundle's dependency on
+ * the demo/store code entirely, so the homepage never loads the interactive
+ * application just to show a preview. Figures and the highlighted region are
+ * props so the pinned showcase can animate them; it is always decorative.
  */
-export function PlatformPreview() {
+export function PlatformPreview({
+  stats = BASE_PREVIEW_STATS,
+  growth = 1,
+  highlight = null,
+  reveal = true,
+}: PlatformPreviewProps) {
+  const Group = reveal ? RevealStagger : PlainBlock
+  const Item = reveal ? RevealStagger.Item : PlainBlock
+
+  const statTiles = [
+    { key: 'tile-revenue', label: 'Revenue', value: `₱${Math.round(stats.revenue).toLocaleString('en-US')}` },
+    { key: 'tile-orders', label: 'Orders', value: String(Math.round(stats.orders)) },
+    { key: 'tile-employees', label: 'Employees', value: String(Math.round(stats.employees)) },
+    { key: 'tile-attendance', label: 'Attendance', value: `${Math.round(stats.attendance)}%` },
+  ]
+
   return (
     <div
       aria-hidden="true"
@@ -57,9 +79,9 @@ export function PlatformPreview() {
         </span>
       </div>
 
-      <RevealStagger className="flex">
+      <Group className="flex">
         {/* Sidebar */}
-        <RevealStagger.Item className="hidden w-40 shrink-0 border-r border-ink-200/70 bg-white p-3 md:block lg:w-48">
+        <Item className="hidden w-40 shrink-0 border-r border-ink-200/70 bg-white p-3 md:block lg:w-48">
           <div className="flex items-center gap-2 px-1">
             <span className="grid size-6 place-items-center rounded-md bg-ink-950 text-[0.6rem] font-semibold text-white">
               A
@@ -78,8 +100,12 @@ export function PlatformPreview() {
                     <div
                       key={item.label}
                       className={cn(
-                        'flex items-center gap-2 rounded-md px-2 py-1.5 text-[0.7rem] font-medium',
-                        item.active ? 'bg-ink-950 text-white' : 'text-ink-500',
+                        'flex items-center gap-2 rounded-md px-2 py-1.5 text-[0.7rem] font-medium transition-colors duration-300',
+                        item.active
+                          ? 'bg-ink-950 text-white'
+                          : item.key !== null && item.key === highlight
+                            ? 'bg-accent-50 text-accent-700'
+                            : 'text-ink-500',
                       )}
                     >
                       <item.icon className="size-3.5 shrink-0" strokeWidth={1.9} />
@@ -90,11 +116,11 @@ export function PlatformPreview() {
               </div>
             ))}
           </div>
-        </RevealStagger.Item>
+        </Item>
 
         {/* Main panel */}
         <div className="min-w-0 flex-1 p-4 sm:p-5">
-          <RevealStagger.Item>
+          <Item>
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm font-semibold text-ink-900">Dashboard</span>
               <div className="flex items-center gap-2">
@@ -105,53 +131,47 @@ export function PlatformPreview() {
 
             <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               {statTiles.map((tile) => (
-                <div key={tile.label} className="rounded-xl border border-ink-200/70 bg-white p-2.5">
+                <div
+                  key={tile.label}
+                  className={cn(
+                    'rounded-xl border border-ink-200/70 bg-white p-2.5 transition-[outline-color] duration-300',
+                    tile.key === highlight ? HIGHLIGHT_RING : 'outline-transparent',
+                  )}
+                >
                   <span className="block text-[0.6rem] font-semibold tracking-[0.08em] text-ink-400 uppercase">
                     {tile.label}
                   </span>
-                  <span className="mt-1.5 block text-sm font-semibold text-ink-900">{tile.value}</span>
+                  <span className="mt-1.5 block text-sm font-semibold text-ink-900 tabular-nums">{tile.value}</span>
                 </div>
               ))}
             </div>
-          </RevealStagger.Item>
+          </Item>
 
-          <RevealStagger.Item>
+          <Item>
             <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
               <div className="rounded-xl border border-ink-200/70 bg-white p-3">
                 <span className="block text-[0.65rem] font-medium text-ink-500">Revenue trend</span>
-                <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
-                  {revenueBars.map((height, index) => (
-                    <span
-                      key={index}
-                      className={cn(
-                        'flex-1 rounded-t-sm',
-                        index === revenueBars.length - 1 ? 'bg-accent-500' : 'bg-accent-200',
-                      )}
-                      style={{ height: `${height}%` }}
-                    />
-                  ))}
-                </div>
+                <Bars heights={revenueBars} accent={revenueBars.length - 1} growth={growth} />
               </div>
-              <div className="rounded-xl border border-ink-200/70 bg-white p-3">
+              <div
+                className={cn(
+                  'rounded-xl border border-ink-200/70 bg-white p-3 transition-[outline-color] duration-300',
+                  highlight === 'chart-activity' ? HIGHLIGHT_RING : 'outline-transparent',
+                )}
+              >
                 <span className="block text-[0.65rem] font-medium text-ink-500">Order activity</span>
-                <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
-                  {activityBars.map((height, index) => (
-                    <span
-                      key={index}
-                      className={cn(
-                        'flex-1 rounded-t-sm',
-                        index === activityBars.length - 2 ? 'bg-accent-500' : 'bg-accent-200',
-                      )}
-                      style={{ height: `${height}%` }}
-                    />
-                  ))}
-                </div>
+                <Bars heights={activityBars} accent={activityBars.length - 2} growth={growth} />
               </div>
             </div>
-          </RevealStagger.Item>
+          </Item>
 
-          <RevealStagger.Item>
-            <div className="mt-3 space-y-2 rounded-xl border border-ink-200/70 bg-white p-3">
+          <Item>
+            <div
+              className={cn(
+                'mt-3 space-y-2 rounded-xl border border-ink-200/70 bg-white p-3 transition-[outline-color] duration-300',
+                highlight === 'recent' ? HIGHLIGHT_RING : 'outline-transparent',
+              )}
+            >
               <span className="block text-[0.65rem] font-medium text-ink-500">Recent orders</span>
               {recentRows.map((row) => (
                 <div key={row.name} className="flex items-center gap-2.5 border-t border-ink-100 pt-2 first:border-t-0 first:pt-0">
@@ -163,9 +183,27 @@ export function PlatformPreview() {
                 </div>
               ))}
             </div>
-          </RevealStagger.Item>
+          </Item>
         </div>
-      </RevealStagger>
+      </Group>
     </div>
   )
+}
+
+function Bars({ heights, accent, growth }: { heights: number[]; accent: number; growth: number }) {
+  return (
+    <div className="mt-2.5 flex h-14 items-end gap-1.5 sm:h-16">
+      {heights.map((height, index) => (
+        <span
+          key={index}
+          className={cn('flex-1 rounded-t-sm', index === accent ? 'bg-accent-500' : 'bg-accent-200')}
+          style={{ height: `${Math.max(4, height * growth)}%` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function PlainBlock({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={className}>{children}</div>
 }
