@@ -18,6 +18,38 @@ export function useScrolled(threshold = 8): boolean {
 }
 
 
+/**
+ * Runs `attach` against the elements `resolve` finds now, and again whenever
+ * that set changes. Several sections swap between a pinned and a static
+ * layout at a breakpoint, which replaces their element; an observer holding
+ * the old one would silently stop reporting. Mutations are coalesced to one
+ * check per frame, and `attach` only re-runs when the elements differ.
+ */
+function watchElements<T extends Element>(resolve: () => T[], attach: (elements: T[]) => () => void): () => void {
+  let current = resolve()
+  let detach = attach(current)
+  let frame = 0
+
+  const mutations = new MutationObserver(() => {
+    cancelAnimationFrame(frame)
+    frame = requestAnimationFrame(() => {
+      const next = resolve()
+      const same = next.length === current.length && next.every((element, index) => element === current[index])
+      if (same) return
+      detach()
+      current = next
+      detach = attach(current)
+    })
+  })
+  mutations.observe(document.body, { childList: true, subtree: true })
+
+  return () => {
+    cancelAnimationFrame(frame)
+    mutations.disconnect()
+    detach()
+  }
+}
+
 interface SectionProgressEntry {
   sectionId: string
   itemIndex: number
@@ -40,34 +72,38 @@ export function useSectionProgress(sections: readonly SectionProgressEntry[]): {
     activeSectionId: null,
   })
 
-  useEffect(() => {
-    const entries = sections
-      .map((section) => ({ ...section, element: document.getElementById(section.sectionId) }))
-      .filter((section): section is SectionProgressEntry & { element: HTMLElement } => section.element !== null)
+  useEffect(
+    () =>
+      watchElements(
+        () =>
+          sections
+            .map((section) => document.getElementById(section.sectionId))
+            .filter((element): element is HTMLElement => element !== null),
+        (elements) => {
+          const visible = new Map<string, boolean>()
 
-    if (entries.length === 0) return
+          const observer = new IntersectionObserver(
+            (records) => {
+              for (const record of records) visible.set(record.target.id, record.isIntersecting)
 
-    const visible = new Map<string, boolean>()
+              const hit = sections.find((section) => visible.get(section.sectionId))
+              if (!hit) return
 
-    const observer = new IntersectionObserver(
-      (records) => {
-        for (const record of records) visible.set(record.target.id, record.isIntersecting)
+              setState((previous) =>
+                previous.activeSectionId === hit.sectionId
+                  ? previous
+                  : { activeIndex: hit.itemIndex, activeSectionId: hit.sectionId },
+              )
+            },
+            { rootMargin: '-45% 0px -45% 0px' },
+          )
 
-        const hit = entries.find((section) => visible.get(section.sectionId))
-        if (!hit) return
-
-        setState((previous) =>
-          previous.activeSectionId === hit.sectionId
-            ? previous
-            : { activeIndex: hit.itemIndex, activeSectionId: hit.sectionId },
-        )
-      },
-      { rootMargin: '-45% 0px -45% 0px' },
-    )
-
-    entries.forEach((section) => observer.observe(section.element))
-    return () => observer.disconnect()
-  }, [sections])
+          elements.forEach((element) => observer.observe(element))
+          return () => observer.disconnect()
+        },
+      ),
+    [sections],
+  )
 
   return state
 }
@@ -94,33 +130,57 @@ export function useCompactMotion(): boolean {
   return compact
 }
 
-/** True while any `[data-tone="dark"]` section is crossing the middle of the viewport. */
+/** Live result of a CSS media query, updated only when the query flips. */
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches)
+
+  useEffect(() => {
+    const list = window.matchMedia(query)
+    const handleChange = (event: MediaQueryListEvent) => setMatches(event.matches)
+    list.addEventListener('change', handleChange)
+    return () => list.removeEventListener('change', handleChange)
+  }, [query])
+
+  return matches
+}
+
+/** True while any `[data-tone="dark"]` ground is crossing the middle of the viewport. */
 export function useDarkGroundAtMiddle(): boolean {
   const [dark, setDark] = useState(false)
 
-  useEffect(() => {
-    const targets = Array.from(document.querySelectorAll<HTMLElement>('[data-tone="dark"]'))
-    if (targets.length === 0) return
+  useEffect(
+    () =>
+      watchElements(
+        // The dial marks itself dark in response to this hook, so it is never a ground.
+        () => Array.from(document.querySelectorAll<HTMLElement>('[data-tone="dark"]:not([data-mode])')),
+        (targets) => {
+          const visible = new Set<Element>()
 
-    const visible = new Set<Element>()
+          const observer = new IntersectionObserver(
+            (records) => {
+              for (const record of records) {
+                if (record.isIntersecting) visible.add(record.target)
+                else visible.delete(record.target)
+              }
+              setDark(visible.size > 0)
+            },
+            { rootMargin: '-50% 0px -50% 0px' },
+          )
 
-    const observer = new IntersectionObserver(
-      (records) => {
-        for (const record of records) {
-          if (record.isIntersecting) visible.add(record.target)
-          else visible.delete(record.target)
-        }
-        setDark(visible.size > 0)
-      },
-      { rootMargin: '-50% 0px -50% 0px' },
-    )
-
-    targets.forEach((target) => observer.observe(target))
-    return () => observer.disconnect()
-  }, [])
+          targets.forEach((target) => observer.observe(target))
+          return () => {
+            observer.disconnect()
+            // A ground that was removed while on screen must not leave the dial dark.
+            setDark(false)
+          }
+        },
+      ),
+    [],
+  )
 
   return dark
 }
+
 
 /**
  * Calls `onOutside` when a pointer press lands outside the returned ref's

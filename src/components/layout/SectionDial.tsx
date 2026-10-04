@@ -102,7 +102,9 @@ function SectionDialInner() {
       navigation?.notifyDialCommit(index)
       // Computed rather than scrollIntoView: the offset is explicit, and it
       // doesn't depend on scroll-margin being honoured by the engine.
-      const top = target.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
+      // Pinned sections clear the navbar inside their own frame, so they land flush.
+      const offset = target.hasAttribute('data-pinned') ? 0 : HEADER_OFFSET
+      const top = target.getBoundingClientRect().top + window.scrollY - offset
       window.scrollTo({
         top: Math.max(0, top),
         // "instant" rather than "auto": the page sets `scroll-behavior: smooth`

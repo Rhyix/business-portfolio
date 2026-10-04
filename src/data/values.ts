@@ -18,31 +18,26 @@ export const valueProps: ValueProp[] = [
   {
     icon: Workflow,
     title: 'The process came first',
-    description:
-      'The way your organisation works was settled long before the software was chosen, and the product expects a different sequence.',
+    description: 'Your way of working predates the software, and the product expects a different order.',
   },
   {
     icon: ClipboardList,
     title: 'Spreadsheets fill the gaps',
-    description:
-      'The system covers most of the work, and the rest lives in spreadsheets, email threads and steps someone has to remember.',
+    description: 'The system covers most of the work. The rest lives in spreadsheets, inboxes and memory.',
   },
   {
     icon: Waypoints,
-    title: 'The same record lives in several tools',
-    description:
-      'A customer, an order or an employee is entered more than once, and keeping the copies in agreement becomes its own task.',
+    title: 'One record, many tools',
+    description: 'The same customer or order is entered twice, and keeping the copies in sync is a job of its own.',
   },
   {
     icon: Plug,
     title: 'The exceptions are the point',
-    description:
-      'Approvals, edge cases and local rules are what the product cannot express, and they are the part that actually matters.',
+    description: "Approvals, edge cases and local rules are what the product can't express, and what matters most.",
   },
   {
     icon: ShieldCheck,
-    title: 'You need to keep changing it',
-    description:
-      'The process will keep moving, so the system has to be something your team or ours can extend without waiting on a vendor.',
+    title: 'It has to keep changing',
+    description: 'Your process keeps moving, so the system must grow without waiting on a vendor.',
   },
 ]

@@ -5,6 +5,29 @@ interface ServiceCardProps {
   service: Service
 }
 
+/** Tall rail panel used by the pinned layout: icon and index on top, copy anchored to the bottom. */
+export function ServicePanel({ service, index }: ServiceCardProps & { index: number }) {
+  const Icon = service.icon
+
+  return (
+    <article className="flex h-full flex-col rounded-3xl bg-white p-8 shadow-lift">
+      <div className="flex items-start justify-between">
+        <span
+          aria-hidden="true"
+          className="inline-flex size-14 items-center justify-center rounded-2xl bg-accent-50 text-accent-600"
+        >
+          <Icon className="size-5" strokeWidth={1.75} />
+        </span>
+        <span aria-hidden="true" className="label-mono text-ink-400">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+      </div>
+      <h3 className="mt-auto pt-8 text-xl font-semibold text-balance text-ink-900">{service.title}</h3>
+      <p className="mt-3 leading-relaxed text-ink-500">{service.description}</p>
+    </article>
+  )
+}
+
 /** Single service tile: decorative icon, title and one-line description. */
 export function ServiceCard({ service }: ServiceCardProps) {
   return (

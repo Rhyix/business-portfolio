@@ -17,7 +17,7 @@ interface SectionProps {
    */
   tone?: 'light' | 'muted' | 'dark'
   /** "feature" gives the section extra vertical room — reserved for the one flagship section. */
-  size?: 'default' | 'feature'
+  size?: 'default' | 'feature' | 'flush'
   /** Set false to drop this section's bottom padding, so it merges with a same-tone section directly below it instead of reading as two stacked blocks. */
   seam?: boolean
   className?: string
@@ -43,9 +43,11 @@ const toneStyles: Record<'light' | 'muted' | 'dark', string> = {
  * which reads as dead space at that width rather than as rhythm. Every sm/lg
  * value is unchanged, so desktop spacing is exactly as before.
  */
-const sizeStyles: Record<'default' | 'feature', { pt: string; pb: string }> = {
+const sizeStyles: Record<'default' | 'feature' | 'flush', { pt: string; pb: string }> = {
   default: { pt: 'pt-14 sm:pt-24 lg:pt-32', pb: 'pb-14 sm:pb-24 lg:pb-32' },
   feature: { pt: 'pt-14 sm:pt-28 lg:pt-40', pb: 'pb-14 sm:pb-28 lg:pb-40' },
+  // Pinned, full-viewport sections own their spacing inside the sticky frame.
+  flush: { pt: 'pt-0', pb: 'pb-0' },
 }
 
 /** Semantic page section with consistent vertical rhythm and anchor offset. */
@@ -71,8 +73,12 @@ export function Section({
       aria-labelledby={labelledBy}
       data-tone={tone === 'dark' ? 'dark' : undefined}
       data-chapter-active={isActiveSection ? 'true' : 'false'}
+      // A pinned section's frame clears the navbar itself, so arrivals land on
+      // its very top: the negative margin cancels the page's 6rem scroll-padding.
+      data-pinned={size === 'flush' ? '' : undefined}
       className={cn(
-        'relative scroll-mt-24',
+        'relative',
+        size === 'flush' ? '-scroll-mt-24' : 'scroll-mt-24',
         sizeStyles[size].pt,
         seam ? sizeStyles[size].pb : 'pb-0',
         toneStyles[tone],
