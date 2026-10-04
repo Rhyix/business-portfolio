@@ -27,8 +27,15 @@ export interface SceneState {
   offset: number
 }
 
-/** Scroll distance per unit of scene weight, in vh. */
-const VH_PER_UNIT = 70
+/**
+ * Scroll distance per unit of scene weight, in vh.
+ *
+ * Was 70. The pinned sequences together accounted for roughly 21 of the page's
+ * 29 viewports, so most of the site was spent inside a scroll-driven sequence
+ * with no ordinary scrolling between them. This shortens how long each beat is
+ * held without removing a single beat.
+ */
+const VH_PER_UNIT = 50
 
 interface SceneSequenceProps {
   id: string
@@ -73,13 +80,20 @@ export function SceneSequence({ id, labelledBy, scenes, renderScene, progress = 
       <div ref={trackRef} style={{ height: `calc(100svh + ${totalUnits * VH_PER_UNIT}vh)` }}>
         <div className="sticky top-0 h-svh overflow-clip bg-ink-50">
           {hasDark ? (
-            // Dark ground rises for the dark scenes. Its real height (not a
-            // clip) is what the section dial's dark-ground observer measures.
+            // Dark ground rises for the dark scenes.
+            //
+            // Raised with scaleY rather than an animated height: height is a
+            // layout property, and this is a full-width element. The dial's
+            // dark-ground observer still measures this correctly because an
+            // IntersectionObserver computes its target rect *after* transforms,
+            // so a bottom-anchored scaleY(0) collapses out of the middle band
+            // exactly as a zero height did. Keep the element full-height and
+            // the origin at the bottom; changing either breaks that detection.
             <div
               aria-hidden="true"
               data-tone="dark"
-              className="absolute inset-x-0 bottom-0 bg-ink-975 transition-[height] duration-700 ease-out-expo"
-              style={{ height: dark ? '100%' : '0%' }}
+              className="absolute inset-0 origin-bottom bg-ink-975 transition-transform duration-700 ease-out-expo"
+              style={{ transform: dark ? 'scaleY(1)' : 'scaleY(0)' }}
             />
           ) : null}
 

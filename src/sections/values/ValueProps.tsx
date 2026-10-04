@@ -17,9 +17,13 @@ const PINNED_QUERY = '(min-width: 1024px) and (min-height: 640px)'
 /** Share of the pinned scroll spent stepping through cards; the rest holds the last card while the title is corrected. */
 const CARDS_SHARE = 0.82
 
-/** Scroll distance, in vh, given to each card and to the closing correction. */
-const VH_PER_CARD = 45
-const VH_FOR_CORRECTION = 35
+/**
+ * Scroll distance, in vh, given to each card and to the closing correction.
+ * Were 45 and 35, shortened for the same reason as SceneSequence's VH_PER_UNIT:
+ * the choreography is unchanged, it simply takes less scrolling to watch.
+ */
+const VH_PER_CARD = 34
+const VH_FOR_CORRECTION = 24
 
 const count = valueProps.length
 

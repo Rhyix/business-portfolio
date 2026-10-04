@@ -12,6 +12,7 @@ import { Section } from '../../components/ui/Section'
 import { SectionHeading } from '../../components/ui/SectionHeading'
 import { sectionIndexLabel } from '../../data/sectionRail'
 import { services } from '../../data/services'
+import { cn } from '../../lib/cn'
 import { useMediaQuery } from '../../lib/hooks'
 import { ServiceCard, ServicePanel } from './ServiceCard'
 
@@ -63,6 +64,8 @@ function PinnedServices() {
   const railRef = useRef<HTMLOListElement>(null)
   const descriptionRef = useRef<HTMLParagraphElement>(null)
   const [pinLength, setPinLength] = useState(0)
+  /** Diameter of the accent ground's circle, in px. See `groundScale`. */
+  const [groundSize, setGroundSize] = useState(0)
   const metrics = useMotionValue(EMPTY_METRICS)
 
   useEffect(() => {
@@ -90,6 +93,13 @@ function PinnedServices() {
         step: second.offsetLeft - first.offsetLeft,
       })
       setPinLength(distance + COLLAPSE_SCROLL)
+
+      // The ground used to be a clip-path circle sized in CSS percentages,
+      // which resolve against sqrt((w² + h²) / 2). Reproducing that reference
+      // here lets a plain scaled div trace exactly the radius the clip did.
+      const box = frame.getBoundingClientRect()
+      const reference = Math.sqrt((box.width ** 2 + box.height ** 2) / 2)
+      setGroundSize(Math.ceil(reference * 3))
     })
     observer.observe(frame)
     observer.observe(rail)
@@ -105,12 +115,16 @@ function PinnedServices() {
   const collapsed = useTransform(pinned, (value) => clamp01(collapseShare > 0 ? value / collapseShare : 1))
   const travelled = useTransform(pinned, (value) => clamp01((value - collapseShare) / (1 - collapseShare)))
 
-  const ground = useTransform(arrival, (value) =>
-    value >= 1 ? 'none' : `circle(${Math.pow(value, 1.15) * 150}% at 88% 100%)`,
-  )
-  const headingColor = useTransform(arrival, [0.45, 0.8], ['#1b1f27', '#ffffff'])
-  const leadColor = useTransform(arrival, [0.45, 0.8], ['#6b7688', '#dbe8fe'])
-  const eyebrowColor = useTransform(arrival, [0.45, 0.8], ['#2557eb', '#dbe8fe'])
+  // The ground is a scaled circle rather than an animated clip-path. clip-path
+  // is not composited, so the old version repainted the whole viewport on every
+  // frame of the arrival. `groundSize` is three times the reference the CSS
+  // percentage resolved against, so scaling by the curve below traces the same
+  // radius the clip traced — the curve itself is unchanged.
+  const groundScale = useTransform(arrival, (value) => Math.pow(value, 1.15))
+  // The watermark used to be clipped by the ground. It is white at 7% opacity,
+  // invisible against the light ground either way, so it fades in with the
+  // accent instead of being masked by it.
+  const watermarkOpacity = useTransform(arrival, [0.25, 0.7], [0, 1])
   const leadOpacity = useTransform(collapsed, [0, 0.7], [1, 0])
   const lift = useTransform([collapsed, metrics] as MotionValue[], ([value, current]) => {
     return -(value as number) * (current as RailMetrics).collapse
@@ -120,6 +134,12 @@ function PinnedServices() {
   })
   const watermarkX = useTransform(travelled, [0, 1], ['0%', '-30%'])
 
+  // Three text colours used to be interpolated from scroll on every frame, each
+  // a paint. The same crossing now happens once, at the midpoint of the old
+  // 0.45–0.8 ramp, as a CSS transition.
+  const [onAccent, setOnAccent] = useState(false)
+  useMotionValueEvent(arrival, 'change', (value) => setOnAccent(value >= 0.62))
+
   const total = services.length + 1
   const [current, setCurrent] = useState(1)
   useMotionValueEvent(travelled, 'change', (value) => setCurrent(Math.round(value * (total - 1)) + 1))
@@ -128,32 +148,58 @@ function PinnedServices() {
     <Section id="services" labelledBy="services-title" size="flush">
       <div ref={trackRef} style={{ height: `calc(100svh + ${pinLength}px)` }}>
         <div ref={frameRef} data-tone="dark" className="sticky top-0 h-svh overflow-clip">
-          <m.div aria-hidden="true" className="absolute inset-0 bg-accent-600" style={{ clipPath: ground }}>
+          <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+            <m.div
+              className="absolute rounded-full bg-accent-600"
+              style={{
+                width: groundSize,
+                height: groundSize,
+                left: '88%',
+                top: '100%',
+                marginLeft: -groundSize / 2,
+                marginTop: -groundSize / 2,
+                scale: groundScale,
+              }}
+            />
             <m.p
               className="absolute -bottom-[0.18em] left-0 text-[clamp(12rem,22vw,20rem)] leading-none font-semibold tracking-tight whitespace-nowrap text-white/[0.07] select-none"
-              style={{ x: watermarkX }}
+              style={{ x: watermarkX, opacity: watermarkOpacity }}
             >
               {WATERMARK.repeat(2)}
             </m.p>
-          </m.div>
+          </div>
 
           <Container className="relative flex h-full flex-col pt-28 pb-10">
             <div className="max-w-3xl">
-              <m.p className="mb-5 flex items-center gap-2.5" style={{ color: eyebrowColor }}>
+              <p
+                className={cn(
+                  'mb-5 flex items-center gap-2.5 transition-colors duration-500 ease-out-expo',
+                  onAccent ? 'text-accent-100' : 'text-accent-600',
+                )}
+              >
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-current" />
                 <span aria-hidden="true" className="h-px w-10 shrink-0 bg-current opacity-40" />
                 <span aria-hidden="true" className="label-mono opacity-70">
                   {sectionIndexLabel('services')}
                 </span>
                 <span className="label-mono font-medium">Services</span>
-              </m.p>
-              <m.h2 id="services-title" className="text-title font-semibold" style={{ color: headingColor }}>
+              </p>
+              <h2
+                id="services-title"
+                className={cn(
+                  'text-title font-semibold transition-colors duration-500 ease-out-expo',
+                  onAccent ? 'text-white' : 'text-ink-900',
+                )}
+              >
                 {TITLE}
-              </m.h2>
+              </h2>
               <m.p
                 ref={descriptionRef}
-                className="mt-5 max-w-2xl text-lead"
-                style={{ color: leadColor, opacity: leadOpacity }}
+                className={cn(
+                  'mt-5 max-w-2xl text-lead transition-colors duration-500 ease-out-expo',
+                  onAccent ? 'text-accent-100' : 'text-ink-500',
+                )}
+                style={{ opacity: leadOpacity }}
               >
                 {DESCRIPTION}
               </m.p>
@@ -162,11 +208,11 @@ function PinnedServices() {
             <m.div className="mt-12" style={{ y: lift }}>
               <m.ol ref={railRef} className="flex w-max gap-6" style={{ x: railX }}>
                 {services.map((service, index) => (
-                  <RailPanel key={service.title} index={index} x={railX} arrival={arrival} metrics={metrics}>
+                  <RailPanel key={service.title} index={index} x={railX} metrics={metrics}>
                     <ServicePanel service={service} index={index} />
                   </RailPanel>
                 ))}
-                <RailPanel index={services.length} x={railX} arrival={arrival} metrics={metrics}>
+                <RailPanel index={services.length} x={railX} metrics={metrics}>
                   <ContactPanel index={services.length} />
                 </RailPanel>
               </m.ol>
@@ -191,31 +237,31 @@ function PinnedServices() {
 interface RailPanelProps {
   index: number
   x: MotionValue<number>
-  arrival: MotionValue<number>
   metrics: MotionValue<RailMetrics>
   children: ReactNode
 }
 
 /**
  * One panel on the rail. A panel crossing the frame's right edge is tilted,
- * lowered and translucent, and settles flat as it slides fully into view;
- * every panel also firms up from translucent as the accent ground arrives.
+ * lowered and translucent, and settles flat as it slides fully into view.
+ *
+ * It deliberately has no entrance of its own. Each panel used to fade and lift
+ * 80px as the section arrived, on top of the arrival the whole frame was
+ * already playing — the same content introduced twice, which is what made the
+ * rail feel busy. The edge behaviour below stays because it says where a panel
+ * sits on the rail, which is information rather than decoration.
  */
-function RailPanel({ index, x, arrival, metrics, children }: RailPanelProps) {
-  const inputs = [x, arrival, metrics] as MotionValue[]
-  const edge = useTransform(inputs, ([xValue, , current]) => {
+function RailPanel({ index, x, metrics, children }: RailPanelProps) {
+  const inputs = [x, metrics] as MotionValue[]
+  const edge = useTransform(inputs, ([xValue, current]) => {
     const { viewEnd, railLeft, panelWidth, step } = current as RailMetrics
     if (!panelWidth) return 0
     const right = railLeft + index * step + (xValue as number) + panelWidth
     return clamp01((right - viewEnd) / (panelWidth * 0.75))
   })
-  const settled = useTransform(arrival, (value) => clamp01((value - 0.55) / 0.4))
   const rotate = useTransform(edge, (value) => value * 4)
-  const y = useTransform([edge, settled] as MotionValue[], ([e, s]) => (e as number) * 28 + (1 - (s as number)) * 80)
-  const opacity = useTransform(
-    [edge, settled] as MotionValue[],
-    ([e, s]) => (0.35 + 0.65 * (s as number)) * (1 - (e as number) * 0.45),
-  )
+  const y = useTransform(edge, (value) => value * 28)
+  const opacity = useTransform(edge, (value) => 1 - value * 0.45)
 
   return (
     <m.li
