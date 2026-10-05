@@ -51,7 +51,7 @@ export function CallToAction() {
             <div className="mt-10 border-t border-ink-800 pt-6">
               <a
                 href={`mailto:${company.email}`}
-                className="inline-flex items-center gap-2.5 font-mono text-[0.8125rem] tracking-[0.04em] text-accent-300 transition-colors duration-200 hover:text-white"
+                className="inline-flex min-h-11 items-center gap-2.5 font-mono text-[0.8125rem] tracking-[0.04em] text-accent-300 transition-colors duration-200 hover:text-white sm:min-h-0"
               >
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-400" />
                 Or email {company.email}

@@ -126,7 +126,7 @@ export function Hero() {
               */}
               <a
                 href="#solutions"
-                className="group mt-6 inline-flex items-center gap-2.5 text-sm text-ink-500 transition-colors duration-200 hover:text-ink-900"
+                className="group mt-6 inline-flex min-h-11 items-center gap-2.5 text-sm text-ink-500 transition-colors duration-200 hover:text-ink-900 sm:min-h-0"
               >
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent-500" />
                 <span className="font-semibold text-ink-900">

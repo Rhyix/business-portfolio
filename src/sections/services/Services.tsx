@@ -265,7 +265,12 @@ function RailPanel({ index, x, metrics, children }: RailPanelProps) {
 
   return (
     <m.li
-      className="h-[clamp(20rem,50svh,28rem)] w-[clamp(19rem,27vw,25rem)] shrink-0 origin-bottom-left"
+      // Height follows the content. At 28rem the tallest service text filled a
+      // little over half the card, leaving 150-200px of blank in the middle of
+      // every one. The floor is set by the closing panel, which carries a
+      // button the others do not and needs 336px at the tightest viewport the
+      // rail still pins at.
+      className="h-[clamp(21.5rem,38svh,22rem)] w-[clamp(19rem,27vw,25rem)] shrink-0 origin-bottom-left"
       style={{ rotate, y, opacity }}
     >
       {children}
@@ -291,7 +296,7 @@ function ContactPanel({ index }: { index: number }) {
           {String(index + 1).padStart(2, '0')}
         </span>
       </div>
-      <h3 className="mt-auto pt-8 text-xl font-semibold text-white">Something else in mind?</h3>
+      <h3 className="mt-8 text-xl font-semibold text-white">Something else in mind?</h3>
       <p className="mt-3 leading-relaxed text-accent-100">
         Most projects don&apos;t fit neatly into one category. Tell us what you&apos;re trying to build.
       </p>

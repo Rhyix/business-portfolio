@@ -47,7 +47,9 @@ export function Contact() {
                         {detail.href ? (
                           <a
                             href={detail.href}
-                            className="transition-colors duration-200 hover:text-accent-700"
+                            // min-h-11 on phones: these were 19px tall, and they
+                            // are the two links that matter most on this page.
+                            className="inline-flex min-h-11 items-center transition-colors duration-200 hover:text-accent-700 sm:min-h-0"
                           >
                             {detail.value}
                           </a>

@@ -22,7 +22,11 @@ export function ServicePanel({ service, index }: ServiceCardProps & { index: num
           {String(index + 1).padStart(2, '0')}
         </span>
       </div>
-      <h3 className="mt-auto pt-8 text-xl font-semibold text-balance text-ink-900">{service.title}</h3>
+      {/* Top-aligned, not pushed to the bottom: the descriptions run from two
+          lines to four, so bottom-anchoring put every title at a different
+          height. Any slack now falls at the foot of the card, where it reads
+          as margin rather than as a gap in the middle. */}
+      <h3 className="mt-8 text-xl font-semibold text-balance text-ink-900">{service.title}</h3>
       <p className="mt-3 leading-relaxed text-ink-500">{service.description}</p>
     </article>
   )

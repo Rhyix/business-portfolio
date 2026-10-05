@@ -24,6 +24,17 @@ const COVER_MARGIN = 1.15
 /** How long the zoom runs once the visitor asks for it, in seconds. */
 const ZOOM_DURATION = 1
 
+/**
+ * Vertical space the copy under the mark needs: the 36px gap, the block
+ * itself, and a margin clear of browser chrome and the home indicator.
+ *
+ * The composition was previously positioned from the viewport's midpoint
+ * alone, and the mark sized from width alone, so neither knew anything about
+ * height. In landscape that left the copy 2px from the bottom edge on a
+ * 812x375 phone — clipped once real browser chrome is involved.
+ */
+const COPY_RESERVE = 230
+
 /** Keys that mean "move the page" and so mean "open the intro". */
 const SCROLL_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Spacebar'])
 
@@ -116,7 +127,14 @@ function IntroOverlay({ onDone }: { onDone: () => void }) {
   // The stem's core starts a little above centre (the wordmark sits above its
   // tagline) and drifts to dead centre, where the end scale is computed.
   const focusX = viewport.width / 2
-  const restFocusY = viewport.height / 2 - baseHeight * 0.4
+  // Centred when there is room, lifted just enough when there is not.
+  const restFocusY = Math.max(
+    16,
+    Math.min(
+      viewport.height / 2 - baseHeight * 0.4,
+      viewport.height - COPY_RESERVE - baseHeight * (1 - FOCAL_Y),
+    ),
+  )
   const maxScale =
     COVER_MARGIN *
     Math.max(

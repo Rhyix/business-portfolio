@@ -104,10 +104,18 @@
 /* Mono micro-label: zero-padded indices, eyebrows, captions. */
 @utility label-mono {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  /* 12px on phones, 11px from sm up. This carries real copy — every section
+     eyebrow, and the "Sample data" disclaimer on the platform preview — so
+     11px was too small on the devices least able to render it crisply. The
+     desktop size is unchanged. */
+  font-size: 0.75rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   line-height: 1;
+
+  @media (width >= 40rem) {
+    font-size: 0.6875rem;
+  }
 }
 
 /* Rail labels: label-mono with tighter tracking, so the widest item

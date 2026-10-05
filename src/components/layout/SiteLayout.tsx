@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Footer } from './Footer'
+import { MobileActionBar } from './MobileActionBar'
 import { Navbar } from './Navbar'
 import { SectionDial } from './SectionDial'
 import { railSections } from '../../data/sectionRail'
@@ -50,6 +51,8 @@ export function SiteLayout({ children }: SiteLayoutProps) {
 
       <SectionDial />
       <Footer />
+      {/* Last in the DOM so it never interrupts the tab order through the page. */}
+      <MobileActionBar />
     </div>
     </NavigationProvider>
   )

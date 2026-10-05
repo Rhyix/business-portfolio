@@ -47,7 +47,7 @@ export function Footer() {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="block py-1 text-sm transition-colors duration-200 hover:text-white"
+                    className="block py-3 text-sm transition-colors duration-200 hover:text-white sm:py-1"
                   >
                     {item.label}
                   </a>
@@ -72,7 +72,7 @@ export function Footer() {
                 <li key={service.title}>
                   <a
                     href="#services"
-                    className="block py-1 text-sm transition-colors duration-200 hover:text-white"
+                    className="block py-3 text-sm transition-colors duration-200 hover:text-white sm:py-1"
                   >
                     {service.title}
                   </a>
@@ -89,7 +89,7 @@ export function Footer() {
               <li>
                 <a
                   href={contactLinks.email}
-                  className="flex items-start gap-2 py-1 transition-colors duration-200 hover:text-white"
+                  className="flex min-h-11 items-start gap-2 py-3 transition-colors duration-200 hover:text-white sm:min-h-0 sm:py-1"
                 >
                   <Mail className="mt-0.5 size-4 shrink-0 text-ink-400" aria-hidden="true" />
                   {/* An address is one unbreakable token and this column is the
@@ -100,7 +100,7 @@ export function Footer() {
               <li>
                 <a
                   href={contactLinks.phone}
-                  className="inline-flex items-center gap-2 py-1 transition-colors duration-200 hover:text-white"
+                  className="inline-flex min-h-11 items-center gap-2 py-1 transition-colors duration-200 hover:text-white sm:min-h-0"
                 >
                   <Phone className="size-4 text-ink-400" aria-hidden="true" />
                   {company.phone}
@@ -114,7 +114,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-ink-800 py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+        {/* Extra bottom padding on phones so the fixed action bar never sits
+            over the final line of the page. */}
+        <div className="flex flex-col gap-2 border-t border-ink-800 pt-6 pb-28 text-xs sm:flex-row sm:items-center sm:justify-between sm:pb-6">
           <p>{buildCopyright()}</p>
           <p>Built with React, TypeScript and Tailwind CSS.</p>
         </div>
