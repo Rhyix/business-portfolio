@@ -12,7 +12,10 @@ function SidebarBrand({ appName }: SidebarBrandProps) {
   return (
     <div className="px-5 pt-5">
       <Link
-        to="/"
+        // Leaving a demo returns to the Solutions section it was opened from,
+        // rather than the top of the marketing page — which would also replay
+        // the intro, since that only skips itself when there is a hash.
+        to="/#solutions"
         className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-400 transition-colors duration-200 hover:text-ink-700"
       >
         <ArrowLeft className="size-3.5" aria-hidden="true" />

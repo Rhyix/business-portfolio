@@ -107,12 +107,16 @@ function SectionDialInner() {
       const top = target.getBoundingClientRect().top + window.scrollY - offset
       window.scrollTo({
         top: Math.max(0, top),
-        // "instant" rather than "auto": the page sets `scroll-behavior: smooth`
-        // globally, which would otherwise animate the reduced-motion path too.
-        behavior: prefersReducedMotion ? 'instant' : 'smooth',
+        // Always instant. A smooth scroll here animated through every section
+        // in between, and several of them are pinned sequences driven by scroll
+        // position — so a deliberate jump scrubbed their whole choreography at
+        // whatever speed the browser chose. The destination announces itself
+        // through its own strong, direction-aware chapter entrance instead,
+        // which is what `notifyDialCommit` above exists to trigger.
+        behavior: 'instant',
       })
     },
-    [prefersReducedMotion, navigation],
+    [navigation],
   )
 
   const { mode, selectedIndex, surfaceProps, onKeyDown } = useDialController({

@@ -254,7 +254,7 @@ export function DemoTopbar({
                   </li>
                   <li>
                     <Link
-                      to="/"
+                      to="/#solutions"
                       onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2.5 px-4 py-2 text-sm text-ink-700 transition-colors duration-200 hover:bg-ink-50 hover:text-ink-900"
                     >

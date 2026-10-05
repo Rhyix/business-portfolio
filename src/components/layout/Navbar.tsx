@@ -39,11 +39,14 @@ export function Navbar() {
 
   return (
     <header
+      // No backdrop-filter. This bar is sticky over the whole document, so a
+      // blurred backdrop had to be re-sampled and re-blurred on every scroll
+      // frame of every section — the one per-frame cost on the site that was
+      // paid even where nothing is animating. The higher opacities below read
+      // almost identically without compositing the layer beneath.
       className={cn(
         'sticky top-0 z-50 border-b transition-colors duration-300',
-        scrolled
-          ? 'border-ink-200/80 bg-white/85 backdrop-blur-md'
-          : 'border-transparent bg-white/60 backdrop-blur-sm',
+        scrolled ? 'border-ink-200/80 bg-white/95' : 'border-transparent bg-white/80',
       )}
     >
       <Container>

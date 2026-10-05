@@ -1,9 +1,10 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { m, useMotionTemplate, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { animate, m, useMotionTemplate, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 import { company } from '../../data/company'
 import { useViewportSize } from '../../lib/dialGeometry'
+import { EASE_OUT_EXPO } from '../../lib/motion'
 
 /** White-stroke wordmark: drawn as the logo at rest, and its alpha is the window the page shows through. */
 const LOGO_SRC = '/brand/aetex-logo-2.png'
@@ -20,16 +21,28 @@ const FOCAL_X = (STEM.left + STEM.right) / 2 / 948
 const FOCAL_Y = (STEM.top + STEM.bottom) / 2 / 200
 /** Margin on the computed end scale, so the core edges sit well outside the viewport. */
 const COVER_MARGIN = 1.15
-/** Scroll spent on the intro, as a fraction of the viewport height. */
-const INTRO_DISTANCE = 1.3
+/** How long the zoom runs once the visitor asks for it, in seconds. */
+const ZOOM_DURATION = 1
+
+/** Keys that mean "move the page" and so mean "open the intro". */
+const SCROLL_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Spacebar'])
 
 /**
  * Opening sequence for the home page. The page starts behind a dark ground
- * with the AETEX wordmark at its centre; scrolling zooms into the wordmark,
- * whose letters become a window onto the hero, until a single stroke fills
- * the screen. The dark ground stays fully opaque throughout.
- * The hero is held in place and kept inert until then, so nothing of it can
- * be seen or reached before it is unmasked.
+ * with the AETEX wordmark at its centre; the first scroll zooms into the
+ * wordmark, whose letters become a window onto the hero, until a single
+ * stroke fills the screen. The dark ground stays fully opaque throughout.
+ * The page is kept inert until then, so nothing of it can be reached before
+ * it is unmasked.
+ *
+ * The zoom is a one-second animation triggered by the first scroll, not a
+ * scrub tied to scroll position. It used to be the latter, over 1.3 viewports
+ * of its own scroll track, which meant re-rasterising a full-viewport two-layer
+ * mask on every frame the visitor scrolled — the most expensive thing on the
+ * site, running while they were trying to move the page, as their first
+ * impression of it. Scroll intent is now swallowed rather than measured, so
+ * the sequence costs one short animation and the document loses the 1.3
+ * viewports it used to reserve.
  *
  * Plays from the top of the page only. Reduced motion, or arriving already
  * scrolled or at an anchor, renders the page as it is.
@@ -39,55 +52,63 @@ export function IntroReveal({ children }: { children: ReactNode }) {
   const [done, setDone] = useState(
     () => typeof window === 'undefined' || window.scrollY > 0 || window.location.hash !== '',
   )
-  // Fixed for the life of the intro, so resizing mid-zoom can't strand the scroll position.
-  const [distance] = useState(() => (typeof window === 'undefined' ? 0 : Math.round(window.innerHeight * INTRO_DISTANCE)))
-  const holdRef = useRef<HTMLDivElement>(null)
+  const finish = useCallback(() => setDone(true), [])
   const playing = !done && !prefersReducedMotion
-
-  useLayoutEffect(() => {
-    const hold = holdRef.current
-    if (!hold) return
-    if (playing) {
-      // Pin the hero exactly where it would sit at the top of the page —
-      // under the navbar — so it doesn't move while the intro scrolls past.
-      hold.style.top = `${hold.getBoundingClientRect().top + window.scrollY}px`
-      return
-    }
-    hold.style.top = ''
-  }, [playing])
-
-  // Finishing removes the intro's scroll distance from the document, so take
-  // the same amount off the scroll position: the hero stays exactly in place.
-  const finishedRef = useRef(false)
-  useLayoutEffect(() => {
-    if (!done || finishedRef.current || prefersReducedMotion) return
-    finishedRef.current = true
-    window.scrollTo({ top: Math.max(0, window.scrollY - distance), behavior: 'instant' })
-  }, [done, distance, prefersReducedMotion])
 
   return (
     <>
-      <div>
-        <div ref={holdRef} className={playing ? 'sticky' : undefined} inert={playing}>
-          {children}
-        </div>
-        {/* A real box rather than padding: a sticky element only travels
-            within its parent's content box, which padding is not part of. */}
-        {playing ? <div aria-hidden="true" style={{ height: distance }} /> : null}
-      </div>
-      {playing ? <IntroOverlay distance={distance} onDone={() => setDone(true)} /> : null}
+      <div inert={playing}>{children}</div>
+      {playing ? <IntroOverlay onDone={finish} /> : null}
     </>
   )
 }
 
-function IntroOverlay({ distance, onDone }: { distance: number; onDone: () => void }) {
+function IntroOverlay({ onDone }: { onDone: () => void }) {
   const viewport = useViewportSize()
-  const { scrollY } = useScroll()
-  const progress = useTransform(scrollY, [0, distance], [0, 1], { clamp: true })
+  const progress = useMotionValue(0)
+  const [opening, setOpening] = useState(false)
 
-  useMotionValueEvent(progress, 'change', (value) => {
-    if (value >= 1) onDone()
-  })
+  /**
+   * Any attempt to move the page opens the intro, and the attempt itself is
+   * swallowed. Non-passive on purpose: preventing the scroll is what keeps the
+   * hero still for the second the zoom runs, without locking `overflow` and
+   * taking the scrollbar — and therefore the layout — with it. These listeners
+   * exist only while the overlay is mounted, and replace the `useScroll`
+   * subscription this component used to hold.
+   */
+  useEffect(() => {
+    const open = (event: Event) => {
+      event.preventDefault()
+      setOpening(true)
+    }
+    const openOnKey = (event: KeyboardEvent) => {
+      if (!SCROLL_KEYS.has(event.key)) return
+      // Space activates a focused button. Swallowing it here would leave the
+      // prompt below unusable from the keyboard.
+      if (event.target instanceof HTMLElement && event.target.closest('button')) return
+      event.preventDefault()
+      setOpening(true)
+    }
+
+    window.addEventListener('wheel', open, { passive: false })
+    window.addEventListener('touchmove', open, { passive: false })
+    window.addEventListener('keydown', openOnKey)
+    return () => {
+      window.removeEventListener('wheel', open)
+      window.removeEventListener('touchmove', open)
+      window.removeEventListener('keydown', openOnKey)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!opening) return
+    const controls = animate(progress, 1, {
+      duration: ZOOM_DURATION,
+      ease: EASE_OUT_EXPO,
+      onComplete: onDone,
+    })
+    return () => controls.stop()
+  }, [opening, progress, onDone])
 
   const baseWidth = Math.min(560, viewport.width * 0.7)
   const baseHeight = baseWidth * LOGO_RATIO
@@ -103,7 +124,7 @@ function IntroOverlay({ distance, onDone }: { distance: number; onDone: () => vo
       viewport.height / ((STEM.bottom - STEM.top) * pixel),
     )
 
-  // Exponential, so each slice of scroll multiplies the size by the same
+  // Exponential, so each slice of the run multiplies the size by the same
   // amount and the zoom reads as steady travel rather than a late lurch.
   const scale = useTransform(progress, (value) => Math.pow(maxScale, value))
   const focusY = useTransform(progress, (value) => restFocusY + (viewport.height / 2 - restFocusY) * value)
@@ -140,12 +161,26 @@ function IntroOverlay({ distance, onDone }: { distance: number; onDone: () => vo
 
       {/* The wordmark itself, laid exactly over its own window, so at rest the
           logo reads as a logo and the page stays hidden. It fades as the zoom
-          begins, and the letters turn into the way in. */}
+          begins, and the letters turn into the way in.
+
+          Laid out once at its resting size and zoomed with a transform: driving
+          left/top/width/height animated four layout properties per frame. With
+          the origin at the top-left corner, translate-then-scale puts the same
+          box in the same place — the values below are the ones the layout
+          version used. */}
       <m.img
         src={LOGO_SRC}
         alt={company.name}
         className="absolute max-w-none"
-        style={{ left, top, width, height, opacity: logoOpacity }}
+        style={{
+          x: left,
+          y: top,
+          width: baseWidth,
+          height: baseHeight,
+          scale,
+          transformOrigin: '0 0',
+          opacity: logoOpacity,
+        }}
       />
 
       <m.div

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import { RouterContext, useRouter } from './useRouter'
 
@@ -17,13 +17,36 @@ export function RouterProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
+  // A hash in `to` names a section on the destination page, which cannot be
+  // scrolled to until that page has rendered. Parked here and consumed by the
+  // effect below, which runs after the commit that swaps the page in.
+  const pendingHashRef = useRef<string | null>(null)
+
   const navigate = useCallback((to: string) => {
-    if (to !== window.location.pathname) {
+    const hashIndex = to.indexOf('#')
+    const pathname = hashIndex === -1 ? to : to.slice(0, hashIndex) || '/'
+    const hash = hashIndex === -1 ? '' : to.slice(hashIndex + 1)
+
+    if (to !== window.location.pathname + window.location.hash) {
       window.history.pushState({}, '', to)
-      setPath(to)
+      setPath(pathname)
     }
-    window.scrollTo(0, 0)
+
+    if (hash) {
+      pendingHashRef.current = hash
+    } else {
+      window.scrollTo(0, 0)
+    }
   }, [])
+
+  useEffect(() => {
+    const hash = pendingHashRef.current
+    if (!hash) return
+    pendingHashRef.current = null
+    // Instant: the page has just been replaced, so animating the distance
+    // would scrub every scroll-driven section between here and there.
+    document.getElementById(hash)?.scrollIntoView({ behavior: 'instant', block: 'start' })
+  }, [path])
 
   return <RouterContext.Provider value={{ path, navigate }}>{children}</RouterContext.Provider>
 }

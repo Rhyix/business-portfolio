@@ -150,7 +150,7 @@ function PinnedServices() {
         <div ref={frameRef} data-tone="dark" className="sticky top-0 h-svh overflow-clip">
           <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
             <m.div
-              className="absolute rounded-full bg-accent-600"
+              className="absolute rounded-full bg-ink-975"
               style={{
                 width: groundSize,
                 height: groundSize,
@@ -174,7 +174,7 @@ function PinnedServices() {
               <p
                 className={cn(
                   'mb-5 flex items-center gap-2.5 transition-colors duration-500 ease-out-expo',
-                  onAccent ? 'text-accent-100' : 'text-accent-600',
+                  onAccent ? 'text-accent-300' : 'text-accent-600',
                 )}
               >
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-current" />
@@ -197,7 +197,7 @@ function PinnedServices() {
                 ref={descriptionRef}
                 className={cn(
                   'mt-5 max-w-2xl text-lead transition-colors duration-500 ease-out-expo',
-                  onAccent ? 'text-accent-100' : 'text-ink-500',
+                  onAccent ? 'text-ink-300' : 'text-ink-500',
                 )}
                 style={{ opacity: leadOpacity }}
               >
@@ -218,11 +218,11 @@ function PinnedServices() {
               </m.ol>
 
               <div className="mt-8 flex items-center gap-6" aria-hidden="true">
-                <span className="label-mono text-accent-100 tabular-nums">
+                <span className="label-mono text-ink-500 tabular-nums">
                   <span className="text-white">{String(current).padStart(2, '0')}</span> /{' '}
                   {String(total).padStart(2, '0')}
                 </span>
-                <span className="h-px w-64 bg-white/25">
+                <span className="h-px w-64 bg-ink-800">
                   <m.span className="block h-full origin-left bg-white" style={{ scaleX: travelled }} />
                 </span>
               </div>
@@ -278,24 +278,24 @@ function ContactPanel({ index }: { index: number }) {
   return (
     <a
       href="#contact"
-      className="group flex h-full flex-col rounded-3xl bg-ink-950 p-8 text-white shadow-lift transition-colors duration-200 hover:bg-ink-900"
+      className="group flex h-full flex-col rounded-3xl bg-accent-600 p-8 text-white shadow-lift transition-colors duration-200 hover:bg-accent-500"
     >
       <div className="flex items-start justify-between">
         <span
           aria-hidden="true"
-          className="inline-flex size-14 items-center justify-center rounded-2xl bg-white/10 text-accent-300"
+          className="inline-flex size-14 items-center justify-center rounded-2xl bg-white/15 text-white"
         >
           <ArrowRight className="size-5" strokeWidth={1.75} />
         </span>
-        <span aria-hidden="true" className="label-mono text-ink-500">
+        <span aria-hidden="true" className="label-mono text-accent-200">
           {String(index + 1).padStart(2, '0')}
         </span>
       </div>
       <h3 className="mt-auto pt-8 text-xl font-semibold text-white">Something else in mind?</h3>
-      <p className="mt-3 leading-relaxed text-ink-300">
+      <p className="mt-3 leading-relaxed text-accent-100">
         Most projects don&apos;t fit neatly into one category. Tell us what you&apos;re trying to build.
       </p>
-      <span className="mt-6 inline-flex items-center gap-1.5 self-start rounded-full bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 group-hover:bg-accent-500">
+      <span className="mt-6 inline-flex items-center gap-1.5 self-start rounded-full bg-white px-4 py-2 text-sm font-medium text-accent-700 transition-colors duration-200 group-hover:bg-accent-50">
         <ScrambleText text="Start a Project" />
         <ArrowRight
           className="size-4 transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5"
