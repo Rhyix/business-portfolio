@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { animate, m, useMotionTemplate, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
 import type { MotionValue } from 'motion/react'
 import { company } from '../../data/company'
-import { useViewportSize } from '../../lib/dialGeometry'
 import { EASE_OUT_EXPO } from '../../lib/motion'
 
 /** White-stroke wordmark: drawn as the logo at rest, and its alpha is the window the page shows through. */
@@ -35,6 +34,17 @@ const ZOOM_DURATION = 1
  */
 const COPY_RESERVE = 230
 
+/**
+ * The intro is a desktop moment. Below this the page opens straight onto the
+ * hero — the same line the System Dial and the pinned sections use, so the
+ * desktop experience stays one coherent set rather than a patchwork.
+ *
+ * Read once, at mount, alongside the scroll and hash checks below. Resizing
+ * across the breakpoint mid-visit is not worth a subscription: by then the
+ * intro has either finished or was never going to run.
+ */
+const DESKTOP_QUERY = '(min-width: 1024px)'
+
 /** Keys that mean "move the page" and so mean "open the intro". */
 const SCROLL_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' ', 'Spacebar'])
 
@@ -55,13 +65,18 @@ const SCROLL_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home
  * the sequence costs one short animation and the document loses the 1.3
  * viewports it used to reserve.
  *
- * Plays from the top of the page only. Reduced motion, or arriving already
- * scrolled or at an anchor, renders the page as it is.
+ * Plays on desktop, from the top of the page only. Phones and tablets,
+ * reduced motion, or arriving already scrolled or at an anchor, render the
+ * page as it is.
  */
 export function IntroReveal({ children }: { children: ReactNode }) {
   const prefersReducedMotion = useReducedMotion()
   const [done, setDone] = useState(
-    () => typeof window === 'undefined' || window.scrollY > 0 || window.location.hash !== '',
+    () =>
+      typeof window === 'undefined' ||
+      !window.matchMedia(DESKTOP_QUERY).matches ||
+      window.scrollY > 0 ||
+      window.location.hash !== '',
   )
   const finish = useCallback(() => setDone(true), [])
   const playing = !done && !prefersReducedMotion
@@ -75,9 +90,39 @@ export function IntroReveal({ children }: { children: ReactNode }) {
 }
 
 function IntroOverlay({ onDone }: { onDone: () => void }) {
-  const viewport = useViewportSize()
+  const frameRef = useRef<HTMLDivElement>(null)
   const progress = useMotionValue(0)
   const [opening, setOpening] = useState(false)
+
+  /**
+   * The box this is drawn in, measured rather than inferred.
+   *
+   * It used to come from `window.innerHeight`, which is the *visual*
+   * viewport — on a phone that shrinks by the height of the URL bar. A
+   * `position: fixed` element resolves against the *layout* viewport, which
+   * does not. The composition was therefore laid out for a box up to ~100px
+   * shorter than the one it occupied, sitting high in the frame, and shifting
+   * again whenever the browser collapsed its chrome. Measuring the element
+   * itself is correct whatever the browser does with its toolbars.
+   */
+  const [viewport, setViewport] = useState(() => ({
+    width: typeof document === 'undefined' ? 1280 : document.documentElement.clientWidth,
+    height: typeof document === 'undefined' ? 800 : document.documentElement.clientHeight,
+  }))
+
+  useLayoutEffect(() => {
+    const frame = frameRef.current
+    if (!frame) return
+    const measure = () => {
+      const { width, height } = frame.getBoundingClientRect()
+      setViewport((current) =>
+        current.width === width && current.height === height ? current : { width, height },
+      )
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
 
   /**
    * Any attempt to move the page opens the intro, and the attempt itself is
@@ -157,7 +202,7 @@ function IntroOverlay({ onDone }: { onDone: () => void }) {
   const copyOpacity = useTransform(progress, [0, 0.08], [1, 0])
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[70]">
+    <div ref={frameRef} className="pointer-events-none fixed inset-0 z-[70]">
       {/* The ground, with the wordmark cut out of it: the page shows only through the letters. */}
       <m.div
         aria-hidden="true"
